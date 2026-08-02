@@ -8,46 +8,41 @@ import {
   BarChart3,
   FileSearch,
   Video,
-  Rocket,
-  KeyRound,
+  Sparkles,
   Check,
   ArrowRight,
   ArrowLeft,
   Settings,
-  ShieldCheck,
   Crown,
+  Link2,
 } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/constants";
-import {
-  LICENSE_FEATURES,
-  BUNDLE_ENV,
-  upsellUrls,
-} from "@/lib/licensing";
+import { upsellUrls } from "@/lib/licensing";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const url = `${SITE_URL}/affilirank`;
   return {
-    title: `${SITE_NAME} — Rank first. Earn on autopilot.`,
+    title: `${SITE_NAME} — Rank your deals. Earn on autopilot.`,
     description:
-      "Turn your affiliate deals into a self-publishing SEO machine. TikTok-style deal stream, auto-generated review articles, exit-intent popups and more — locked behind simple license keys you sell as upsells.",
+      "Turn any JVZoo offer into a self-ranking deal stream and SEO blog that writes itself. Every CTA monetized with your affiliate link. One-time price, lifetime commissions.",
     alternates: { canonical: url },
     openGraph: {
       type: "website",
       url,
       siteName: SITE_NAME,
-      title: `${SITE_NAME} — Rank first. Earn on autopilot.`,
+      title: `${SITE_NAME} — Rank your deals. Earn on autopilot.`,
       description:
-        "Self-publishing SEO machine for affiliate deals. Sell it white-label with license-key unlocks.",
+        "A deal stream + SEO blog for affiliate marketers. Paste a JVZoo link and start ranking your offers on autopilot.",
       images: [{ url: `${SITE_URL}/og-default.png`, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${SITE_NAME} — Rank first. Earn on autopilot.`,
+      title: `${SITE_NAME} — Rank your deals. Earn on autopilot.`,
       description:
-        "Self-publishing SEO machine for affiliate deals. Sell it white-label with license-key unlocks.",
+        "A deal stream + SEO blog for affiliate marketers. Paste a JVZoo link and start ranking your offers on autopilot.",
     },
   };
 }
@@ -57,10 +52,11 @@ const TIERS = [
     name: "Core",
     icon: Zap,
     price: "Included",
-    desc: "The deal stream engine with everything you need to launch.",
+    desc: "Your deal stream engine — free, ship it today, sell from day one.",
     features: [
       "TikTok-style snap deal stream",
       "JVZoo one-click URL ingest + auto-scrape",
+      "Your affiliate tag injected into every CTA",
       "Countdown timers & coupons",
       "10 deal slots",
       "YouTube / Vimeo VSL playback",
@@ -72,15 +68,16 @@ const TIERS = [
     name: "Bundle",
     icon: Crown,
     price: "Full version",
-    desc: "Every module unlocked forever — what your buyers get.",
+    desc: "Every module unlocked forever — the end-user route to owning it all.",
     features: [
       "Everything in Core",
-      "SEO Blog module (auto articles)",
-      "Unlimited deals",
-      "Exit-intent popup",
+      "SEO Blog Module (auto-written ranking articles)",
+      "Unlimited deals — no 10-deal cap",
+      "Exit-intent popup + countdown",
       "Analytics module (GA4 + Meta Pixel)",
       "Deal detail pages with Product schema",
       "Pro video mode (MP4 / iframe / GIF)",
+      "White-label rights — rebrand and resell your own copies",
     ],
     highlight: true,
   },
@@ -89,31 +86,90 @@ const TIERS = [
 export default function VslPage() {
   const urls = upsellUrls();
   const bundleUrl = urls.bundle;
-  const featureRows = [
-    { key: "blog", icon: Newspaper, def: LICENSE_FEATURES[0] },
-    { key: "unlimited-deals", icon: InfinityIcon, def: LICENSE_FEATURES[1] },
-    { key: "exit-intent", icon: MousePointerClick, def: LICENSE_FEATURES[2] },
-    { key: "analytics", icon: BarChart3, def: LICENSE_FEATURES[3] },
-    { key: "deal-pages", icon: FileSearch, def: LICENSE_FEATURES[4] },
-    { key: "pro-video", icon: Video, def: LICENSE_FEATURES[5] },
+
+  const modules = [
+    {
+      key: "blog",
+      icon: Newspaper,
+      label: "SEO Blog Module",
+      desc: "Auto-written, keyword-optimized review articles that rank your deals on Google — every CTA goes to your affiliate checkout.",
+      url: urls.blog,
+    },
+    {
+      key: "unlimited-deals",
+      icon: InfinityIcon,
+      label: "Unlimited Deals",
+      desc: "Sell every offer you promote. No 10-deal cap on your stream — add as many lifetime deals as you want.",
+      url: urls["unlimited-deals"],
+    },
+    {
+      key: "exit-intent",
+      icon: MousePointerClick,
+      label: "Exit-Intent Popup",
+      desc: "Catch visitors before they leave with a high-converting offer and countdown. More clicks, more commissions.",
+      url: urls["exit-intent"],
+    },
+    {
+      key: "analytics",
+      icon: BarChart3,
+      label: "Analytics Module",
+      desc: "Know exactly what converts. GA4 + Meta Pixel tracking baked in — double your best-performing deals.",
+      url: urls.analytics,
+    },
+    {
+      key: "deal-pages",
+      icon: FileSearch,
+      label: "Deal Detail Pages",
+      desc: "A dedicated SEO landing page for every product, with rich Product schema and your affiliate link.",
+      url: urls["deal-pages"],
+    },
+    {
+      key: "pro-video",
+      icon: Video,
+      label: "Pro Video Mode",
+      desc: "Go beyond YouTube & Vimeo — play MP4, iframe and GIF creative so no offer gets left behind.",
+      url: urls["pro-video"],
+    },
+  ];
+
+  const steps = [
+    {
+      icon: Link2,
+      title: "1 · Paste a JVZoo link",
+      body: "One-click ingest scrapes the title, image, video and price. Your affiliate tag is injected automatically into every checkout link.",
+    },
+    {
+      icon: Sparkles,
+      title: "2 · It publishes itself",
+      body: "A TikTok-style stream card goes live instantly, and a Google-indexed review article is auto-written — every CTA monetized with your affiliate link.",
+    },
+    {
+      icon: BarChart3,
+      title: "3 · Rank and earn",
+      body: "SEO articles, deal pages and exit-intent popups drive clicks on autopilot. A one-time purchase you own forever — lifetime commissions.",
+    },
   ];
 
   const faq = [
     {
+      q: "How does AffiliRank help me rank my deals?",
+      a: "Every deal gets a keyword-optimized review article at /blog and a dedicated landing page at /deals/[slug] — both indexed by Google and packed with CTAs that link to your affiliate checkout. Publish once, and the articles keep ranking and converting for you.",
+    },
+    {
       q: "How does the licensing work?",
-      a: "Every deployment ships with the core deal stream unlocked. Advanced modules (SEO blog, unlimited deals, exit-intent, analytics, deal pages, pro video) are locked behind RSA-signed license keys. Buyers paste a key in the admin portal — no license server needed. A bundle key unlocks everything.",
+      a: "The core deal stream ships unlocked with every deployment. Advanced modules — SEO blog, unlimited deals, exit-intent, analytics, deal pages, pro video — are gated behind RSA-signed license keys. Activate instantly by pasting a key in the admin portal. No license server, no phone-home.",
     },
     {
-      q: "Can I sell this as my own product?",
-      a: "Yes. It's fully white-label. Rebrand it, give buyers their own deployment, and let them add their own affiliate ID. You keep the private key, so only you can mint new unlock keys.",
+      q: "What exactly is the Bundle?",
+      a: "The Bundle is the full version: every module unlocked forever, including the SEO blog and unlimited deals. It also includes white-label rights — so if you want the end-user route of rebranding and reselling your own copies, that's yours.",
     },
     {
-      q: "Is this a one-time payment?",
-      a: "Everything here is designed for lifetime deals: one-time pricing, your affiliate commissions, and a product your buyers can deploy and own.",
+      q: "Is it a one-time payment?",
+      a: "Yes. Everything here is designed lifetime-deal style: one-time pricing, your affiliate commissions, and a product you deploy, own and keep.",
     },
     {
       q: "Do I need a license server?",
-      a: "No. Keys are verified offline with public-key cryptography. The app never phones home — buyers get instant activation, and you get forge-proof controls.",
+      a: "No. Keys are verified offline with public-key cryptography. Buyers get instant activation, and you get forge-proof control over every unlock.",
     },
   ];
 
@@ -159,18 +215,18 @@ export default function VslPage() {
         <div className="relative mx-auto max-w-4xl px-4 py-16 text-center sm:px-6 sm:py-24">
           <span className="text-[11px] font-bold uppercase tracking-[0.32em] text-violet-300/90">
             <Zap className="mr-1 inline h-4 w-4 -translate-y-0.5" />
-            White-label affiliate deal machine
+            Affiliate deal marketing on autopilot
           </span>
           <h1 className="mt-5 font-display text-4xl font-extrabold leading-tight sm:text-6xl">
-            Rank first.
+            Rank your deals.
             <br />
             <span className="text-gradient">Earn on autopilot.</span>
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-white/65 sm:text-base">
-            {SITE_NAME} is the affiliate storefront that writes its own SEO.
-            Paste a JVZoo link and it scrapes the offer, launches a TikTok-style
-            deal stream, and auto-publishes a ranking review article — every
-            CTA monetized with your affiliate tag.
+            {SITE_NAME} turns any JVZoo offer into a self-ranking deal stream
+            plus an SEO blog that writes itself — every view, article and popup
+            monetized with your affiliate link. Publish once, rank in Google,
+            collect lifetime commissions.
           </p>
 
           {/* VSL video */}
@@ -195,11 +251,8 @@ export default function VslPage() {
                   Your video sales letter goes here
                 </p>
                 <p className="max-w-md text-xs text-white/35">
-                  Set{" "}
-                  <code className="rounded bg-white/10 px-1.5 py-0.5">
-                    NEXT_PUBLIC_VSL_EMBED_URL
-                  </code>{" "}
-                  to embed your VSL (YouTube, Vimeo, or direct MP4).
+                  Embed your VSL (YouTube, Vimeo, or direct MP4) and it plays
+                  right here.
                 </p>
               </div>
             )}
@@ -227,26 +280,10 @@ export default function VslPage() {
       {/* How it works */}
       <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
         <h2 className="text-center font-display text-3xl font-extrabold">
-          Launch yours in <span className="text-gradient">3 steps</span>
+          Start ranking in <span className="text-gradient">3 steps</span>
         </h2>
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
-          {[
-            {
-              icon: Rocket,
-              title: "1 · Deploy",
-              body: "Stand up your own branded instance. Rebrand it, point it at your domain, connect Supabase for realtime data.",
-            },
-            {
-              icon: KeyRound,
-              title: "2 · Unlock",
-              body: "Sell the six advanced modules as upsells. Buyers activate instantly by pasting an RSA-signed key you mint in seconds.",
-            },
-            {
-              icon: ShieldCheck,
-              title: "3 · Monetize",
-              body: "Every stream card, blog CTA and deal page runs your affiliate link. One-time purchases + lifetime commissions.",
-            },
-          ].map((s) => (
+          {steps.map((s) => (
             <div key={s.title} className="glass rounded-3xl p-6">
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 text-white shadow-lg">
                 <s.icon className="h-5 w-5" />
@@ -260,19 +297,19 @@ export default function VslPage() {
         </div>
       </section>
 
-      {/* Features (the license modules) */}
-      <section className="border-y border-white/10 bg-black/20">
+      {/* Modules to unlock */}
+      <section id="modules" className="border-y border-white/10 bg-black/20">
         <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
           <h2 className="text-center font-display text-3xl font-extrabold">
-            Six unlockable <span className="text-gradient">modules</span>
+            Unlock more <span className="text-gradient">firepower</span>
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-white/55">
-            The core stream ships unlocked. Every advanced module is gated
-            behind a license key — sell them individually, or hand buyers a
-            bundle key that unlocks everything.
+            The core stream ships unlocked. Add SEO that ranks your deals on
+            Google, unlimited slots, and conversion tools as one-time upsells —
+            or grab the Bundle for everything at once.
           </p>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {featureRows.map(({ key, icon: Icon, def }) => (
+            {modules.map(({ key, icon: Icon, label, desc, url }) => (
               <div
                 key={key}
                 className="glass flex flex-col rounded-3xl p-6 transition hover:border-violet-400/40"
@@ -281,16 +318,14 @@ export default function VslPage() {
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/15 text-violet-300">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <h3 className="font-display text-base font-bold">
-                    {def.label}
-                  </h3>
+                  <h3 className="font-display text-base font-bold">{label}</h3>
                 </div>
                 <p className="mt-3 flex-1 text-sm leading-relaxed text-white/55">
-                  {def.description}
+                  {desc}
                 </p>
-                {urls[key] ? (
+                {url ? (
                   <a
-                    href={urls[key]}
+                    href={url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-300 transition hover:text-cyan-200"
@@ -299,10 +334,7 @@ export default function VslPage() {
                   </a>
                 ) : (
                   <p className="mt-4 text-xs text-white/35">
-                    <code className="rounded bg-white/10 px-1.5 py-0.5">
-                      {def.env}
-                    </code>{" "}
-                    not configured
+                    Unlock link coming soon
                   </p>
                 )}
               </div>
@@ -411,8 +443,9 @@ export default function VslPage() {
           Ready to <span className="text-gradient">rank first?</span>
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-sm text-white/60 sm:text-base">
-          {SITE_TAGLINE} — launch your own affiliate deal machine today and
-          start collecting lifetime commissions.
+          {SITE_TAGLINE} — publish your deals once and let {SITE_NAME} do the
+          ranking, the writing and the converting while you collect lifetime
+          commissions.
         </p>
         <a
           href={bundleUrl || "#buy"}
@@ -422,10 +455,6 @@ export default function VslPage() {
           Get the Full Version
           <ArrowRight className="h-4 w-4" />
         </a>
-        <p className="mt-6 text-xs text-white/40">
-          {BUNDLE_ENV} configures the bundle checkout. Configured here:{" "}
-          {bundleUrl ? "yes" : "no"}.
-        </p>
       </section>
 
       {/* Footer */}

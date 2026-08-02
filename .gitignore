@@ -22,3 +22,4 @@ yarn-error.log*
 .env*.local
 !.env.example
 license-private.pem
+.env*
