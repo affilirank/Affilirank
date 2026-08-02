@@ -341,10 +341,41 @@ function collectVideoCandidates(
     push(m[0].replace(/\\u002F/g, "/"));
   }
 
+  // Next.js / React landers often ship zero iframes but expose the real player
+  // id as JSON inside scripts ("vimeoId":"1195983684", "youtubeId":"dQw4w9WgXcQ").
+  // These are the true, playable ids — prefer them over CDN-derived guesses.
+  const fullHtml = $.html();
+  // Both plain JSON and escaped JSON inside <script> strings ("\"vimeoId\":\"1195...\"") occur.
+  const vimeoIdRe = /\\*?["']vimeoId\\*?["']\s*:\s*\\*?["'](\d{7,12})\\*?["']/g;
+  let vid: RegExpExecArray | null;
+  while ((vid = vimeoIdRe.exec(fullHtml)) !== null) {
+    push(`https://player.vimeo.com/video/${vid[1]}`);
+  }
+  const youtubeIdRe = /\\*?["']youtubeId\\*?["']\s*:\s*\\*?["']([\w-]{8,20})\\*?["']/g;
+  let yid: RegExpExecArray | null;
+  while ((yid = youtubeIdRe.exec(fullHtml)) !== null) {
+    push(`https://www.youtube.com/embed/${yid[1]}`);
+  }
+
+  // ClickFunnels / VTurb landers ship the whole rendered page as a URL-encoded
+  // string inside a script; players surface as data-youtube-url="..." (with the
+  // value optionally %22-encoded). e.g. data-youtube-url="CP34ygcYzi4".
+  const ytAttrRe = /data-youtube-url\s*=\s*(?:"|%22|')([\w-]{6,20})(?:"|%22|')/g;
+  let ya: RegExpExecArray | null;
+  while ((ya = ytAttrRe.exec(fullHtml)) !== null) {
+    push(`https://www.youtube.com/embed/${ya[1]}`);
+  }
+  const wistiaAttrRe = /data-wistia-url\s*=\s*(?:"|%22|')([a-z0-9]{6,15})(?:"|%22|')/g;
+  let wa: RegExpExecArray | null;
+  while ((wa = wistiaAttrRe.exec(fullHtml)) !== null) {
+    push(`https://fast.wistia.net/embed/iframe/${wa[1]}`);
+  }
+
   // Vimeo CDN thumbnail URLs (i.vimeocdn.com/video/{id}-{hash}-d_1280) imply
   // a Vimeo-hosted video even when the player itself is JS-rendered — common
   // on Next.js landers and ClickFunnels pages that ship zero iframes.
-  const fullHtml = $.html();
+  // NOTE: the id here is a CDN *asset* id, not the playable video id — it is
+  // used only as a last-resort hint and filtered by vimeoIsPublic() below.
   const vimeoThumbRe = /i\.vimeocdn\.com\/video\/(\d+)/g;
   let vt: RegExpExecArray | null;
   while ((vt = vimeoThumbRe.exec(fullHtml)) !== null) {
