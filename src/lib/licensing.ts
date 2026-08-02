@@ -138,8 +138,30 @@ export function verifyLicenseKey(key: string): LicensePayload | null {
   return payload;
 }
 
+/**
+ * Demo mode grants the full bundle on the public site so visitors can browse
+ * every deal, blog post and pro video without a license key. Enable it with
+ * `DEMO_MODE=true` on demo deployments only.
+ */
+export function isDemoMode(): boolean {
+  return (
+    process.env.DEMO_MODE === "true" ||
+    process.env.NEXT_PUBLIC_DEMO_MODE === "true"
+  );
+}
+
 /** Resolve the combined license state from a list of raw keys. */
 export function resolveLicense(rawKeys: string[]): LicenseState {
+  if (isDemoMode()) {
+    return {
+      tier: "bundle",
+      features: new Set(ALL_FEATURES),
+      maxDeals: Number.MAX_SAFE_INTEGER,
+      activeKeys: [],
+      invalidKeys: [],
+    };
+  }
+
   const state: LicenseState = {
     tier: "base",
     features: new Set(),
