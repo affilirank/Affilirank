@@ -1,0 +1,17 @@
+{
+  "name": "AffiliRank",
+  "short_name": "AffiliRank",
+  "description": "Rank first. Earn on autopilot. White-label affiliate deal storefront with auto-generated SEO blogs.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05060a",
+  "theme_color": "#0a0a12",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
