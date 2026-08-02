@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>One Last Deal — Pro Video Mode</title>
+  <meta name="description" content="Last chance: unlock pro video mode (MP4, iframe &amp; GIF playback) at a special price — less than half the original." />
+  <link rel="stylesheet" href="style.css" />
+  <script src="config.js"></script>
+  <script>window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};</script>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">
+        <svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="64" y2="64"><stop offset="0%" stop-color="#a855f7"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient>
+            <linearGradient id="g2" x1="0" y1="0" x2="64" y2="64"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#67e8f9"/></linearGradient>
+          </defs>
+          <path d="M27 17a15 15 0 1 0 10 0" stroke="url(#g1)" stroke-width="14" stroke-linecap="round" fill="none" opacity="0.28"/>
+          <circle cx="27" cy="32" r="13" stroke="url(#g1)" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <circle cx="37" cy="32" r="13" stroke="url(#g1)" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <circle cx="32" cy="32" r="10.5" fill="#0a0a12"/>
+          <circle cx="32" cy="32" r="10.5" stroke="url(#g2)" stroke-width="2.2" fill="none"/>
+          <path d="M28.2 26.8 L37 32 L28.2 37.2 Z" fill="url(#g2)"/>
+          <rect x="27.5" y="44" width="3.6" height="4" rx="1" fill="#22d3ee"/>
+          <rect x="32" y="44" width="4.2" height="5.4" rx="1" fill="#a855f7"/>
+          <rect x="37.2" y="44" width="3" height="3.4" rx="1" fill="#7c3aed"/>
+        </svg>
+        <span><span class="wordmark">Affili<span>Rank</span></span><span class="tag">Last-chance offer</span></span>
+      </a>
+    </div>
+  </header>
+
+  <div class="oto-wrap">
+    <span class="oto-tag">⏳ Final warning</span>
+    <h1>Last chance — <span class="grad">play ANY video, not just 2</span></h1>
+    <p class="lead" style="margin-top:14px">The full analytics &amp; deal pages stack is gone. But I can still get you the <strong>Pro Video Mode</strong> at a price you won't see again.</p>
+
+    <div class="oto-card">
+      <h2>Pro Video Mode — Downsell</h2>
+      <p class="sub">Go beyond YouTube &amp; Vimeo. Play MP4, iframe and GIF creative so <strong>no offer gets left behind</strong> — even the ones without a YouTube VSL.</p>
+
+      <ul class="check-list" style="margin-top:16px">
+        <li><span class="tick">✓</span>MP4 video playback in the deal stream</li>
+        <li><span class="tick">✓</span>iframe embeds for any player</li>
+        <li><span class="tick">✓</span>Animated GIF previews</li>
+        <li><span class="tick">✓</span>Lifetime access, one-time price</li>
+      </ul>
+
+      <div class="oto-price">
+        <span class="now" id="ds2-now">$47</span>
+        <span class="was" id="ds2-was">$147</span>
+        <span class="save" id="ds2-save">68% OFF RIGHT NOW</span>
+      </div>
+      <div class="price-once" id="ds2-once">One-time payment · lifetime access</div>
+
+      <div class="oto-btns">
+        <a class="btn btn-primary btn-lg" onclick="location.href=window.F.oto2Ds" style="cursor:pointer">YES — Unlock Pro Video At This Price →</a>
+        <a class="btn btn-ghost" onclick="location.href='thankyou.html'" style="cursor:pointer">No thanks, complete my order</a>
+      </div>
+
+      <div class="oto-guarantee">
+        <span class="seal">🛡</span>
+        <span>Protected by the same 30-day money-back guarantee</span>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="links"><a href="index.html">Back to main offer</a><a href="https://affilirank.com" target="_blank" rel="noopener">Live demo</a></div>
+      <p>© <span id="year"></span> AffiliRank — Special offer. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      document.getElementById("year").textContent = new Date().getFullYear();
+      var p = window.F.priceOto2Ds;
+      if (p) {
+        var n = document.getElementById("ds2-now"), w = document.getElementById("ds2-was"), s = document.getElementById("ds2-save"), o = document.getElementById("ds2-once");
+        if (n) n.textContent = p.now;
+        if (w) w.textContent = p.was;
+        if (o) o.textContent = p.once + " · lifetime access";
+        if (s) s.textContent = "RIGHT NOW — JUST " + p.now;
+      }
+    })();
+  </script>
+</body>
+</html>

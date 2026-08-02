@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Last Chance — Deal Pages + Pro Video + Analytics</title>
+  <meta name="description" content="Final one-time upgrade: dedicated SEO deal pages, pro video mode and full analytics. Claim it before you leave." />
+  <link rel="stylesheet" href="style.css" />
+  <script src="config.js"></script>
+  <script>window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};</script>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">
+        <svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="64" y2="64"><stop offset="0%" stop-color="#a855f7"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient>
+            <linearGradient id="g2" x1="0" y1="0" x2="64" y2="64"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#67e8f9"/></linearGradient>
+          </defs>
+          <path d="M27 17a15 15 0 1 0 10 0" stroke="url(#g1)" stroke-width="14" stroke-linecap="round" fill="none" opacity="0.28"/>
+          <circle cx="27" cy="32" r="13" stroke="url(#g1)" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <circle cx="37" cy="32" r="13" stroke="url(#g1)" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <circle cx="32" cy="32" r="10.5" fill="#0a0a12"/>
+          <circle cx="32" cy="32" r="10.5" stroke="url(#g2)" stroke-width="2.2" fill="none"/>
+          <path d="M28.2 26.8 L37 32 L28.2 37.2 Z" fill="url(#g2)"/>
+          <rect x="27.5" y="44" width="3.6" height="4" rx="1" fill="#22d3ee"/>
+          <rect x="32" y="44" width="4.2" height="5.4" rx="1" fill="#a855f7"/>
+          <rect x="37.2" y="44" width="3" height="3.4" rx="1" fill="#7c3aed"/>
+        </svg>
+        <span><span class="wordmark">Affili<span>Rank</span></span><span class="tag">Checkout upgrade</span></span>
+      </a>
+    </div>
+  </header>
+
+  <div class="oto-wrap">
+    <span class="oto-tag">🔥 Final one-time upgrade</span>
+    <h1>One more thing — <span class="grad">rank faster, convert harder</span></h1>
+    <p class="lead" style="margin-top:14px">This is the upgrade that takes AffiliRank from <strong>"a deal stream"</strong> to a <strong>full conversion machine</strong>. Your call, right now.</p>
+
+    <div class="oto-card">
+      <h2>Deal Pages + Pro Video + Analytics</h2>
+      <p class="sub">Every deal gets its own SEO landing page, every video format plays (MP4 / iframe / GIF), and you finally see exactly what converts with GA4 + Meta Pixel tracking.</p>
+
+      <ul class="check-list" style="margin-top:16px">
+        <li><span class="tick">✓</span>Dedicated /deals/[slug] SEO page for every product</li>
+        <li><span class="tick">✓</span>Rich Product schema → rich Google results</li>
+        <li><span class="tick">✓</span>Pro video mode — MP4, iframe &amp; GIF creative</li>
+        <li><span class="tick">✓</span>GA4 + Meta Pixel analytics built in</li>
+      </ul>
+
+      <div class="oto-price">
+        <span class="now" id="oto2-now">$97</span>
+        <span class="was" id="oto2-was">$147</span>
+        <span class="save" id="oto2-save">SAVE 34% TODAY</span>
+      </div>
+      <div class="price-once" id="oto2-once">One-time payment · lifetime access</div>
+
+      <div class="oto-btns">
+        <a class="btn btn-primary btn-lg" onclick="location.href=window.F.oto2" style="cursor:pointer">YES — Add This To My Order Now →</a>
+        <a class="btn btn-ghost" onclick="location.href='downsell2.html'" style="cursor:pointer">No thanks, I'll pass</a>
+      </div>
+
+      <div class="oto-guarantee">
+        <span class="seal">🛡</span>
+        <span>Protected by the same 30-day money-back guarantee</span>
+      </div>
+    </div>
+
+    <div class="no-thanks">
+      Not interested in the full conversion stack?
+      <a href="downsell2.html">See a cheaper option</a> or
+      <a href="thankyou.html">complete my purchase</a>.
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="links"><a href="index.html">Back to main offer</a><a href="https://affilirank.com" target="_blank" rel="noopener">Live demo</a></div>
+      <p>© <span id="year"></span> AffiliRank — One-time offer. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      document.getElementById("year").textContent = new Date().getFullYear();
+      var p = window.F.priceOto2;
+      if (p) {
+        var n = document.getElementById("oto2-now"), w = document.getElementById("oto2-was"), s = document.getElementById("oto2-save"), o = document.getElementById("oto2-once");
+        if (n) n.textContent = p.now;
+        if (w) w.textContent = p.was;
+        if (o) o.textContent = p.once + " · lifetime access";
+        if (s) s.textContent = "SAVE TODAY — JUST " + p.now;
+      }
+    })();
+  </script>
+</body>
+</html>

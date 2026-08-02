@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thank You — Welcome to AffiliRank!</title>
+  <meta name="description" content="Your order is complete. Here's how to access your AffiliRank account and get set up in minutes." />
+  <link rel="stylesheet" href="style.css" />
+  <script src="config.js"></script>
+  <script>window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};</script>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">
+        <svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="64" y2="64"><stop offset="0%" stop-color="#a855f7"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient>
+            <linearGradient id="g2" x1="0" y1="0" x2="64" y2="64"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#67e8f9"/></linearGradient>
+          </defs>
+          <path d="M27 17a15 15 0 1 0 10 0" stroke="url(#g1)" stroke-width="14" stroke-linecap="round" fill="none" opacity="0.28"/>
+          <circle cx="27" cy="32" r="13" stroke="url(#g1)" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <circle cx="37" cy="32" r="13" stroke="url(#g1)" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <circle cx="32" cy="32" r="10.5" fill="#0a0a12"/>
+          <circle cx="32" cy="32" r="10.5" stroke="url(#g2)" stroke-width="2.2" fill="none"/>
+          <path d="M28.2 26.8 L37 32 L28.2 37.2 Z" fill="url(#g2)"/>
+          <rect x="27.5" y="44" width="3.6" height="4" rx="1" fill="#22d3ee"/>
+          <rect x="32" y="44" width="4.2" height="5.4" rx="1" fill="#a855f7"/>
+          <rect x="37.2" y="44" width="3" height="3.4" rx="1" fill="#7c3aed"/>
+        </svg>
+        <span><span class="wordmark">Affili<span>Rank</span></span><span class="tag">You're in</span></span>
+      </a>
+    </div>
+  </header>
+
+  <div class="ty-wrap">
+    <div class="ty-check">✓</div>
+    <h1>Thank you! Your order is <span class="grad">complete</span></h1>
+    <p class="lead" style="margin-top:14px">
+      Welcome to <strong>AffiliRank</strong>. Your account details, login and
+      receipts are on their way to the email you used at checkout.
+    </p>
+
+    <div class="card ty-steps">
+      <div>
+        <h3 style="margin-bottom:6px">1 · Check your inbox</h3>
+        <p style="margin:0">Look for your AffiliRank welcome email with your login, license key and access instructions.</p>
+      </div>
+      <div>
+        <h3 style="margin-bottom:6px">2 · Log in and deploy</h3>
+        <p style="margin:0">Paste your license key in the admin portal at <strong>/admin</strong> to activate your features.</p>
+      </div>
+      <div>
+        <h3 style="margin-bottom:6px">3 · Paste your first JVZoo link</h3>
+        <p style="margin:0">Ingest one offer and watch your deal stream + SEO article publish themselves.</p>
+      </div>
+      <div>
+        <h3 style="margin-bottom:6px">4 · Share your affiliate links</h3>
+        <p style="margin:0">Every CTA on your site already carries your affiliate tag — start driving traffic.</p>
+      </div>
+    </div>
+
+    <div class="cta-row" style="margin-top:32px">
+      <a class="btn btn-primary" href="https://affilirank.com" target="_blank" rel="noopener">See the Live Deal Stream</a>
+      <a class="btn btn-ghost" href="https://affilirank.com/admin" target="_blank" rel="noopener">Open the Admin Portal</a>
+    </div>
+
+    <div class="guarantee-strip" style="margin-top:28px">
+      🛡 Questions? Reply to your receipt email — support is here within 24 hours.
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="links"><a href="index.html">Main offer</a><a href="https://affilirank.com" target="_blank" rel="noopener">Live demo</a><a href="https://affilirank.com/blog" target="_blank" rel="noopener">Blog</a></div>
+      <p>© <span id="year"></span> AffiliRank — Affiliate deal engine. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

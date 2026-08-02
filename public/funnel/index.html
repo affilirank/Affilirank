@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AffiliRank — Rank Your Deals. Earn on Autopilot.</title>
+  <meta name="description" content="Turn any JVZoo offer into a self-ranking deal stream and SEO blog that writes itself. Every CTA monetized with your affiliate link. One-time price, lifetime commissions." />
+  <link rel="stylesheet" href="style.css" />
+  <script src="config.js"></script>
+  <script>
+    window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};
+    function checkout(k) { location.href = window.F[k]; }
+  </script>
+</head>
+<body>
+
+  <!-- Nav -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#top">
+        <svg width="30" height="30" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="64" y2="64">
+              <stop offset="0%" stop-color="#a855f7"/><stop offset="55%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#22d3ee"/>
+            </linearGradient>
+            <linearGradient id="g2" x1="0" y1="0" x2="64" y2="64">
+              <stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#67e8f9"/>
+            </linearGradient>
+          </defs>
+          <path d="M27 17a15 15 0 1 0 10 0" stroke="url(#g1)" stroke-width="14" stroke-linecap="round" fill="none" opacity="0.28"/>
+          <circle cx="27" cy="32" r="13" stroke="url(#g1)" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <circle cx="37" cy="32" r="13" stroke="url(#g1)" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <circle cx="32" cy="32" r="10.5" fill="#0a0a12"/>
+          <circle cx="32" cy="32" r="10.5" stroke="url(#g2)" stroke-width="2.2" fill="none"/>
+          <path d="M28.2 26.8 L37 32 L28.2 37.2 Z" fill="url(#g2)"/>
+          <rect x="27.5" y="44" width="3.6" height="4" rx="1" fill="#22d3ee"/>
+          <rect x="32" y="44" width="4.2" height="5.4" rx="1" fill="#a855f7"/>
+          <rect x="37.2" y="44" width="3" height="3.4" rx="1" fill="#7c3aed"/>
+        </svg>
+        <span>
+          <span class="wordmark">Affili<span>Rank</span></span>
+          <span class="tag">Affiliate deal engine</span>
+        </span>
+      </a>
+      <a class="btn btn-primary btn-sm" onclick="checkout('fe')" style="cursor:pointer">Get Instant Access</a>
+    </div>
+  </header>
+
+  <!-- Urgency -->
+  <div class="urgency">
+    <div class="container">
+      Limited-time launch pricing ends in <b class="countdown" data-minutes="15"></b>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="container">
+      <span class="badge">⚡ Affiliate deal marketing on autopilot</span>
+      <h1>Rank your deals.<br /><span class="grad">Earn on autopilot.</span></h1>
+      <p class="lead">
+        <strong>AffiliRank</strong> turns any JVZoo offer into a self-ranking
+        deal stream <strong>plus</strong> an SEO blog that writes itself — every
+        view, article and popup monetized with <strong>your</strong> affiliate
+        link. Publish once, rank in Google, collect lifetime commissions.
+      </p>
+
+      <!-- VSL -->
+      <div class="vsl-box">
+        <div id="vsl-host" class="vsl-placeholder">
+          <div class="play">▶</div>
+          <p>Your video sales letter plays here</p>
+          <small>Set the <code>vsl</code> value in config.js to embed your video</small>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <a class="btn btn-primary btn-lg" onclick="checkout('fe')" style="cursor:pointer">Get Instant Access — $37</a>
+        <a class="btn btn-ghost btn-lg" href="https://affilirank.com" target="_blank" rel="noopener">See the Deal Stream Live</a>
+      </div>
+      <div class="trust">
+        <span><span class="dot">✓</span> One-time payment</span>
+        <span><span class="dot">✓</span> Lifetime access</span>
+        <span><span class="dot">✓</span> 30-day money-back guarantee</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section section-alt" id="features">
+    <div class="container">
+      <h2 class="section-title">Everything you need to <span class="grad">start selling</span> today</h2>
+      <p class="section-sub">The core deal stream ships unlocked with every deployment. You paste an offer, it publishes itself, and every button points at your affiliate checkout.</p>
+      <div class="grid grid-3" style="margin-top:32px">
+        <div class="card"><div class="icon">▣</div><h3>TikTok-style deal stream</h3><p>A scroll-stopping stream of lifetime deals with autoplaying VSLs that keeps visitors on the page.</p></div>
+        <div class="card"><div class="icon">⌁</div><h3>One-click JVZoo ingest</h3><p>Paste any JVZoo link — title, image, video and price are scraped automatically. No manual data entry.</p></div>
+        <div class="card"><div class="icon">↗</div><h3>Your affiliate tag injected</h3><p>Your affiliate ID is auto-appended to every checkout CTA so every sale is tracked to you.</p></div>
+        <div class="card"><div class="icon">◷</div><h3>Countdown timers & coupons</h3><p>Urgency built in. Show countdowns and coupon codes to lift conversion on every offer.</p></div>
+        <div class="card"><div class="icon">▶</div><h3>YouTube / Vimeo VSL playback</h3><p>Muted autoplay, tap-for-sound — the same feel as the big deal sites, without the cost.</p></div>
+        <div class="card"><div class="icon">↻</div><h3>Realtime sync via Supabase</h3><p>Publish from the admin and watch the stream update instantly in every open tab.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section" id="how">
+    <div class="container">
+      <h2 class="section-title">Start ranking in <span class="grad">3 steps</span></h2>
+      <div class="grid grid-3" style="margin-top:32px">
+        <div class="card step"><div class="num">1</div><h3>Paste a JVZoo link</h3><p>One-click ingest scrapes the title, image, video and price. Your affiliate tag is injected automatically.</p></div>
+        <div class="card step"><div class="num">2</div><h3>It publishes itself</h3><p>A stream card goes live instantly, and a Google-indexed review article is auto-written — every CTA monetized.</p></div>
+        <div class="card step"><div class="num">3</div><h3>Rank and earn</h3><p>SEO articles, deal pages and exit-intent popups drive clicks on autopilot. One-time purchase, lifetime commissions.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section section-alt" id="pricing">
+    <div class="container">
+      <h2 class="section-title">Simple, <span class="grad">one-time</span> pricing</h2>
+      <div class="price-wrap">
+        <div class="price-card hot">
+          <span class="ribbon">★ Launch offer</span>
+          <div class="plan">AffiliRank Core</div>
+          <div class="plan-desc">Your deal stream engine — ship it today, sell from day one.</div>
+          <div class="price-row">
+            <span class="price-now" id="fe-now">$37</span>
+            <span class="price-old" id="fe-was">$97</span>
+          </div>
+          <div class="price-once" id="fe-once">One-time payment · lifetime access</div>
+          <ul class="check-list" style="margin-top:18px">
+            <li><span class="tick">✓</span>TikTok-style snap deal stream</li>
+            <li><span class="tick">✓</span>JVZoo one-click URL ingest + auto-scrape</li>
+            <li><span class="tick">✓</span>Your affiliate tag injected into every CTA</li>
+            <li><span class="tick">✓</span>Countdown timers &amp; coupons</li>
+            <li><span class="tick">✓</span>10 deal slots</li>
+            <li><span class="tick">✓</span>YouTube / Vimeo VSL playback</li>
+            <li><span class="tick">✓</span>Realtime sync via Supabase</li>
+          </ul>
+          <a class="btn btn-primary btn-block" style="margin-top:22px" onclick="checkout('fe')" style="cursor:pointer">Get Instant Access</a>
+          <div class="guarantee-strip">🛡 30-day money-back guarantee — zero risk</div>
+        </div>
+        <div class="price-card">
+          <div class="plan">AffiliRank Bundle</div>
+          <div class="plan-desc">The full version — every module unlocked forever, incl. white-label resell rights.</div>
+          <div class="price-row">
+            <span class="price-now">Best value</span>
+          </div>
+          <div class="price-once">Grab it as an upgrade inside the funnel</div>
+          <ul class="check-list" style="margin-top:18px">
+            <li><span class="tick">✓</span>Everything in Core</li>
+            <li><span class="tick">✓</span>SEO Blog Module — auto-written ranking articles</li>
+            <li><span class="tick">✓</span>Unlimited deals — no 10-deal cap</li>
+            <li><span class="tick">✓</span>Deal detail pages + Pro video mode</li>
+            <li><span class="tick">✓</span>Exit-intent popup + Analytics</li>
+            <li><span class="tick">✓</span>White-label rights — rebrand and resell</li>
+          </ul>
+          <a class="btn btn-ghost btn-block" style="margin-top:22px" onclick="checkout('oto1')" style="cursor:pointer">See it as an upgrade →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="container">
+      <h2 class="section-title">Questions, <span class="grad">answered</span></h2>
+      <div class="faq-list">
+        <details open><summary>How does AffiliRank help me rank my deals?</summary><p>Every deal gets a keyword-optimized review article and a dedicated landing page — both indexed by Google and packed with CTAs that link to your affiliate checkout. Publish once, and the articles keep ranking and converting for you.</p></details>
+        <details><summary>Is it really a one-time payment?</summary><p>Yes. AffiliRank is sold lifetime-deal style: pay once, own it forever, keep every future update and collect lifetime affiliate commissions.</p></details>
+        <details><summary>Do I need technical skills?</summary><p>No. The whole thing is paste-and-publish. Ingest a JVZoo link, and the stream card and review article are created for you automatically.</p></details>
+        <details><summary>Which products can I promote?</summary><p>Any JVZoo offer — the deal stream, SEO blog and deal pages are built to monetize JVZoo's marketplace, and your affiliate tag is injected into every checkout link.</p></details>
+        <details><summary>Do I need a license server?</summary><p>No. Keys are verified offline with public-key cryptography. Buyers get instant activation, and you get forge-proof control over every unlock.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="section section-alt">
+    <div class="container" style="text-align:center">
+      <h2 class="section-title">Ready to <span class="grad">rank first?</span></h2>
+      <p class="lead" style="margin:16px auto 0; max-width:560px">Publish your deals once and let AffiliRank do the ranking, the writing and the converting while you collect lifetime commissions.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary btn-lg" onclick="checkout('fe')" style="cursor:pointer">Get Instant Access — $37</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="links">
+        <a href="https://affilirank.com" target="_blank" rel="noopener">Live demo</a>
+        <a href="https://affilirank.com/blog" target="_blank" rel="noopener">Blog</a>
+        <a href="https://affilirank.com/affilirank" target="_blank" rel="noopener">About the product</a>
+      </div>
+      <p>© <span id="year"></span> AffiliRank — Affiliate deal engine. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    /* ---- VSL embed (set `vsl` in config.js) ---- */
+    (function () {
+      var vsl = window.F.vsl;
+      if (vsl) {
+        var host = document.getElementById("vsl-host");
+        var iframe = document.createElement("iframe");
+        iframe.src = vsl;
+        iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+        iframe.allowFullscreen = true;
+        host.replaceWith(iframe);
+      }
+      document.getElementById("year").textContent = new Date().getFullYear();
+    })();
+
+    /* ---- Countdown (per-visitor 15 min, stored in localStorage) ---- */
+    (function () {
+      var key = "ar-countdown";
+      var end = parseInt(localStorage.getItem(key) || "0", 10);
+      var now = Date.now();
+      if (!end || end < now) {
+        end = now + 15 * 60 * 1000;
+        localStorage.setItem(key, end);
+      }
+      var els = document.querySelectorAll(".countdown");
+      function tick() {
+        var left = Math.max(0, Math.floor((end - Date.now()) / 1000));
+        var m = String(Math.floor(left / 60)).padStart(2, "0");
+        var s = String(left % 60).padStart(2, "0");
+        els.forEach(function (el) { el.textContent = m + ":" + s; });
+      }
+      tick();
+      setInterval(tick, 1000);
+    })();
+
+    /* ---- Prices from config ---- */
+    (function () {
+      var p = window.F.priceFe;
+      if (p) {
+        var n = document.getElementById("fe-now"), w = document.getElementById("fe-was"), o = document.getElementById("fe-once");
+        if (n) n.textContent = p.now;
+        if (w) w.textContent = p.was;
+        if (o) o.textContent = p.once + " · lifetime access";
+      }
+    })();
+  </script>
+</body>
+</html>
