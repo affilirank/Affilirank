@@ -284,6 +284,7 @@ function readStore(): Store {
     if (fs.existsSync(STORE_PATH)) {
       const raw = fs.readFileSync(STORE_PATH, "utf8");
       const store = JSON.parse(raw) as Store;
+      memoryStore = store;
       if (Array.isArray(store.deals)) {
         // Backfill generated blogs for stores created before the blog feature.
         if (!Array.isArray(store.blog_posts)) {
@@ -301,6 +302,7 @@ function readStore(): Store {
   } catch {
     // fall through and re-seed
   }
+  if (memoryStore) return memoryStore;
   const store = seedStore();
   writeStore(store);
   return store;
@@ -315,9 +317,16 @@ function seedStore(): Store {
   };
 }
 
+let memoryStore: Store | null = null;
+
 function writeStore(store: Store) {
-  fs.mkdirSync(path.dirname(STORE_PATH), { recursive: true });
-  fs.writeFileSync(STORE_PATH, JSON.stringify(store, null, 2));
+  memoryStore = store;
+  try {
+    fs.mkdirSync(path.dirname(STORE_PATH), { recursive: true });
+    fs.writeFileSync(STORE_PATH, JSON.stringify(store, null, 2));
+  } catch {
+    // Read-only filesystem (e.g. Vercel serverless): keep in-memory only.
+  }
 }
 
 export function isMockMode() {
