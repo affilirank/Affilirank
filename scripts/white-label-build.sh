@@ -9,6 +9,13 @@
 # by NEXT_PUBLIC_* env vars at build time — see src/lib/constants.ts.
 set -euo pipefail
 
-rm -rf public/funnel src/app/affilirank src/app/funnel
+echo "> White-label build: stripping AffiliRank-only surfaces"
+for target in public/funnel src/app/affilirank src/app/funnel; do
+  if [ -d "$target" ]; then
+    rm -rf "$target"
+    echo "  removed $target"
+  fi
+done
 
+echo "> Building (NEXT_PUBLIC_SHOW_PRODUCT_PAGE=${NEXT_PUBLIC_SHOW_PRODUCT_PAGE:-unset})"
 npx next build
