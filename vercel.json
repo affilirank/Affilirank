@@ -1,4 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/funnel/index.html",
+      "has": [{ "type": "host", "value": "get.affilirank.com" }],
+      "permanent": false
+    }
+  ]
 }
