@@ -34,6 +34,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const url = `${SITE_URL}/deals/${deal.slug}`;
   const image = deal.hero_image ?? `${SITE_URL}/og-default.png`;
 
+  // Only advertise og:video for formats Facebook can actually validate:
+  // direct MP4 files, or YouTube player pages (text/html). Vimeo embed URLs
+  // return 405/text-html and would break the share preview, so omit them.
+  const videos: NonNullable<Metadata["openGraph"]>["videos"] = [];
+  if (deal.video_type === "mp4" && deal.video_url) {
+    videos.push({ url: deal.video_url, type: "video/mp4" });
+  } else if (deal.video_type === "youtube" && deal.video_url) {
+    videos.push({ url: deal.video_url, type: "text/html" });
+  }
+
   return {
     title,
     description,
@@ -45,16 +55,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url,
       siteName: SITE_NAME,
       images: [{ url: image, width: 1200, height: 630 }],
-      ...(deal.video_url
-        ? {
-            videos: [
-              {
-                url: deal.video_url,
-                type: deal.video_type === "youtube" ? "text/html" : "video/mp4",
-              },
-            ],
-          }
-        : {}),
+      ...(videos.length > 0 ? { videos } : {}),
     },
     twitter: {
       card: "summary_large_image",
