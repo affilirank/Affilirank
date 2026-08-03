@@ -85,7 +85,8 @@ const TIERS = [
 
 export default function VslPage() {
   const urls = upsellUrls();
-  const bundleUrl = urls.bundle;
+  const FUNNEL = "https://get.affilirank.com";
+  const bundleUrl = urls.bundle || FUNNEL;
 
   const modules = [
     {
@@ -93,42 +94,42 @@ export default function VslPage() {
       icon: Newspaper,
       label: "SEO Blog Module",
       desc: "Auto-written, keyword-optimized review articles that rank your deals on Google — every CTA goes to your affiliate checkout.",
-      url: urls.blog,
+      url: urls.blog || `${FUNNEL}/funnel/oto1.html`,
     },
     {
       key: "unlimited-deals",
       icon: InfinityIcon,
       label: "Unlimited Deals",
       desc: "Sell every offer you promote. No 10-deal cap on your stream — add as many lifetime deals as you want.",
-      url: urls["unlimited-deals"],
+      url: urls["unlimited-deals"] || `${FUNNEL}/funnel/oto1.html`,
     },
     {
       key: "exit-intent",
       icon: MousePointerClick,
       label: "Exit-Intent Popup",
       desc: "Catch visitors before they leave with a high-converting offer and countdown. More clicks, more commissions.",
-      url: urls["exit-intent"],
+      url: urls["exit-intent"] || `${FUNNEL}/funnel/oto2.html`,
     },
     {
       key: "analytics",
       icon: BarChart3,
       label: "Analytics Module",
       desc: "Know exactly what converts. GA4 + Meta Pixel tracking baked in — double your best-performing deals.",
-      url: urls.analytics,
+      url: urls.analytics || `${FUNNEL}/funnel/oto2.html`,
     },
     {
       key: "deal-pages",
       icon: FileSearch,
       label: "Deal Detail Pages",
       desc: "A dedicated SEO landing page for every product, with rich Product schema and your affiliate link.",
-      url: urls["deal-pages"],
+      url: urls["deal-pages"] || `${FUNNEL}/funnel/oto2.html`,
     },
     {
       key: "pro-video",
       icon: Video,
       label: "Pro Video Mode",
       desc: "Go beyond YouTube & Vimeo — play MP4, iframe and GIF creative so no offer gets left behind.",
-      url: urls["pro-video"],
+      url: urls["pro-video"] || `${FUNNEL}/funnel/oto2.html`,
     },
   ];
 
