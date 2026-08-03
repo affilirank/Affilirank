@@ -51,8 +51,8 @@ const TIERS = [
   {
     name: "Core",
     icon: Zap,
-    price: "Included",
-    desc: "Your deal stream engine — free, ship it today, sell from day one.",
+    price: "Core version",
+    desc: "Your deal stream engine — ship it today, start selling from day one.",
     features: [
       "TikTok-style snap deal stream",
       "JVZoo one-click URL ingest + auto-scrape",
@@ -67,7 +67,7 @@ const TIERS = [
   {
     name: "Bundle",
     icon: Crown,
-    price: "Full version",
+    price: "The complete package",
     desc: "Every module unlocked forever — the end-user route to owning it all.",
     features: [
       "Everything in Core",
@@ -391,7 +391,7 @@ export default function VslPage() {
                 ))}
               </ul>
               <a
-                href={t.highlight ? bundleUrl || "#buy" : "#modules"}
+                href={bundleUrl || "#buy"}
                 className={`mt-6 flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-bold transition ${
                   t.highlight
                     ? "bg-gradient-to-r from-violet-600 to-cyan-500 text-white hover:brightness-110 cta-glow"
@@ -403,7 +403,9 @@ export default function VslPage() {
                     <Crown className="h-4 w-4" /> Get the Bundle
                   </>
                 ) : (
-                  <>Included with every deployment</>
+                  <>
+                    <Zap className="h-4 w-4" /> Get AffiliRank Core — $37
+                  </>
                 )}
               </a>
             </div>
