@@ -391,6 +391,62 @@ h1 .grad {
 .oto-guarantee { display: flex; gap: 10px; align-items: center; justify-content: center; margin-top: 20px; font-size: 13px; color: var(--muted); }
 .oto-guarantee .seal { color: var(--emerald); font-weight: 800; }
 
+/* ---------- Funnel progress ---------- */
+.funnel-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 26px;
+  flex-wrap: wrap;
+}
+.fp {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.fp .dot {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+.fp.on { color: #fff; }
+.fp.on .dot { background: linear-gradient(135deg, #7c3aed, #22d3ee); border-color: transparent; box-shadow: 0 6px 18px -6px rgba(124, 58, 237, 0.8); }
+.fp.done { color: var(--muted); }
+.fp.done .dot { background: rgba(52, 211, 153, 0.14); border-color: rgba(52, 211, 153, 0.4); color: var(--emerald); }
+.fp .arrow { color: var(--faint); font-size: 14px; }
+
+/* ---------- Order summary ---------- */
+.order-summary {
+  max-width: 640px;
+  margin: 0 auto 22px;
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  padding: 14px 18px;
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+}
+.os-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.os-row .os-name { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.os-row .os-status { font-weight: 700; }
+.os-row.paid .os-name { color: rgba(255, 255, 255, 0.82); }
+.os-row.paid .os-check { color: var(--emerald); font-weight: 800; }
+.os-row.paid .os-status { color: var(--emerald); }
+.os-row.current { border-top: 1px dashed var(--border); padding-top: 8px; }
+.os-row.current .os-name { color: #fff; font-weight: 700; }
+.os-row.current .os-add { color: #fde68a; font-weight: 800; }
+
 /* ---------- Thank you ---------- */
 .ty-wrap { max-width: 640px; margin: 0 auto; text-align: center; padding: 80px 20px; }
 .ty-check {

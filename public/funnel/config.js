@@ -16,6 +16,7 @@ window.FUNNEL = {
   fe:        "https://jvz0.com/c/3582897/FE_PRODUCT_ID/",
   oto1:      "https://jvz0.com/c/3582897/OTO1_PRODUCT_ID/",
   oto2:      "https://jvz0.com/c/3582897/OTO2_PRODUCT_ID/",
+  oto3:      "https://jvz0.com/c/3582897/OTO3_PRODUCT_ID/",
   oto1Ds:    "https://jvz0.com/c/3582897/DS1_PRODUCT_ID/",
   oto2Ds:    "https://jvz0.com/c/3582897/DS2_PRODUCT_ID/",
 
@@ -26,6 +27,7 @@ window.FUNNEL = {
   priceFe:     { now: "$37", was: "$97",  once: "One-time payment" },
   priceOto1:   { now: "$67", was: "$97",  once: "One-time payment" },
   priceOto2:   { now: "$97", was: "$147", once: "One-time payment" },
+  priceOto3:   { now: "$147", was: "$297", once: "One-time payment" },
   priceOto1Ds: { now: "$37", was: "$97",  once: "One-time payment" },
   priceOto2Ds: { now: "$47", was: "$147", once: "One-time payment" },
 };
@@ -37,6 +39,7 @@ window.FUNNEL_FALLBACK = window.FUNNEL || {
   fe: "https://jvz0.com/c/3582897/FE_PRODUCT_ID/",
   oto1: "https://jvz0.com/c/3582897/OTO1_PRODUCT_ID/",
   oto2: "https://jvz0.com/c/3582897/OTO2_PRODUCT_ID/",
+  oto3: "https://jvz0.com/c/3582897/OTO3_PRODUCT_ID/",
   oto1Ds: "https://jvz0.com/c/3582897/DS1_PRODUCT_ID/",
   oto2Ds: "https://jvz0.com/c/3582897/DS2_PRODUCT_ID/",
   vsl: "",
