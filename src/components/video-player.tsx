@@ -19,7 +19,7 @@ function buildEmbedUrl(deal: Deal): string {
   }
   if (deal.video_type === "vimeo") {
     const sep = deal.video_url.includes("?") ? "&" : "?";
-    return `${deal.video_url}${sep}autoplay=1&muted=1&playsinline=1&texttrack=1`;
+    return `${deal.video_url}${sep}autoplay=1&muted=1&playsinline=1&texttrack=en-x-autogen`;
   }
   return deal.video_url;
 }

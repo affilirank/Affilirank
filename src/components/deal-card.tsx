@@ -62,6 +62,14 @@ export function DealCard({
   const percent = discountPercent(deal.original_price, deal.price);
   const expired = isExpired(deal.expiration_date) && deal.countdown_enabled;
 
+  // Embedded players (Vimeo/YouTube) must stay fully interactive — don't wrap
+  // them in the click-to-open button so their controls work. Non-embeds
+  // (mp4/gif/image) keep click-to-open-details on the background.
+  const isEmbed =
+    deal.video_type === "youtube" ||
+    deal.video_type === "vimeo" ||
+    deal.video_type === "iframe";
+
   // TikTok-style overlay: clear the title/details after ~15s of watching so
   // the video is unobstructed, but keep the CTA buttons available.
   const [textHidden, setTextHidden] = useState(false);
@@ -101,15 +109,21 @@ export function DealCard({
         standalone && "min-h-[100svh]"
       )}
     >
-      {/* Background VSL — clicking the video opens the details modal */}
-      <button
-        onClick={() => openDeal(deal)}
-        aria-label={`Open ${deal.title} details`}
-        className="absolute inset-0 z-0 block h-full w-full cursor-pointer"
-        tabIndex={-1}
-      >
-        <VideoPlayer deal={deal} inView={inView} proVideo={proVideo} />
-      </button>
+      {/* Background VSL — embeds stay fully interactive; click-to-open for the rest */}
+      {isEmbed ? (
+        <div className="absolute inset-0 z-0">
+          <VideoPlayer deal={deal} inView={inView} proVideo={proVideo} />
+        </div>
+      ) : (
+        <button
+          onClick={() => openDeal(deal)}
+          aria-label={`Open ${deal.title} details`}
+          className="absolute inset-0 z-0 block h-full w-full cursor-pointer"
+          tabIndex={-1}
+        >
+          <VideoPlayer deal={deal} inView={inView} proVideo={proVideo} />
+        </button>
+      )}
 
       {/* Category chip — top left */}
       <div className="pointer-events-none absolute left-4 top-16 z-20 sm:left-6 sm:top-20">
@@ -123,8 +137,8 @@ export function DealCard({
         <ActionBar deal={deal} onShare={() => setShareOpen(true)} />
       </div>
 
-      {/* Bottom content */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 px-4 pb-8 sm:px-8 sm:pb-12">
+      {/* Bottom content — padded up so it clears the player's bottom control bar */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 px-4 pb-16 sm:px-8 sm:pb-20">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{
@@ -132,7 +146,10 @@ export function DealCard({
             y: textHidden ? 130 : inView ? 0 : 24,
           }}
           transition={{ duration: 0.45, ease: "easeOut" }}
-          className="pointer-events-auto max-w-2xl"
+          className={cn(
+            "pointer-events-auto max-w-2xl",
+            textHidden && "pointer-events-none"
+          )}
         >
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <HotTag deal={deal} />
