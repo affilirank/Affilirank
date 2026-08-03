@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { SITE_NAME, SITE_BRAND_TAG, SITE_LOGO_URL, SHOW_PRODUCT_PAGE } from "@/lib/constants";
+import { SITE_NAME, SITE_BRAND_TAG, SITE_LOGO_URL, SHOW_PRODUCT_PAGE, SHOW_LOGO_PLACEHOLDER } from "@/lib/constants";
 
 /**
  * Brand logo.
@@ -38,15 +38,18 @@ export function Logo({
         />
       ) : !SHOW_PRODUCT_PAGE ? (
         // White-label: blank logo slot so resellers can make it their own.
-        <span
-          aria-hidden
-          style={{ width: size, height: size }}
-          className="inline-flex shrink-0 items-center justify-center rounded-xl border border-dashed border-white/30 bg-white/5"
-        >
-          <span className="px-0.5 text-[8px] font-bold uppercase tracking-[0.14em] text-white/40">
-            Your logo
+        // Hide the slot on specific deployments via NEXT_PUBLIC_SHOW_LOGO_PLACEHOLDER.
+        SHOW_LOGO_PLACEHOLDER ? (
+          <span
+            aria-hidden
+            style={{ width: size, height: size }}
+            className="inline-flex shrink-0 items-center justify-center rounded-xl border border-dashed border-white/30 bg-white/5"
+          >
+            <span className="px-0.5 text-[8px] font-bold uppercase tracking-[0.14em] text-white/40">
+              Your logo
+            </span>
           </span>
-        </span>
+        ) : null
       ) : (
         <svg
         width={size}

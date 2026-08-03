@@ -8,6 +8,12 @@ export const SITE_TAGLINE =
  */
 export const SITE_LOGO_URL = process.env.NEXT_PUBLIC_SITE_LOGO_URL ?? "";
 /**
+ * White-label deployments can hide the dashed "Your logo" placeholder while
+ * keeping the feature available for resellers (default: placeholder shown).
+ */
+export const SHOW_LOGO_PLACEHOLDER =
+  process.env.NEXT_PUBLIC_SHOW_LOGO_PLACEHOLDER !== "false";
+/**
  * Product name used by the rebranded white-label sales funnel. Falls back to
  * the site name, but a short product brand reads better in the funnel.
  */
