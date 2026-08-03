@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowUpRight, ChevronLeft } from "lucide-react";
@@ -62,10 +62,40 @@ export function DealCard({
   const percent = discountPercent(deal.original_price, deal.price);
   const expired = isExpired(deal.expiration_date) && deal.countdown_enabled;
 
+  // TikTok-style overlay: clear the title/details after ~15s of watching so
+  // the video is unobstructed, but keep the CTA buttons available.
+  const [textHidden, setTextHidden] = useState(false);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const startHideTimer = useCallback(() => {
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+    hideTimer.current = setTimeout(() => setTextHidden(true), 15000);
+  }, []);
+
+  useEffect(() => {
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+    if (inView) startHideTimer();
+    else setTextHidden(false);
+    return () => {
+      if (hideTimer.current) clearTimeout(hideTimer.current);
+    };
+  }, [inView, startHideTimer]);
+
+  const revealText = useCallback(() => {
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+    setTextHidden(false);
+  }, []);
+
+  const concealText = useCallback(() => {
+    startHideTimer();
+  }, [startHideTimer]);
+
   return (
     <section
       ref={ref}
       data-deal-id={deal.id}
+      onPointerEnter={revealText}
+      onPointerLeave={concealText}
       className={cn(
         "relative h-full w-full snap-start overflow-hidden bg-black",
         standalone && "min-h-[100svh]"
@@ -97,7 +127,10 @@ export function DealCard({
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 px-4 pb-8 sm:px-8 sm:pb-12">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: inView ? 1 : 0.4, y: inView ? 0 : 24 }}
+          animate={{
+            opacity: textHidden ? 0 : inView ? 1 : 0.4,
+            y: textHidden ? 130 : inView ? 0 : 24,
+          }}
           transition={{ duration: 0.45, ease: "easeOut" }}
           className="pointer-events-auto max-w-2xl"
         >
@@ -143,11 +176,18 @@ export function DealCard({
               />
             </div>
           )}
+        </motion.div>
 
-          {/* CTA */}
+        {/* CTA stays available when the text lowers */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: inView ? 1 : 0.5, y: 0 }}
+          transition={{ duration: 0.45, ease: "easeOut", delay: 0.1 }}
+          className="pointer-events-auto mt-6 flex flex-wrap items-center gap-x-4 gap-y-3"
+        >
           <button
             onClick={() => openDeal(deal)}
-            className="group mt-6 flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-cyan-500 px-6 py-3.5 text-base font-bold text-white transition-all duration-200 hover:brightness-110 active:scale-[0.98] cta-glow"
+            className="group flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-cyan-500 px-6 py-3.5 text-base font-bold text-white transition-all duration-200 hover:brightness-110 active:scale-[0.98] cta-glow"
           >
             View Deal & Details
             <ArrowUpRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -156,7 +196,7 @@ export function DealCard({
           {standalone && (
             <Link
               href="/"
-              className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-white/70 transition hover:text-white"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-white/70 transition hover:text-white"
             >
               <ChevronLeft className="h-4 w-4" /> Back to the deal stream
             </Link>

@@ -15,11 +15,11 @@ function buildEmbedUrl(deal: Deal): string {
   if (!deal.video_url) return "";
   if (deal.video_type === "youtube") {
     const sep = deal.video_url.includes("?") ? "&" : "?";
-    return `${deal.video_url}${sep}autoplay=1&mute=1&playsinline=1&rel=0&loop=1`;
+    return `${deal.video_url}${sep}autoplay=1&mute=1&playsinline=1&rel=0&loop=1&cc_load_policy=1`;
   }
   if (deal.video_type === "vimeo") {
     const sep = deal.video_url.includes("?") ? "&" : "?";
-    return `${deal.video_url}${sep}autoplay=1&muted=1&playsinline=1`;
+    return `${deal.video_url}${sep}autoplay=1&muted=1&playsinline=1&texttrack=1`;
   }
   return deal.video_url;
 }
