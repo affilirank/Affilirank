@@ -69,11 +69,15 @@
       </ul>
 
       <div class="oto-price">
-        <span class="now" id="oto3-now">$147</span>
-        <span class="was" id="oto3-was">$297</span>
-        <span class="save" id="oto3-save">SAVE 50% TODAY</span>
+        <span class="now" id="oto3-now">$367</span>
+        <span class="was" id="oto3-was">$497</span>
+        <span class="save" id="oto3-save">SAVE $130 TODAY</span>
       </div>
       <div class="price-once" id="oto3-once">One-time payment · lifetime access · resell rights included</div>
+
+      <div class="guarantee-strip" style="margin-top:14px" id="oto3-coupon">
+        🎟 Use coupon code <strong>SAVE100</strong> at checkout — save $100 → pay just <strong>$267</strong> today
+      </div>
 
       <div class="oto-btns">
         <a class="btn btn-primary btn-lg" onclick="location.href=window.F.oto3" style="cursor:pointer">YES — Upgrade Me To The Bundle →</a>
@@ -103,7 +107,11 @@
         if (n) n.textContent = p.now;
         if (w) w.textContent = p.was;
         if (o) o.textContent = p.once + " · resell rights included";
-        if (s) s.textContent = "SAVE TODAY — JUST " + p.now;
+        if (s && p.now && p.was) s.textContent = "SAVE TODAY";
+        if (p.coupon) {
+          var c = document.getElementById("oto3-coupon");
+          if (c) c.innerHTML = "🎟 Use coupon code <strong>" + p.coupon + "</strong> at checkout — save " + (p.couponOff || "$100") + " → pay just <strong>" + (p.couponTotal || "less") + "</strong> today";
+        }
       }
     })();
   </script>

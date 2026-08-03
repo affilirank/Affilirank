@@ -27,7 +27,7 @@ window.FUNNEL = {
   priceFe:     { now: "$37", was: "$97",  once: "One-time payment" },
   priceOto1:   { now: "$67", was: "$97",  once: "One-time payment" },
   priceOto2:   { now: "$97", was: "$147", once: "One-time payment" },
-  priceOto3:   { now: "$147", was: "$297", once: "One-time payment" },
+  priceOto3:   { now: "$367", was: "$497", once: "One-time payment", coupon: "SAVE100", couponOff: "$100", couponTotal: "$267" },
   priceOto1Ds: { now: "$37", was: "$97",  once: "One-time payment" },
   priceOto2Ds: { now: "$47", was: "$147", once: "One-time payment" },
 };
