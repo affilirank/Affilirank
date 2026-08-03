@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getDealBySlug, getLicenseState } from "@/lib/data";
 import { StreamProvider } from "@/components/stream-provider";
 import { DealCard } from "@/components/deal-card";
+import { DealModal } from "@/components/deal-modal";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
 import { truncate } from "@/lib/utils";
 
@@ -97,6 +98,7 @@ export default async function DealPage({ params }: Props) {
       />
       <StreamProvider initialDeals={[deal]} features={[...state.features]}>
         <DealCard deal={deal} standalone />
+        <DealModal />
       </StreamProvider>
     </>
   );
