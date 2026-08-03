@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ArrowUpRight, ChevronLeft } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUpRight, ChevronLeft, ChevronUp } from "lucide-react";
 import type { Deal } from "@/lib/types";
 import { useStream } from "@/components/stream-provider";
 import { useInView } from "@/hooks/use-in-view";
@@ -69,7 +69,7 @@ export function DealCard({
 
   const startHideTimer = useCallback(() => {
     if (hideTimer.current) clearTimeout(hideTimer.current);
-    hideTimer.current = setTimeout(() => setTextHidden(true), 15000);
+    hideTimer.current = setTimeout(() => setTextHidden(true), 8000);
   }, []);
 
   useEffect(() => {
@@ -177,6 +177,21 @@ export function DealCard({
             </div>
           )}
         </motion.div>
+
+        {/* Reopen chip — reappears once the text has lowered */}
+        <AnimatePresence>
+          {inView && textHidden && (
+            <motion.button
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              onClick={revealText}
+              className="pointer-events-auto mt-4 inline-flex items-center gap-1.5 rounded-full glass px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:text-white"
+            >
+              <ChevronUp className="h-3.5 w-3.5" /> Show details
+            </motion.button>
+          )}
+        </AnimatePresence>
 
         {/* CTA stays available when the text lowers */}
         <motion.div
