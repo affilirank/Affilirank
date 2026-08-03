@@ -2,6 +2,17 @@ export const SITE_NAME =
   process.env.NEXT_PUBLIC_SITE_NAME ?? "AffiliRank";
 export const SITE_TAGLINE =
   process.env.NEXT_PUBLIC_SITE_TAGLINE ?? "Rank first. Earn on autopilot.";
+/**
+ * Optional custom logo image (URL). When set, it replaces the built-in mark
+ * everywhere (header, intro, blog). Resellers drop their logo here.
+ */
+export const SITE_LOGO_URL = process.env.NEXT_PUBLIC_SITE_LOGO_URL ?? "";
+/**
+ * Product name used by the rebranded white-label sales funnel. Falls back to
+ * the site name, but a short product brand reads better in the funnel.
+ */
+export const SITE_PRODUCT_NAME =
+  process.env.NEXT_PUBLIC_SITE_PRODUCT_NAME ?? SITE_NAME;
 /** Short sub-label under the logo wordmark. */
 export const SITE_BRAND_TAG =
   process.env.NEXT_PUBLIC_SITE_BRAND_TAG ?? "affiliate deal engine";

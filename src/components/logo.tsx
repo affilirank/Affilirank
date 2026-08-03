@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { SITE_NAME, SITE_BRAND_TAG } from "@/lib/constants";
+import { SITE_NAME, SITE_BRAND_TAG, SITE_LOGO_URL, SHOW_PRODUCT_PAGE } from "@/lib/constants";
 
 /**
  * Brand logo.
@@ -24,7 +24,31 @@ export function Logo({
       className={cn("inline-flex items-center gap-2.5 select-none", className)}
       aria-label={SITE_NAME}
     >
-      <svg
+      {SITE_LOGO_URL ? (
+        // Reseller-provided logo — replaces the built-in mark everywhere.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={SITE_LOGO_URL}
+          alt=""
+          aria-hidden
+          width={size}
+          height={size}
+          style={{ width: size, height: size }}
+          className="shrink-0 rounded-lg object-contain"
+        />
+      ) : !SHOW_PRODUCT_PAGE ? (
+        // White-label: blank logo slot so resellers can make it their own.
+        <span
+          aria-hidden
+          style={{ width: size, height: size }}
+          className="inline-flex shrink-0 items-center justify-center rounded-xl border border-dashed border-white/30 bg-white/5"
+        >
+          <span className="px-0.5 text-[8px] font-bold uppercase tracking-[0.14em] text-white/40">
+            Your logo
+          </span>
+        </span>
+      ) : (
+        <svg
         width={size}
         height={size}
         viewBox="0 0 64 64"
@@ -97,6 +121,7 @@ export function Logo({
         <rect x="32" y="44" width="4.2" height="5.4" rx="1" fill="#a855f7" />
         <rect x="37.2" y="44" width="3" height="3.4" rx="1" fill="#7c3aed" />
       </svg>
+      )}
 
       {withWordmark && (
         <span className="flex flex-col leading-none">

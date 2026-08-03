@@ -19,7 +19,7 @@ function buildEmbedUrl(deal: Deal): string {
   }
   if (deal.video_type === "vimeo") {
     const sep = deal.video_url.includes("?") ? "&" : "?";
-    return `${deal.video_url}${sep}autoplay=1&muted=1&loop=1&playsinline=1`;
+    return `${deal.video_url}${sep}autoplay=1&muted=1&playsinline=1`;
   }
   return deal.video_url;
 }
@@ -27,21 +27,15 @@ function buildEmbedUrl(deal: Deal): string {
 /**
  * Full-bleed VSL player. Autoplays (muted) when the card is in view,
  * pauses when scrolled away, and reports watch milestones to analytics.
- *
- * `preload` fires ~one viewport before `inView` so the iframe player mounts
- * and starts buffering early — the video is already playing by the time the
- * card is actually on screen (TikTok-style instant playback).
  */
 export function VideoPlayer({
   deal,
   inView,
-  preload = false,
   proVideo = false,
   className,
 }: {
   deal: Deal;
   inView: boolean;
-  preload?: boolean;
   proVideo?: boolean;
   className?: string;
 }) {
@@ -140,7 +134,6 @@ export function VideoPlayer({
 
   // ---- <video> (mp4) source ---------------------------------------------
   if (deal.video_type === "mp4" && deal.video_url) {
-    const mp4Preload = preload ? "auto" : "metadata";
     return (
       <div className={cn("absolute inset-0 overflow-hidden bg-black", className)}>
         <video
@@ -149,7 +142,7 @@ export function VideoPlayer({
           poster={deal.hero_image ?? undefined}
           loop
           playsInline
-          preload={mp4Preload}
+          preload="metadata"
           muted
           onTimeUpdate={handleTimeUpdate}
           onPlay={() => setPaused(false)}
@@ -209,28 +202,16 @@ export function VideoPlayer({
 
   // ---- iframe embeds (youtube / vimeo / raw player) -----------------------
   if (deal.video_url && deal.video_type !== "mp4") {
-    const mounted = preload || inView;
     return (
       <div className={cn("absolute inset-0 overflow-hidden bg-black", className)}>
-        {/* Instant poster while the player warms up */}
-        {deal.hero_image && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={deal.hero_image}
-            alt=""
-            aria-hidden
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        )}
-        {mounted && (
-          <iframe
-            src={buildEmbedUrl(deal)}
-            title={deal.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="absolute inset-0 h-full w-full"
-          />
-        )}
+        <iframe
+          src={inView ? buildEmbedUrl(deal) : undefined}
+          title={deal.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          loading="lazy"
+          className="h-full w-full"
+        />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/80" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/25" />
       </div>

@@ -108,6 +108,21 @@ export function Header() {
                 </Link>
               )}
 
+              {/* White-label: sales funnel entry (rebranded at build time) */}
+              {!SHOW_PRODUCT_PAGE && (
+                <Link
+                  href="/funnel"
+                  aria-label="Sales funnel"
+                  title="Sales funnel"
+                  className="flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-white/10 bg-black/40 px-3 text-white/60 transition hover:border-violet-400/50 hover:text-white"
+                >
+                  <Sparkles className="h-4.5 w-4.5" />
+                  <span className="hidden text-sm font-semibold md:inline">
+                    Funnel
+                  </span>
+                </Link>
+              )}
+
               {/* Admin */}
               <a
                 href="/admin"

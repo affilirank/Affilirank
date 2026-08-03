@@ -52,18 +52,7 @@ export function DealCard({
 }) {
   const { openDeal, setCurrentDeal, proVideo } = useStream();
   const { ref, inView } = useInView<HTMLDivElement>(0.65);
-  // Fires roughly one viewport before the card is on screen, so the VSL
-  // player can start buffering early — instant play, TikTok-style.
-  const { ref: nearRef, inView: near } = useInView<HTMLDivElement>(0, {
-    rootMargin: "400px 0px 400px 0px",
-    ratioCheck: false,
-  });
   const [shareOpen, setShareOpen] = useState(false);
-
-  const setRefs = (node: HTMLDivElement | null) => {
-    ref.current = node;
-    nearRef.current = node;
-  };
 
   // Surface the currently-visible deal (used by the exit-intent popup).
   useEffect(() => {
@@ -75,7 +64,7 @@ export function DealCard({
 
   return (
     <section
-      ref={setRefs}
+      ref={ref}
       data-deal-id={deal.id}
       className={cn(
         "relative h-full w-full snap-start overflow-hidden bg-black",
@@ -89,7 +78,7 @@ export function DealCard({
         className="absolute inset-0 z-0 block h-full w-full cursor-pointer"
         tabIndex={-1}
       >
-        <VideoPlayer deal={deal} inView={inView} preload={near} proVideo={proVideo} />
+        <VideoPlayer deal={deal} inView={inView} proVideo={proVideo} />
       </button>
 
       {/* Category chip — top left */}
