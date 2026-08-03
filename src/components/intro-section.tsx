@@ -50,7 +50,11 @@ export function IntroSection() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_45%_at_50%_-5%,rgba(124,58,237,0.28),transparent_60%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_110%,rgba(34,211,238,0.14),transparent_60%)]" />
 
-      <div className="no-scrollbar relative z-10 flex h-full w-full flex-col items-center justify-center gap-5 overflow-y-auto px-5 py-14 text-center sm:gap-6 sm:px-8">
+      <div className="no-scrollbar relative z-10 h-full w-full overflow-y-auto px-5 pt-32 pb-10 text-center sm:px-8 sm:pt-36 sm:pb-12">
+        {/* min-h-full + justify-center on the inner wrapper (not the scroller)
+            lets the section stretch taller than the viewport without clipping
+            its top behind the fixed header. */}
+        <div className="flex min-h-full flex-col items-center justify-center gap-5 sm:gap-6">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
@@ -130,6 +134,7 @@ export function IntroSection() {
           Start Exploring
           <ArrowDown className="h-5 w-5 transition-transform group-hover:translate-y-0.5" />
         </motion.button>
+        </div>
       </div>
     </section>
   );
