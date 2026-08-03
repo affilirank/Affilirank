@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Newspaper, Settings, Home, Sparkles } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { cn } from "@/lib/utils";
+import { SHOW_PRODUCT_PAGE, SITE_NAME } from "@/lib/constants";
 
 /**
  * Simple sticky top nav for the static SEO pages (/blog, /blog/[slug], …).
@@ -19,7 +20,7 @@ export function BlogNav({ active }: { active?: "blog" }) {
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0a0f1e]/95 shadow-lg shadow-black/40 backdrop-blur-xl">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <Link href="/" aria-label="AffiliRank home" className="shrink-0">
+        <Link href="/" aria-label={`${SITE_NAME} home`} className="shrink-0">
           <span className="hidden sm:inline-flex">
             <Logo size={32} withWordmark />
           </span>
@@ -37,10 +38,12 @@ export function BlogNav({ active }: { active?: "blog" }) {
             <Newspaper className="h-4 w-4" />
             Blog
           </Link>
-          <Link href="/affilirank" className={linkClass(false)}>
-            <Sparkles className="h-4 w-4" />
-            <span className="hidden sm:inline">Get this</span>
-          </Link>
+          {SHOW_PRODUCT_PAGE && (
+            <Link href="/affilirank" className={linkClass(false)}>
+              <Sparkles className="h-4 w-4" />
+              <span className="hidden sm:inline">Get this</span>
+            </Link>
+          )}
           <Link href="/admin" className={linkClass(false)}>
             <Settings className="h-4 w-4" />
             <span className="hidden sm:inline">Admin</span>

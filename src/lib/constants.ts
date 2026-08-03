@@ -1,5 +1,15 @@
-export const SITE_NAME = "AffiliRank";
-export const SITE_TAGLINE = "Rank first. Earn on autopilot.";
+export const SITE_NAME =
+  process.env.NEXT_PUBLIC_SITE_NAME ?? "AffiliRank";
+export const SITE_TAGLINE =
+  process.env.NEXT_PUBLIC_SITE_TAGLINE ?? "Rank first. Earn on autopilot.";
+/** Short sub-label under the logo wordmark. */
+export const SITE_BRAND_TAG =
+  process.env.NEXT_PUBLIC_SITE_BRAND_TAG ?? "affiliate deal engine";
+/**
+ * When false, the AffiliRank product/sales pages (/affilirank, /funnel) are
+ * hidden — used by white-label deployments like lifetimedealsbundle.com.
+ */
+export const SHOW_PRODUCT_PAGE = process.env.NEXT_PUBLIC_SHOW_PRODUCT_PAGE !== "false";
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://affilirank.com";
 

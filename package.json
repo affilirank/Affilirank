@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "build:whitelabel": "bash scripts/white-label-build.sh",
     "license:keys": "node scripts/license-keys.mjs"
   },
   "dependencies": {

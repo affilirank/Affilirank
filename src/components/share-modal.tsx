@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Link2, Check, Send, MessageCircle } from "lucide-react";
 import type { Deal } from "@/lib/types";
-import { SHARE_BASE_URL } from "@/lib/constants";
+import { SHARE_BASE_URL, SITE_NAME } from "@/lib/constants";
 import { analytics } from "@/lib/analytics";
 
 function XIcon({ className }: { className?: string }) {
@@ -39,7 +39,7 @@ export function ShareModal({
   const [copied, setCopied] = useState(false);
   const shareUrl = `${SHARE_BASE_URL}/${deal.slug}`;
   const text = encodeURIComponent(
-    `🔥 ${deal.title} — ${deal.subtitle ?? "Lifetime deal"} on AffiliRank`
+    `🔥 ${deal.title} — ${deal.subtitle ?? "Lifetime deal"} on ${SITE_NAME}`
   );
   const encodedUrl = encodeURIComponent(shareUrl);
 

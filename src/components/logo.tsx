@@ -1,7 +1,8 @@
 import { cn } from "@/lib/utils";
+import { SITE_NAME, SITE_BRAND_TAG } from "@/lib/constants";
 
 /**
- * AffiliRank logo.
+ * Brand logo.
  *
  * Concept: an infinite loop (lifetime / forever) merged with a play button
  * (video sales letters) and a subtle stacked "bundle" of gift boxes tucked
@@ -21,7 +22,7 @@ export function Logo({
   return (
     <span
       className={cn("inline-flex items-center gap-2.5 select-none", className)}
-      aria-label="AffiliRank"
+      aria-label={SITE_NAME}
     >
       <svg
         width={size}
@@ -100,16 +101,36 @@ export function Logo({
       {withWordmark && (
         <span className="flex flex-col leading-none">
           <span className="font-display text-[15px] font-bold tracking-tight text-white">
-            Affili
-            <span className="bg-gradient-to-r from-violet-400 to-cyan-300 bg-clip-text text-transparent">
-              Rank
-            </span>
+            {SITE_NAME === "AffiliRank" ? (
+              <>
+                Affili
+                <span className="bg-gradient-to-r from-violet-400 to-cyan-300 bg-clip-text text-transparent">
+                  Rank
+                </span>
+              </>
+            ) : (
+              <Wordmark name={SITE_NAME} />
+            )}
           </span>
           <span className="mt-1 text-[8px] font-semibold uppercase tracking-[0.28em] text-white/40">
-            affiliate deal engine
+            {SITE_BRAND_TAG}
           </span>
         </span>
       )}
     </span>
+  );
+}
+
+function Wordmark({ name }: { name: string }) {
+  const words = name.trim().split(/\s+/);
+  const last = words.pop() ?? name;
+  const rest = words.join(" ");
+  return (
+    <>
+      {rest && <span className="text-white">{rest} </span>}
+      <span className="bg-gradient-to-r from-violet-400 to-cyan-300 bg-clip-text text-transparent">
+        {last}
+      </span>
+    </>
   );
 }

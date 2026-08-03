@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, SlidersHorizontal, Settings, Newspaper, Sparkles } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { useStream } from "@/components/stream-provider";
-import { CATEGORIES } from "@/lib/constants";
+import { CATEGORIES, SHOW_PRODUCT_PAGE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 const STREAM_SELECTOR = "#stream-scroller";
@@ -94,17 +94,19 @@ export function Header() {
               </Link>
 
               {/* About the product / VSL */}
-              <Link
-                href="/affilirank"
-                aria-label="About this software"
-                title="About this software"
-                className="flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-white/10 bg-black/40 px-3 text-white/60 transition hover:border-violet-400/50 hover:text-white"
-              >
-                <Sparkles className="h-4.5 w-4.5" />
-                <span className="hidden text-sm font-semibold md:inline">
-                  Get this
-                </span>
-              </Link>
+              {SHOW_PRODUCT_PAGE && (
+                <Link
+                  href="/affilirank"
+                  aria-label="About this software"
+                  title="About this software"
+                  className="flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-white/10 bg-black/40 px-3 text-white/60 transition hover:border-violet-400/50 hover:text-white"
+                >
+                  <Sparkles className="h-4.5 w-4.5" />
+                  <span className="hidden text-sm font-semibold md:inline">
+                    Get this
+                  </span>
+                </Link>
+              )}
 
               {/* Admin */}
               <a
