@@ -243,18 +243,18 @@ export default function VslPage() {
                 />
               </div>
             ) : (
-              <div
-                id="buy"
-                className="flex aspect-video flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-white/20 bg-panel text-white/40"
-              >
-                <Video className="h-10 w-10" />
-                <p className="text-sm font-medium">
-                  Your video sales letter goes here
-                </p>
-                <p className="max-w-md text-xs text-white/35">
-                  Embed your VSL (YouTube, Vimeo, or direct MP4) and it plays
-                  right here.
-                </p>
+              <div className="overflow-hidden rounded-3xl border border-white/10 shadow-2xl shadow-violet-500/10">
+                <video
+                  src="/videos/affilirank-explainer.mp4"
+                  controls
+                  autoPlay
+                  muted
+                  playsInline
+                  poster=""
+                  className="aspect-video w-full object-cover"
+                >
+                  <track kind="captions" src="/videos/explainer_captions.vtt" srcLang="en" label="English" default />
+                </video>
               </div>
             )}
           </div>
