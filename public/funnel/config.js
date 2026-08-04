@@ -1,10 +1,13 @@
 /* ==========================================================================
    AffiliRank funnel — funnel configuration (EDIT THIS FILE)
    --------------------------------------------------------------------------
-   Replace the PRODUCT_ID placeholders with your real JVZoo product IDs, e.g.
-     https://jvz7.com/c/3582897/440485/
-   Keep the trailing slash. Your affiliate id is baked into the /c/{id}/ part.
    Set `vsl` to your video sales letter embed URL (YouTube / Vimeo) when ready.
+
+   STRIPE (recommended): Create Payment Links at dashboard.stripe.com/payment-links
+   for each product and paste the URLs below. The checkout() function will use
+   Stripe URLs when provided, falling back to JVZoo when they're empty.
+
+   JVZOO (fallback): Replace PRODUCT_ID placeholders with real JVZoo product IDs.
    ========================================================================== */
 
 window.FUNNEL = {
@@ -12,7 +15,15 @@ window.FUNNEL = {
   tagline: "Affiliate deal engine",
   affiliateId: "3582897",
 
-  // ---- CHECKOUT LINKS (JVZoo) — edit these ----
+  // ---- STRIPE PAYMENT LINKS (paste your real URLs here) ----
+  stripeFe:      "",   // e.g. "https://buy.stripe.com/your_fe_link"
+  stripeOto1:    "",
+  stripeOto2:    "",
+  stripeOto3:    "",
+  stripeOto1Ds:  "",
+  stripeOto2Ds:  "",
+
+  // ---- JVZOO CHECKOUT LINKS (fallback if Stripe URLs are empty) ----
   fe:        "https://jvz0.com/c/3582897/FE_PRODUCT_ID/",
   oto1:      "https://jvz0.com/c/3582897/OTO1_PRODUCT_ID/",
   oto2:      "https://jvz0.com/c/3582897/OTO2_PRODUCT_ID/",
@@ -23,7 +34,7 @@ window.FUNNEL = {
   // ---- VIDEO SALES LETTER (YouTube or Vimeo embed URL) ----
   vsl: "",
 
-  // ---- PRICES (placeholders — update to match your JVZoo prices) ----
+  // ---- PRICES (update to match your Stripe/JVZoo prices) ----
   priceFe:     { now: "$37", was: "$97",  once: "One-time payment" },
   priceOto1:   { now: "$67", was: "$97",  once: "One-time payment" },
   priceOto2:   { now: "$97", was: "$147", once: "One-time payment" },

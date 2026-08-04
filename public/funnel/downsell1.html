@@ -7,7 +7,8 @@
   <meta name="description" content="Don't leave empty-handed. Grab the auto-writing SEO blog module at a special downsell price — a fraction of the original." />
   <link rel="stylesheet" href="style.css" />
   <script src="config.js"></script>
-  <script>window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};</script>
+  <script>window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};
+    function checkout(k) { location.href = F["stripe" + k] || F[k]; }</script>
 </head>
 <body>
 
@@ -70,7 +71,7 @@
       <div class="price-once" id="ds1-once">One-time payment · lifetime access</div>
 
       <div class="oto-btns">
-        <a class="btn btn-primary btn-lg" onclick="location.href=window.F.oto1Ds" style="cursor:pointer">YES — Give Me The Blog At This Price →</a>
+        <a class="btn btn-primary btn-lg" onclick="checkout('oto1Ds')" style="cursor:pointer">YES — Give Me The Blog At This Price →</a>
         <a class="btn btn-ghost" onclick="location.href='oto2.html'" style="cursor:pointer">No thanks, show me the next offer</a>
       </div>
 

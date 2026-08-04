@@ -7,7 +7,8 @@
   <meta name="description" content="Get the full AffiliRank Bundle: every module unlocked plus white-label resell rights. The single best deal in this funnel." />
   <link rel="stylesheet" href="style.css" />
   <script src="config.js"></script>
-  <script>window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};</script>
+  <script>window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};
+    function checkout(k) { location.href = F["stripe" + k] || F[k]; }</script>
 </head>
 <body>
 
@@ -80,7 +81,7 @@
       </div>
 
       <div class="oto-btns">
-        <a class="btn btn-primary btn-lg" onclick="location.href=window.F.oto3" style="cursor:pointer">YES — Upgrade Me To The Bundle →</a>
+        <a class="btn btn-primary btn-lg" onclick="checkout('oto3')" style="cursor:pointer">YES — Upgrade Me To The Bundle →</a>
         <a class="btn btn-ghost" onclick="location.href='thankyou.html'" style="cursor:pointer">No thanks, finish my order</a>
       </div>
 

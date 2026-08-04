@@ -7,7 +7,8 @@
   <meta name="description" content="Last chance: unlock pro video mode (MP4, iframe &amp; GIF playback) at a special price — less than half the original." />
   <link rel="stylesheet" href="style.css" />
   <script src="config.js"></script>
-  <script>window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};</script>
+  <script>window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};
+    function checkout(k) { location.href = F["stripe" + k] || F[k]; }</script>
 </head>
 <body>
 
@@ -71,7 +72,7 @@
       <div class="price-once" id="ds2-once">One-time payment · lifetime access</div>
 
       <div class="oto-btns">
-        <a class="btn btn-primary btn-lg" onclick="location.href=window.F.oto2Ds" style="cursor:pointer">YES — Unlock Pro Video At This Price →</a>
+        <a class="btn btn-primary btn-lg" onclick="checkout('oto2Ds')" style="cursor:pointer">YES — Unlock Pro Video At This Price →</a>
         <a class="btn btn-ghost" onclick="location.href='oto3.html'" style="cursor:pointer">No thanks, show me the Bundle</a>
       </div>
 

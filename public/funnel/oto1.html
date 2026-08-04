@@ -7,7 +7,8 @@
   <meta name="description" content="Exclusive one-time offer: unlock unlimited deals plus the auto-writing SEO blog module. Claim it before you leave." />
   <link rel="stylesheet" href="style.css" />
   <script src="config.js"></script>
-  <script>window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};</script>
+  <script>window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};
+    function checkout(k) { location.href = F["stripe" + k] || F[k]; }</script>
 </head>
 <body>
 
@@ -70,7 +71,7 @@
       <div class="price-once" id="oto1-once">One-time payment · lifetime access</div>
 
       <div class="oto-btns">
-        <a class="btn btn-primary btn-lg" onclick="location.href=window.F.oto1" style="cursor:pointer">YES — Add This To My Order Now →</a>
+        <a class="btn btn-primary btn-lg" onclick="checkout('oto1')" style="cursor:pointer">YES — Add This To My Order Now →</a>
         <a class="btn btn-ghost" onclick="location.href='downsell1.html'" style="cursor:pointer">No thanks, I'll pass</a>
       </div>
 

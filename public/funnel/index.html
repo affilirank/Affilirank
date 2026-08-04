@@ -9,7 +9,7 @@
   <script src="config.js"></script>
   <script>
     window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};
-    function checkout(k) { location.href = window.F[k]; }
+    function checkout(k) { location.href = F["stripe" + k] || F[k]; }
   </script>
 </head>
 <body>
