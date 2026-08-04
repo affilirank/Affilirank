@@ -281,6 +281,7 @@ def make_animated_scene(scene):
 def generate_captions(scenes):
     srt = []
     idx = 1
+    offset = 0.0
     for scene in scenes:
         mp3 = SCENE_DIR / f"{scene['id']}.mp3"
         if not mp3.exists():
@@ -291,15 +292,16 @@ def generate_captions(scenes):
         t = 0.0
         i = 0
         while i < len(words):
-            chunk = words[i:i+6]
+            chunk = words[i:i+7]
             chunk_dur = len(chunk) / wps
             srt.append(f"{idx}")
-            srt.append(f"{fmt_time(t)} --> {fmt_time(t+chunk_dur)}")
+            srt.append(f"{fmt_time(offset + t)} --> {fmt_time(offset + t + chunk_dur)}")
             srt.append(" ".join(chunk))
             srt.append("")
             idx += 1
             t += chunk_dur
-            i += 6
+            i += 7
+        offset += dur + 0.3
     return "\n".join(srt)
 
 
