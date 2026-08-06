@@ -16,12 +16,12 @@ window.FUNNEL = {
   affiliateId: "3582897",
 
   // ---- STRIPE PAYMENT LINKS (paste your real URLs here) ----
-  stripeFe:      "",   // e.g. "https://buy.stripe.com/your_fe_link"
-  stripeOto1:    "",
-  stripeOto2:    "",
-  stripeOto3:    "",
-  stripeOto1Ds:  "",
-  stripeOto2Ds:  "",
+  stripeFe:      "https://buy.stripe.com/cNi6oGaAd9zx4Yy0hp1ZS01",
+  stripeOto1:    "https://buy.stripe.com/cNidR89w9h1Z8aKd4b1ZS02",
+  stripeOto2:    "https://buy.stripe.com/9B67sK8s5fXVdv4ggn1ZS03",
+  stripeOto3:    "https://buy.stripe.com/8x27sKgYBbHF1Mm9RZ1ZS04",
+  stripeOto1Ds:  "https://buy.stripe.com/8x23cubEhdPN2Qq5BJ1ZS05",
+  stripeOto2Ds:  "https://buy.stripe.com/bJe7sK4bP8vtcr00hp1ZS06",
 
   // ---- JVZOO CHECKOUT LINKS (fallback if Stripe URLs are empty) ----
   fe:        "https://jvz0.com/c/3582897/FE_PRODUCT_ID/",
