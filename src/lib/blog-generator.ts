@@ -227,7 +227,7 @@ export function generateBlogPost(deal: Deal): BlogPost {
   const post: BlogPost = {
     id: uid("blog"),
     deal_id: deal.id,
-    slug: `${slugify(name) || slugify(deal.title)}-review`,
+    slug: `${deal.slug || slugify(name) || slugify(deal.title)}-review`,
     title: `${name}: Lifetime Deal Review, Features, Pricing & FAQs (${year})`,
     excerpt,
     cover_image: deal.hero_image,
