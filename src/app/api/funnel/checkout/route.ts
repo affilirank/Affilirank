@@ -32,7 +32,7 @@ const OFFERS: Record<
     title: "AffiliRank OTO2",
   },
   oto3: {
-    price: "price_1U1QQXCMo4saoxpIVPlotKhY",
+    price: "price_1U1PH9CMo4saoxpIheAsOECx",
     success: "https://affilirank.com/funnel/thankyou.html",
     title: "AffiliRank Bundle",
   },
