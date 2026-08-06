@@ -17,6 +17,13 @@ yarn-debug.log*
 yarn-error.log*
 .vercel
 
+# Build artifacts / temp media
+tsconfig.tsbuildinfo
+__pycache__/
+*.pyc
+/tmp/
+/public/videos/*.vtt
+
 # Env
 .env
 .env*.local

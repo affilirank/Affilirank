@@ -143,9 +143,12 @@ function buildSections(deal: Deal): BlogSection[] {
     heading: `Pricing: One-Time Payment, Lifetime Access`,
     paragraphs: [
       `The biggest selling point of ${name} is the pricing model. ${discountLine(deal)}`,
+      deal.bundle_url
+        ? `If you want the absolute best value, grab the all-in-one bundle instead — it combines ${name} with the complete upgrade stack in a single discounted checkout, so you get everything without paying for each piece separately.`
+        : null,
       `There are no monthly subscriptions and no renewal charges — you pay once and keep the license forever. On top of that, the deal includes free updates, so the product only gets better over time without costing you a cent more.`,
       guaranteeLine(deal),
-    ],
+    ].filter((p): p is string => Boolean(p)),
   });
 
   // 5 — Why we love it

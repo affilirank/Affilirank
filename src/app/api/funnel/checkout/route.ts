@@ -36,6 +36,11 @@ const OFFERS: Record<
     success: "https://affilirank.com/funnel/thankyou.html",
     title: "AffiliRank Bundle",
   },
+  mega: {
+    price: "price_1U1SC6CMo4saoxpIcTRCHNFM",
+    success: "https://affilirank.com/funnel/thankyou.html",
+    title: "AffiliRank Mega Bundle",
+  },
   oto1Ds: {
     price: "price_1U1PHACMo4saoxpIIXVVvqAU",
     success: "https://affilirank.com/funnel/oto2.html",

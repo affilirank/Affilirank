@@ -114,8 +114,20 @@ function AffiliateCta({ deal, label }: { deal: Deal | null; label: string }) {
         {label}
         <ArrowRight className="h-4 w-4" />
       </a>
+      {deal?.bundle_url && (
+        <a
+          href={deal.bundle_url}
+          target="_blank"
+          rel="noopener noreferrer sponsored"
+          className="mt-3 inline-flex items-center gap-2 rounded-2xl border border-amber-400/40 bg-amber-400/10 px-7 py-3.5 text-sm font-bold text-amber-200 transition hover:bg-amber-400/20 active:scale-[0.98]"
+        >
+          <Zap className="h-4 w-4" />
+          Get The Bundle &amp; Save More
+          <ArrowRight className="h-4 w-4" />
+        </a>
+      )}
       <p className="mt-3 text-[11px] text-white/40">
-        Official affiliate link — we may earn a commission at no extra cost to you.
+        Official affiliate links — we may earn a commission at no extra cost to you.
       </p>
     </div>
   );

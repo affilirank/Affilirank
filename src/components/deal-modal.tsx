@@ -248,6 +248,20 @@ export function DealModal() {
                       Watch Sales Video & Get the Deal
                       <ArrowUpRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </button>
+                    {deal.bundle_url && (
+                      <a
+                        href={deal.bundle_url}
+                        target="_blank"
+                        rel="noopener noreferrer sponsored nofollow"
+                        onClick={() =>
+                          analytics.ctaClick(deal.id, deal.bundle_url as string)
+                        }
+                        className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-3 text-sm font-bold text-amber-200 transition hover:bg-amber-400/20"
+                      >
+                        Get The Bundle &amp; Save More
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    )}
                     {deal.source_url && (
                       <a
                         href={deal.affiliate_url}

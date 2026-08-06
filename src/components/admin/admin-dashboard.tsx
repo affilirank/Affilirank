@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   LayoutDashboard,
   Link2,
@@ -11,6 +11,7 @@ import {
   LogOut,
   RotateCcw,
   Database,
+  MonitorPlay,
 } from "lucide-react";
 import type { Deal, DealDraft, ScrapeResult } from "@/lib/types";
 import { Logo } from "@/components/logo";
@@ -18,10 +19,11 @@ import { UrlIngest } from "@/components/admin/url-ingest";
 import { ProductFormPanel } from "@/components/admin/product-form";
 import { ProductList } from "@/components/admin/product-list";
 import { LicensesTab } from "@/components/admin/licenses-tab";
+import { AutopublishTab } from "@/components/admin/autopublish-tab";
 import { adminApi, draftFromScrape } from "@/components/admin/client";
 import { cn } from "@/lib/utils";
 
-type Tab = "overview" | "ingest" | "deals" | "licenses";
+type Tab = "overview" | "ingest" | "deals" | "licenses" | "autopublish";
 
 /**
  * Admin portal shell: stat overview, one-click URL ingestion + auto-scrape,
@@ -35,7 +37,11 @@ export function AdminDashboard({
   mockMode: boolean;
 }) {
   const router = useRouter();
-  const [tab, setTab] = useState<Tab>("overview");
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const [tab, setTab] = useState<Tab>(
+    tabParam === "autopublish" ? "autopublish" : "overview"
+  );
   const [deals, setDeals] = useState<Deal[]>(initialDeals);
   const [blogCount, setBlogCount] = useState(0);
   const [editing, setEditing] = useState<{ id: string; draft: DealDraft } | null>(null);
@@ -156,6 +162,7 @@ export function AdminDashboard({
     { key: "overview", label: "Overview", Icon: LayoutDashboard },
     { key: "ingest", label: "Ingest Deal", Icon: Link2 },
     { key: "deals", label: "All Deals", Icon: List },
+    { key: "autopublish", label: "Auto-Publish", Icon: MonitorPlay },
     { key: "licenses", label: "Licenses", Icon: KeyRound },
   ];
 
@@ -254,6 +261,8 @@ export function AdminDashboard({
             onDelete={handleDelete}
           />
         )}
+
+        {tab === "autopublish" && <AutopublishTab />}
 
         {tab === "licenses" && <LicensesTab />}
       </main>

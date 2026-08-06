@@ -21,8 +21,12 @@ export interface Deal {
   price: number | null;
   original_price: number | null;
   currency: string;
-  /** Final affiliate URL that actually converts. */
+  /** Final affiliate URL that actually converts (front-end). */
   affiliate_url: string;
+  /** Bundle affiliate URL (optional) — added to blogs, deal CTAs, video descriptions. */
+  bundle_url?: string | null;
+  /** Full funnel links (OTO1, OTO2, downsells...) — embedded in video descriptions. */
+  funnel_links?: FunnelLink[] | null;
   /** The raw JVZoo page that was scraped. */
   source_url: string | null;
   /** ISO timestamp. When set + countdown_enabled, a live timer renders. */
@@ -33,6 +37,15 @@ export interface Deal {
   published: boolean;
   created_at: string;
   updated_at: string;
+  /** YouTube auto-publishing (added by the Auto-Publish engine). */
+  youtube_video_id?: string | null;
+  youtube_url?: string | null;
+  auto_post_status?: "pending" | "processing" | "posted" | "failed" | null;
+}
+
+export interface FunnelLink {
+  label: string;
+  url: string;
 }
 
 export interface ScrapeResult {
@@ -67,6 +80,8 @@ export interface DealDraft {
   original_price: number | null;
   currency: string;
   affiliate_url: string;
+  bundle_url?: string | null;
+  funnel_links?: FunnelLink[] | null;
   source_url: string | null;
   expiration_date: string | null;
   countdown_enabled: boolean;

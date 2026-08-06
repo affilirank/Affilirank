@@ -15,18 +15,46 @@ function buildEmbedUrl(deal: Deal): string {
   if (!deal.video_url) return "";
   if (deal.video_type === "youtube") {
     const sep = deal.video_url.includes("?") ? "&" : "?";
-    return `${deal.video_url}${sep}autoplay=1&mute=1&playsinline=1&rel=0&loop=1&cc_load_policy=1`;
+    return `${deal.video_url}${sep}autoplay=1&mute=1&playsinline=1&rel=0&loop=1&cc_load_policy=1&enablejsapi=1`;
   }
   if (deal.video_type === "vimeo") {
     const sep = deal.video_url.includes("?") ? "&" : "?";
-    return `${deal.video_url}${sep}autoplay=1&muted=1&playsinline=1&texttrack=en-x-autogen`;
+    return `${deal.video_url}${sep}autoplay=1&muted=1&playsinline=1&texttrack=en-x-autogen&api=1`;
   }
   return deal.video_url;
 }
 
 /**
- * Full-bleed VSL player. Autoplays (muted) when the card is in view,
- * pauses when scrolled away, and reports watch milestones to analytics.
+ * Poster cover shown while a video is loading/starting. Rendered as an opaque
+ * thumbnail so the browser's native buffering spinner is never visible — the
+ * cover fades out only once playback actually starts, then the video is
+ * already playing underneath. Placed before the legibility gradients in the
+ * DOM so they still darken it.
+ */
+function PosterCover({ deal, show }: { deal: Deal; show: boolean }) {
+  return (
+    <div
+      className={cn(
+        "absolute inset-0 transition-opacity duration-500 ease-out",
+        show ? "opacity-100" : "pointer-events-none opacity-0"
+      )}
+      aria-hidden="true"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={deal.hero_image ?? "/logo.svg"}
+        alt=""
+        className="h-full w-full object-cover"
+      />
+    </div>
+  );
+}
+
+/**
+ * Full-bleed VSL player. Shows the deal thumbnail as a poster, autoplays
+ * (muted) when the card is in view, fades the poster only when the video is
+ * actually playing (never exposes a buffering spinner), pauses when scrolled
+ * away, and reports watch milestones to analytics.
  */
 export function VideoPlayer({
   deal,
@@ -40,8 +68,10 @@ export function VideoPlayer({
   className?: string;
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [muted, setMuted] = useState(true);
   const [paused, setPaused] = useState(false);
+  const [ready, setReady] = useState(false);
   const reported = useRef<Set<number>>(new Set());
 
   const handleTimeUpdate = useCallback(() => {
@@ -63,10 +93,56 @@ export function VideoPlayer({
     if (inView) {
       el.muted = true;
       el.play().catch(() => {});
+      // Video was already buffered (e.g. card scrolled back) — skip the poster.
+      if (el.readyState >= 3) setReady(true);
     } else {
       el.pause();
     }
   }, [inView]);
+
+  // Reset the poster on scroll-away; re-arm the safety fallback when in view.
+  useEffect(() => {
+    if (!inView) {
+      setReady(false);
+      return;
+    }
+    const t = setTimeout(() => setReady(true), 10000);
+    return () => clearTimeout(t);
+  }, [inView]);
+
+  // Detect real playback start for embedded players via their postMessage API
+  // (enablejsapi=1 / api=1). Until then the poster covers any buffering.
+  useEffect(() => {
+    if (deal.video_type !== "youtube" && deal.video_type !== "vimeo") return;
+    const onMessage = (ev: MessageEvent) => {
+      const iframe = iframeRef.current;
+      if (!iframe || ev.source !== iframe.contentWindow) return;
+      let data: unknown = ev.data;
+      if (typeof data === "string") {
+        try {
+          data = JSON.parse(data);
+        } catch {
+          return;
+        }
+      }
+      if (!data || typeof data !== "object") return;
+      const msg = data as { event?: string; info?: unknown; data?: unknown };
+      if (deal.video_type === "youtube") {
+        const info = msg.info;
+        const playing =
+          (msg.event === "onStateChange" && Number(info) === 1) ||
+          (msg.event === "infoDelivery" &&
+            !!info &&
+            typeof info === "object" &&
+            (info as { playerState?: number }).playerState === 1);
+        if (playing) setReady(true);
+      } else if (deal.video_type === "vimeo") {
+        if (msg.event === "playing") setReady(true);
+      }
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [deal.video_type]);
 
   useEffect(() => {
     const el = videoRef.current;
@@ -142,13 +218,17 @@ export function VideoPlayer({
           poster={deal.hero_image ?? undefined}
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
           muted
           onTimeUpdate={handleTimeUpdate}
           onPlay={() => setPaused(false)}
           onPause={() => setPaused(true)}
+          onCanPlay={() => setReady(true)}
+          onPlaying={() => setReady(true)}
           className="h-full w-full object-cover"
         />
+
+        <PosterCover deal={deal} show={!ready} />
 
         {/* bottom legibility gradient */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/80" />
@@ -205,6 +285,7 @@ export function VideoPlayer({
     return (
       <div className={cn("absolute inset-0 overflow-hidden bg-black", className)}>
         <iframe
+          ref={iframeRef}
           src={inView ? buildEmbedUrl(deal) : undefined}
           title={deal.title}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -212,6 +293,9 @@ export function VideoPlayer({
           loading="lazy"
           className="h-full w-full"
         />
+
+        <PosterCover deal={deal} show={!ready} />
+
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/80" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/25" />
       </div>
