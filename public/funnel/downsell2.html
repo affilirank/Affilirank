@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css" />
   <script src="config.js"></script>
   <script>window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};
-    function checkout(k) { location.href = F["stripe" + k] || F[k]; }</script>
+    function checkout(k) { location.href = F["stripe" + k.charAt(0).toUpperCase() + k.slice(1)] || F[k]; }</script>
 </head>
 <body>
 
