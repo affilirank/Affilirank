@@ -101,22 +101,32 @@ export async function getAllDeals(): Promise<Deal[]> {
   return data as Deal[];
 }
 
+function uniqueSlug(title: string, existingSlugs: string[]): string {
+  const base = slugify(title) || "deal";
+  const set = new Set(existingSlugs);
+  if (!set.has(base)) return base;
+  let n = 2;
+  while (set.has(`${base}-${n}`)) n += 1;
+  return `${base}-${n}`;
+}
+
 export async function createDeal(draft: DealDraft): Promise<Deal> {
   const cleaned = { ...draft, ...sanitizeVideoForDeal(draft) };
   const existing = await getAllDeals();
   await assertCanCreateDeal(existing.length);
   if (cleaned.video_type) await assertProVideoAllowed(cleaned.video_type);
+  const slug = uniqueSlug(cleaned.title, existing.map((d) => d.slug));
   let deal: Deal;
   if (isMockMode()) {
-    deal = mockCreateDeal(cleaned);
+    deal = mockCreateDeal(cleaned, slug);
   } else {
     const sb = await createSupabaseServerClient();
     if (!sb) {
-      deal = mockCreateDeal(cleaned);
+      deal = mockCreateDeal(cleaned, slug);
     } else {
       const { data, error } = await sb
         .from("products")
-        .insert({ ...cleaned, slug: slugify(cleaned.title) })
+        .insert({ ...cleaned, slug })
         .select("*")
         .single();
       if (error) throw new Error(error.message);
@@ -135,20 +145,28 @@ export async function updateDeal(
   const cleaned = { ...patch, ...sanitizeVideoForDeal(patch) };
   if (cleaned.video_type) await assertProVideoAllowed(cleaned.video_type);
   let updated: Deal;
+  let slug: string | undefined;
+  if (cleaned.title) {
+    const all = await getAllDeals();
+    const otherSlugs = all.filter((d) => d.id !== id).map((d) => d.slug);
+    slug = uniqueSlug(cleaned.title, otherSlugs);
+  }
   if (isMockMode()) {
-    const result = mockUpdateDeal(id, cleaned);
+    const result = mockUpdateDeal(id, cleaned, slug);
     if (!result) throw new Error("Deal not found");
     updated = result;
   } else {
     const sb = await createSupabaseServerClient();
     if (!sb) {
-      const result = mockUpdateDeal(id, cleaned);
+      const result = mockUpdateDeal(id, cleaned, slug);
       if (!result) throw new Error("Deal not found");
       updated = result;
     } else {
+      const patchRow: Record<string, unknown> = { ...cleaned };
+      if (slug) patchRow.slug = slug;
       const { data, error } = await sb
         .from("products")
-        .update({ ...cleaned, ...(cleaned.title ? { slug: slugify(cleaned.title) } : {}) })
+        .update(patchRow)
         .eq("id", id)
         .select("*")
         .single();

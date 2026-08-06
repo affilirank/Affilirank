@@ -357,12 +357,12 @@ export function mockGetPublishedDeals() {
     });
 }
 
-export function mockCreateDeal(draft: DealDraft): Deal {
+export function mockCreateDeal(draft: DealDraft, slug?: string): Deal {
   const store = readStore();
   const now = new Date().toISOString();
   const deal: Deal = {
     id: uid("deal"),
-    slug: slugify(draft.title) || uid("deal"),
+    slug: slug || slugify(draft.title) || uid("deal"),
     created_at: now,
     updated_at: now,
     ...draft,
@@ -372,16 +372,22 @@ export function mockCreateDeal(draft: DealDraft): Deal {
   return deal;
 }
 
-export function mockUpdateDeal(id: string, patch: Partial<DealDraft>): Deal | null {
+export function mockUpdateDeal(
+  id: string,
+  patch: Partial<DealDraft>,
+  slug?: string
+): Deal | null {
   const store = readStore();
   const idx = store.deals.findIndex((d) => d.id === id);
   if (idx === -1) return null;
   const next: Deal = {
     ...store.deals[idx],
     ...patch,
-    slug: patch.title
-      ? slugify(patch.title) || store.deals[idx].slug
-      : store.deals[idx].slug,
+    slug:
+      slug ??
+      (patch.title
+        ? slugify(patch.title) || store.deals[idx].slug
+        : store.deals[idx].slug),
     updated_at: new Date().toISOString(),
   };
   store.deals[idx] = next;
