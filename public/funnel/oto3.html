@@ -8,7 +8,19 @@
   <link rel="stylesheet" href="style.css" />
   <script src="config.js"></script>
   <script>window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};
-    function checkout(k) { location.href = F["stripe" + k.charAt(0).toUpperCase() + k.slice(1)] || F[k]; }</script>
+    function checkout(k) {
+      fetch("/api/funnel/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ offer: k })
+      }).then(function (r) { return r.json(); }).then(function (d) {
+        if (d && d.url) { location.href = d.url; return; }
+        location.href = F["stripe" + k.charAt(0).toUpperCase() + k.slice(1)] || F[k];
+      }).catch(function () {
+        location.href = F["stripe" + k.charAt(0).toUpperCase() + k.slice(1)] || F[k];
+      });
+    }
+</script>
 </head>
 <body>
 
@@ -70,14 +82,14 @@
       </ul>
 
       <div class="oto-price">
-        <span class="now" id="oto3-now">$367</span>
+        <span class="now" id="oto3-now">$267</span>
         <span class="was" id="oto3-was">$497</span>
-        <span class="save" id="oto3-save">SAVE $130 TODAY</span>
+        <span class="save" id="oto3-save">SAVE $230 TODAY</span>
       </div>
       <div class="price-once" id="oto3-once">One-time payment · lifetime access · rebrand rights included</div>
 
       <div class="guarantee-strip" style="margin-top:14px" id="oto3-coupon">
-        🎟 Use coupon code <strong>SAVE100</strong> at checkout — save $100 → pay just <strong>$267</strong> today
+        🛡 Everything below — every module, every upgrade — in one bundle
       </div>
 
       <div class="oto-btns">
@@ -108,7 +120,7 @@
         if (n) n.textContent = p.now;
         if (w) w.textContent = p.was;
         if (o) o.textContent = p.once + " · rebrand rights included";
-        if (s && p.now && p.was) s.textContent = "SAVE TODAY";
+        if (s && p.now && p.was) s.textContent = "SAVE TODAY — JUST " + p.now;
         if (p.coupon) {
           var c = document.getElementById("oto3-coupon");
           if (c) c.innerHTML = "🎟 Use coupon code <strong>" + p.coupon + "</strong> at checkout — save " + (p.couponOff || "$100") + " → pay just <strong>" + (p.couponTotal || "less") + "</strong> today";

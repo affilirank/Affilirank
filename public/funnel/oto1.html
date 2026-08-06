@@ -8,7 +8,19 @@
   <link rel="stylesheet" href="style.css" />
   <script src="config.js"></script>
   <script>window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};
-    function checkout(k) { location.href = F["stripe" + k.charAt(0).toUpperCase() + k.slice(1)] || F[k]; }</script>
+    function checkout(k) {
+      fetch("/api/funnel/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ offer: k })
+      }).then(function (r) { return r.json(); }).then(function (d) {
+        if (d && d.url) { location.href = d.url; return; }
+        location.href = F["stripe" + k.charAt(0).toUpperCase() + k.slice(1)] || F[k];
+      }).catch(function () {
+        location.href = F["stripe" + k.charAt(0).toUpperCase() + k.slice(1)] || F[k];
+      });
+    }
+</script>
 </head>
 <body>
 
@@ -64,9 +76,9 @@
       </ul>
 
       <div class="oto-price">
-        <span class="now" id="oto1-now">$67</span>
-        <span class="was" id="oto1-was">$97</span>
-        <span class="save" id="oto1-save">SAVE 31% TODAY</span>
+        <span class="now" id="oto1-now">$97</span>
+        <span class="was" id="oto1-was">$147</span>
+        <span class="save" id="oto1-save">SAVE 34% TODAY</span>
       </div>
       <div class="price-once" id="oto1-once">One-time payment · lifetime access</div>
 

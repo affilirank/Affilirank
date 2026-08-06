@@ -35,12 +35,12 @@ window.FUNNEL = {
   vsl: "",
 
   // ---- PRICES (update to match your Stripe/JVZoo prices) ----
-  priceFe:     { now: "$37", was: "$97",  once: "One-time payment" },
-  priceOto1:   { now: "$67", was: "$97",  once: "One-time payment" },
-  priceOto2:   { now: "$97", was: "$147", once: "One-time payment" },
-  priceOto3:   { now: "$367", was: "$497", once: "One-time payment", coupon: "SAVE100", couponOff: "$100", couponTotal: "$267" },
+  priceFe:     { now: "$79", was: "$99",  once: "One-time payment", coupon: "SAVE10", couponOff: "$10", couponTotal: "$69" },
+  priceOto1:   { now: "$97", was: "$147", once: "One-time payment" },
+  priceOto2:   { now: "$147", was: "$197", once: "One-time payment" },
+  priceOto3:   { now: "$267", was: "$497", once: "One-time payment" },
   priceOto1Ds: { now: "$37", was: "$97",  once: "One-time payment" },
-  priceOto2Ds: { now: "$47", was: "$147", once: "One-time payment" },
+  priceOto2Ds: { now: "$67", was: "$147", once: "One-time payment" },
 };
 
 /* ---- Fallback defaults so a single page still works if config.js is

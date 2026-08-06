@@ -9,7 +9,18 @@
   <script src="config.js"></script>
   <script>
     window.F = window.FUNNEL || window.FUNNEL_FALLBACK || {};
-    function checkout(k) { location.href = F["stripe" + k.charAt(0).toUpperCase() + k.slice(1)] || F[k]; }
+    function checkout(k) {
+      fetch("/api/funnel/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ offer: k })
+      }).then(function (r) { return r.json(); }).then(function (d) {
+        if (d && d.url) { location.href = d.url; return; }
+        location.href = F["stripe" + k.charAt(0).toUpperCase() + k.slice(1)] || F[k];
+      }).catch(function () {
+        location.href = F["stripe" + k.charAt(0).toUpperCase() + k.slice(1)] || F[k];
+      });
+    }
   </script>
 </head>
 <body>
@@ -75,7 +86,7 @@
       </div>
 
       <div class="cta-row">
-        <a class="btn btn-primary btn-lg" onclick="checkout('fe')" style="cursor:pointer">Get Instant Access — $37</a>
+        <a class="btn btn-primary btn-lg" onclick="checkout('fe')" style="cursor:pointer">Get Instant Access — $79</a>
         <a class="btn btn-ghost btn-lg" href="https://affilirank.com" target="_blank" rel="noopener">See the Deal Stream Live</a>
       </div>
       <div class="trust">
@@ -124,10 +135,10 @@
           <div class="plan">AffiliRank Core</div>
           <div class="plan-desc">Your deal stream engine — ship it today, sell from day one.</div>
           <div class="price-row">
-            <span class="price-now" id="fe-now">$37</span>
-            <span class="price-old" id="fe-was">$97</span>
+            <span class="price-now" id="fe-now">$79</span>
+            <span class="price-old" id="fe-was">$99</span>
           </div>
-          <div class="price-once" id="fe-once">One-time payment · lifetime access</div>
+          <div class="price-once" id="fe-once">One-time payment · lifetime access · enter code <strong>SAVE10</strong> for $10 off</div>
           <ul class="check-list" style="margin-top:18px">
             <li><span class="tick">✓</span>TikTok-style snap deal stream</li>
             <li><span class="tick">✓</span>JVZoo one-click URL ingest + auto-scrape</li>
@@ -144,10 +155,10 @@
           <div class="plan">AffiliRank Bundle</div>
           <div class="plan-desc">The full version — every module unlocked forever, incl. white-label rebrand rights.</div>
           <div class="price-row">
-            <span class="price-now">$367</span>
+            <span class="price-now">$267</span>
             <span class="price-old">$497</span>
           </div>
-          <div class="price-once">One-time · enter code <strong>SAVE100</strong> at checkout for $100 off</div>
+          <div class="price-once">One-time · everything unlocked forever</div>
           <ul class="check-list" style="margin-top:18px">
             <li><span class="tick">✓</span>Everything in Core</li>
             <li><span class="tick">✓</span>SEO Blog Module — auto-written ranking articles</li>
@@ -182,7 +193,7 @@
       <h2 class="section-title">Ready to <span class="grad">rank first?</span></h2>
       <p class="lead" style="margin:16px auto 0; max-width:560px">Publish your deals once and let AffiliRank do the ranking, the writing and the converting while you collect lifetime commissions.</p>
       <div class="cta-row">
-        <a class="btn btn-primary btn-lg" onclick="checkout('fe')" style="cursor:pointer">Get Instant Access — $37</a>
+        <a class="btn btn-primary btn-lg" onclick="checkout('fe')" style="cursor:pointer">Get Instant Access — $79</a>
       </div>
     </div>
   </section>
@@ -241,7 +252,7 @@
         var n = document.getElementById("fe-now"), w = document.getElementById("fe-was"), o = document.getElementById("fe-once");
         if (n) n.textContent = p.now;
         if (w) w.textContent = p.was;
-        if (o) o.textContent = p.once + " · lifetime access";
+        if (o) o.innerHTML = p.once + " · lifetime access" + (p.coupon ? " · enter code <strong>" + p.coupon + "</strong> for " + (p.couponOff || "$10") + " off" : "");
       }
     })();
   </script>
