@@ -77,7 +77,7 @@ const TIERS = [
       "Analytics module (GA4 + Meta Pixel)",
       "Deal detail pages with Product schema",
       "Pro video mode (MP4 / iframe / GIF)",
-      "White-label rights — rebrand and resell your own copies",
+      "White-label rights — rebrand with your own logo",
     ],
     highlight: true,
   },
@@ -162,7 +162,7 @@ export default function VslPage() {
     },
     {
       q: "What exactly is the Bundle?",
-      a: "The Bundle is the full version: every module unlocked forever, including the SEO blog and unlimited deals. It also includes white-label rights — so if you want the end-user route of rebranding and reselling your own copies, that's yours.",
+      a: "The Bundle is the full version: every module unlocked forever, including the SEO blog and unlimited deals. It also includes white-label rights — so you can rebrand it with your own logo and sell it as your own product.",
     },
     {
       q: "Is it a one-time payment?",
