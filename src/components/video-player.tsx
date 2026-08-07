@@ -35,8 +35,8 @@ function PosterCover({ deal, show }: { deal: Deal; show: boolean }) {
   return (
     <div
       className={cn(
-        "absolute inset-0 transition-opacity duration-500 ease-out",
-        show ? "opacity-100" : "pointer-events-none opacity-0"
+        "pointer-events-none absolute inset-0 transition-opacity duration-500 ease-out",
+        show ? "opacity-100" : "opacity-0"
       )}
       aria-hidden="true"
     >
@@ -106,7 +106,7 @@ export function VideoPlayer({
       setReady(false);
       return;
     }
-    const t = setTimeout(() => setReady(true), 10000);
+    const t = setTimeout(() => setReady(true), 8000);
     return () => clearTimeout(t);
   }, [inView]);
 
@@ -126,10 +126,11 @@ export function VideoPlayer({
         }
       }
       if (!data || typeof data !== "object") return;
-      const msg = data as { event?: string; info?: unknown; data?: unknown };
+      const msg = data as { event?: string; info?: unknown };
       if (deal.video_type === "youtube") {
         const info = msg.info;
         const playing =
+          msg.event === "onReady" ||
           (msg.event === "onStateChange" && Number(info) === 1) ||
           (msg.event === "infoDelivery" &&
             !!info &&
@@ -137,7 +138,9 @@ export function VideoPlayer({
             (info as { playerState?: number }).playerState === 1);
         if (playing) setReady(true);
       } else if (deal.video_type === "vimeo") {
-        if (msg.event === "playing") setReady(true);
+        if (msg.event === "ready" || msg.event === "play" || msg.event === "playing") {
+          setReady(true);
+        }
       }
     };
     window.addEventListener("message", onMessage);
