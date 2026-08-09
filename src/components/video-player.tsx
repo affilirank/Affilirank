@@ -81,11 +81,14 @@ export function VideoPlayer({
   inView,
   proVideo = false,
   className,
+  onPosterHidden,
 }: {
   deal: Deal;
   inView: boolean;
   proVideo?: boolean;
   className?: string;
+  /** Fired once the thumbnail poster has faded out (video is fully playing). */
+  onPosterHidden?: () => void;
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -141,6 +144,13 @@ export function VideoPlayer({
     const t = setTimeout(() => setPosterDone(true), 3000);
     return () => clearTimeout(t);
   }, [ready]);
+
+  // Notify the parent once the poster has fully faded (poster + 500ms fade).
+  useEffect(() => {
+    if (!posterDone) return;
+    const t = setTimeout(() => onPosterHidden?.(), 500);
+    return () => clearTimeout(t);
+  }, [posterDone, onPosterHidden]);
 
   // Detect real playback start for embedded players via their postMessage API
   // (enablejsapi=1 / api=1). Until then the poster covers any buffering.

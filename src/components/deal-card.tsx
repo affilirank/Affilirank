@@ -70,33 +70,44 @@ export function DealCard({
     deal.video_type === "vimeo" ||
     deal.video_type === "iframe";
 
-  // TikTok-style overlay: clear the title/details after ~15s of watching so
-  // the video is unobstructed, but keep the CTA buttons available.
+  // TikTok-style overlay: when the thumbnail fades (~3.5s in), the
+  // title/details slide up off-screen so the video is unobstructed, then
+  // slide back down 3s later. "Show details" reveals them anytime.
   const [textHidden, setTextHidden] = useState(false);
-  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const returnTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const startHideTimer = useCallback(() => {
-    if (hideTimer.current) clearTimeout(hideTimer.current);
-    hideTimer.current = setTimeout(() => setTextHidden(true), 8000);
+  const clearReturnTimer = useCallback(() => {
+    if (returnTimer.current) {
+      clearTimeout(returnTimer.current);
+      returnTimer.current = null;
+    }
   }, []);
+
+  // Triggered by the player when its poster (thumbnail) has fully faded out.
+  const handlePosterHidden = useCallback(() => {
+    setTextHidden(true);
+    clearReturnTimer();
+    returnTimer.current = setTimeout(() => setTextHidden(false), 3000);
+  }, [clearReturnTimer]);
 
   useEffect(() => {
-    if (hideTimer.current) clearTimeout(hideTimer.current);
-    if (inView) startHideTimer();
-    else setTextHidden(false);
-    return () => {
-      if (hideTimer.current) clearTimeout(hideTimer.current);
-    };
-  }, [inView, startHideTimer]);
+    if (!inView) {
+      setTextHidden(false);
+      clearReturnTimer();
+    }
+    return clearReturnTimer;
+  }, [inView, clearReturnTimer]);
 
   const revealText = useCallback(() => {
-    if (hideTimer.current) clearTimeout(hideTimer.current);
+    clearReturnTimer();
     setTextHidden(false);
-  }, []);
+  }, [clearReturnTimer]);
 
   const concealText = useCallback(() => {
-    startHideTimer();
-  }, [startHideTimer]);
+    setTextHidden(true);
+    clearReturnTimer();
+    returnTimer.current = setTimeout(() => setTextHidden(false), 3000);
+  }, [clearReturnTimer]);
 
   return (
     <section
@@ -112,7 +123,12 @@ export function DealCard({
       {/* Background VSL — embeds stay fully interactive; click-to-open for the rest */}
       {isEmbed ? (
         <div className="absolute inset-0 z-0">
-          <VideoPlayer deal={deal} inView={inView} proVideo={proVideo} />
+          <VideoPlayer
+            deal={deal}
+            inView={inView}
+            proVideo={proVideo}
+            onPosterHidden={handlePosterHidden}
+          />
         </div>
       ) : (
         <button
@@ -121,7 +137,12 @@ export function DealCard({
           className="absolute inset-0 z-0 block h-full w-full cursor-pointer"
           tabIndex={-1}
         >
-          <VideoPlayer deal={deal} inView={inView} proVideo={proVideo} />
+          <VideoPlayer
+            deal={deal}
+            inView={inView}
+            proVideo={proVideo}
+            onPosterHidden={handlePosterHidden}
+          />
         </button>
       )}
 
@@ -143,7 +164,7 @@ export function DealCard({
           initial={{ opacity: 0, y: 24 }}
           animate={{
             opacity: textHidden ? 0 : inView ? 1 : 0.4,
-            y: textHidden ? 130 : inView ? 0 : 24,
+            y: textHidden ? -130 : inView ? 0 : 24,
           }}
           transition={{ duration: 0.45, ease: "easeOut" }}
           className={cn(
