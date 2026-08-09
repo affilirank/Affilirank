@@ -70,44 +70,42 @@ export function DealCard({
     deal.video_type === "vimeo" ||
     deal.video_type === "iframe";
 
-  // TikTok-style overlay: when the thumbnail fades (~3.5s in), the
-  // title/details slide up off-screen so the video is unobstructed, then
-  // slide back down 3s later. "Show details" reveals them anytime.
-  const [textHidden, setTextHidden] = useState(false);
-  const returnTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Details stay hidden while the thumbnail is on screen, pop up once the
+  // video is actually playing (thumbnail faded), then fade away ~4s later.
+  // "Show details" reveals them anytime.
+  const [textHidden, setTextHidden] = useState(true);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const clearReturnTimer = useCallback(() => {
-    if (returnTimer.current) {
-      clearTimeout(returnTimer.current);
-      returnTimer.current = null;
+  const clearHideTimer = useCallback(() => {
+    if (hideTimer.current) {
+      clearTimeout(hideTimer.current);
+      hideTimer.current = null;
     }
   }, []);
 
   // Triggered by the player when its poster (thumbnail) has fully faded out.
   const handlePosterHidden = useCallback(() => {
-    setTextHidden(true);
-    clearReturnTimer();
-    returnTimer.current = setTimeout(() => setTextHidden(false), 3000);
-  }, [clearReturnTimer]);
+    setTextHidden(false);
+    clearHideTimer();
+    hideTimer.current = setTimeout(() => setTextHidden(true), 4000);
+  }, [clearHideTimer]);
 
   useEffect(() => {
     if (!inView) {
-      setTextHidden(false);
-      clearReturnTimer();
+      setTextHidden(true);
+      clearHideTimer();
     }
-    return clearReturnTimer;
-  }, [inView, clearReturnTimer]);
+    return clearHideTimer;
+  }, [inView, clearHideTimer]);
 
   const revealText = useCallback(() => {
-    clearReturnTimer();
+    clearHideTimer();
     setTextHidden(false);
-  }, [clearReturnTimer]);
+  }, [clearHideTimer]);
 
   const concealText = useCallback(() => {
     setTextHidden(true);
-    clearReturnTimer();
-    returnTimer.current = setTimeout(() => setTextHidden(false), 3000);
-  }, [clearReturnTimer]);
+  }, []);
 
   return (
     <section
@@ -161,10 +159,10 @@ export function DealCard({
       {/* Bottom content — padded up so it clears the player's bottom control bar */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 px-4 pb-16 sm:px-8 sm:pb-20">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 130 }}
           animate={{
             opacity: textHidden ? 0 : inView ? 1 : 0.4,
-            y: textHidden ? -130 : inView ? 0 : 24,
+            y: textHidden ? 130 : inView ? 0 : 24,
           }}
           transition={{ duration: 0.45, ease: "easeOut" }}
           className={cn(
