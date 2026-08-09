@@ -34,6 +34,10 @@ export async function POST(req: Request) {
         ? body.profile_in_thumbnails
         : current.profile_in_thumbnails,
     thumbnail_tone: body.thumbnail_tone ?? current.thumbnail_tone,
+    gemini_api_key:
+      typeof body.gemini_api_key === "string"
+        ? body.gemini_api_key.trim()
+        : current.gemini_api_key,
   };
   const saved = await setAutopublishSettings(next);
   return NextResponse.json({ settings: saved });

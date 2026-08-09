@@ -146,9 +146,9 @@ export function AdminDashboard({
   );
 
   const handleReset = useCallback(async () => {
-    if (!confirm("Reset to the built-in demo deals? This removes everything.")) return;
+    if (!confirm("Wipe the stream to blank? This removes every deal.")) return;
     await adminApi.resetAll();
-    notify("Reset to demo data");
+    notify("Stream reset to blank");
     await refresh();
   }, [notify, refresh]);
 

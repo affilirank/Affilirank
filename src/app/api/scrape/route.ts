@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthed } from "@/lib/auth";
 import { scrapeUrl } from "@/lib/scraper";
+import { getYoutubeAuth, googleOAuthConfigured } from "@/lib/youtube";
 
 export const dynamic = "force-dynamic";
 
@@ -9,10 +10,27 @@ export const dynamic = "force-dynamic";
  * Admin — accepts a JVZoo URL, auto-appends the site's affiliate tag, fetches
  * the sales page server-side and returns normalized OpenGraph / JSON-LD data
  * (title, description, hero image, VSL video, pricing, highlights).
+ *
+ * Requires a connected YouTube channel first — the white-label deal stream is
+ * built around the auto-publish engine, so parsing is gated on it.
  */
 export async function POST(request: NextRequest) {
   if (!(await isAdminAuthed())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const [auth, oauthConfigured] = await Promise.all([
+    getYoutubeAuth(),
+    googleOAuthConfigured(),
+  ]);
+  if (!oauthConfigured || !auth) {
+    return NextResponse.json(
+      {
+        error:
+          "Connect your YouTube channel first — parsing JVZoo links is enabled once auto-publish is set up.",
+      },
+      { status: 403 }
+    );
   }
 
   const body = await request.json().catch(() => null);

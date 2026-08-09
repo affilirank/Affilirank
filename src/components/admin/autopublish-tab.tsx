@@ -44,6 +44,14 @@ export function AutopublishTab() {
   const [status, setStatus] = useState<StatusPayload | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [geminiKey, setGeminiKey] = useState("");
+
+  useEffect(() => {
+    if (status && status.settings.gemini_api_key !== geminiKey) {
+      setGeminiKey(status.settings.gemini_api_key ?? "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   const refresh = useCallback(async () => {
     const res = await fetch("/api/admin/youtube/status");
@@ -114,6 +122,10 @@ export function AutopublishTab() {
     },
     [status, notify]
   );
+
+  const saveGeminiKey = useCallback(async () => {
+    await saveSettings({ gemini_api_key: geminiKey.trim() });
+  }, [saveSettings, geminiKey]);
 
   const enqueue = useCallback(
     async (dealId: string | null) => {
@@ -367,6 +379,58 @@ export function AutopublishTab() {
           </section>
         </>
       )}
+
+      {/* AI thumbnails — available before Google/YouTube setup */}
+      <section className="glass rounded-3xl p-6">
+        <h2 className="font-display text-lg font-bold">AI thumbnails</h2>
+        <p className="mt-0.5 text-sm text-white/55">
+          Paste your own Google Gemini API key. It powers scroll-stopping
+          thumbnails with your profile pic — every white-label customer
+          brings their own key. Without one, the built-in design engine is
+          used instead.
+        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <input
+            type="password"
+            value={geminiKey}
+            onChange={(e) => setGeminiKey(e.target.value)}
+            placeholder="Paste your Gemini API key (AIza…)"
+            className="w-full max-w-sm rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-sm text-white outline-none placeholder:text-white/30 focus:border-violet-400/50"
+            autoComplete="off"
+            spellCheck={false}
+          />
+          <button
+            onClick={saveGeminiKey}
+            disabled={busy === "settings" || geminiKey.trim() === (status.settings.gemini_api_key ?? "")}
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-2.5 text-sm font-bold text-white shadow-lg transition hover:opacity-90 disabled:opacity-40"
+          >
+            {busy === "settings" ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <CheckCircle2 className="h-4 w-4" />
+            )}
+            {status.settings.gemini_api_key ? "Update key" : "Save key"}
+          </button>
+          {status.settings.gemini_api_key && (
+            <span className="flex items-center gap-1.5 rounded-full bg-emerald-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-emerald-300 ring-1 ring-emerald-400/30">
+              <CheckCircle2 className="h-3.5 w-3.5" /> Key saved
+            </span>
+          )}
+        </div>
+        <p className="mt-3 text-xs text-white/40">
+          Get a free key at{" "}
+          <a
+            className="text-cyan-300 underline"
+            href="https://aistudio.google.com/apikey"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            aistudio.google.com/apikey
+          </a>{" "}
+          (no credit card). The worker picks this up automatically on its
+          next run.
+        </p>
+      </section>
 
       {/* Deals queue */}
       <section className="glass rounded-3xl p-6">

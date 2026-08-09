@@ -28,6 +28,11 @@ export interface AutopublishSettings {
   /** Overlay the channel avatar on generated thumbnails (CTR booster). */
   profile_in_thumbnails?: boolean;
   thumbnail_tone?: string;
+  /**
+   * Purchaser-supplied Google Gemini API key used to generate AI thumbnails.
+   * Each white-label customer brings their own key — no shared/central key.
+   */
+  gemini_api_key?: string;
 }
 
 export const DEFAULT_AUTOPUBLISH: AutopublishSettings = {
@@ -42,7 +47,7 @@ const clientSecret = () => process.env.GOOGLE_CLIENT_SECRET ?? "";
 export const YOUTUBE_REDIRECT_URI = `${SITE_URL}/api/admin/youtube/callback`;
 
 export const YOUTUBE_SCOPES = [
-  "https://www.googleapis.com/auth/youtube.upload",
+  "https://www.googleapis.com/auth/youtube",
   "https://www.googleapis.com/auth/youtube.readonly",
 ];
 

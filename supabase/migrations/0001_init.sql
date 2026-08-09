@@ -66,42 +66,6 @@ create policy "products_admin_all"
 alter publication supabase_realtime add table public.products;
 
 -- ---------------------------------------------------------------------------
--- Seed a couple of demo deals so the stream is never empty.
+-- No seed deals: white-label owners start with a blank stream and load their
+-- own JVZoo deals (YouTube connect is required before parsing).
 -- ---------------------------------------------------------------------------
-insert into public.products (
-  slug, title, subtitle, description, highlights, category, hero_image,
-  video_url, video_type, deal_tag, tag_style, price, original_price,
-  currency, affiliate_url, source_url, expiration_date, countdown_enabled,
-  featured, sort_order, published
-) values
-(
-  'neuralpulse-ai-lifetime-license',
-  'NeuralPulse AI',
-  'Full AI writing suite — lifetime license',
-  'NeuralPulse AI writes blog posts, ad copy, emails and product descriptions at scale. One payment, lifetime access, unlimited generations.',
-  array['Lifetime access with unlimited generations', '40+ high-converting copywriting templates', 'Brand voice cloning for consistent tone'],
-  'ai-tools',
-  'https://picsum.photos/seed/neuralpulse/900/1600',
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-  'mp4', '70% OFF', 'hot',
-  49, 297, 'USD',
-  'https://www.jvzoo.com/b/7654321/0',
-  'https://www.jvzoo.com/b/7654321/0',
-  now() + interval '3 days', true, true, 10, true
-),
-(
-  'rankforge-pro-unlimited-seo',
-  'RankForge Pro',
-  'Unlimited keyword & rank tracking',
-  'RankForge Pro tracks thousands of keywords across Google, tracks competitors, and fires automated daily ranking reports straight to your inbox.',
-  array['Track unlimited keywords & 50+ competitors', 'Automated daily rank reports to email', 'Lifetime access, no monthly fees'],
-  'seo',
-  'https://picsum.photos/seed/rankforge/900/1600',
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-  'mp4', 'Lifetime Deal', 'lifetime',
-  79, 199, 'USD',
-  'https://www.jvzoo.com/b/7654322/0',
-  'https://www.jvzoo.com/b/7654322/0',
-  now() + interval '7 days', true, false, 20, true
-)
-on conflict (slug) do nothing;
