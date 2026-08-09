@@ -33,7 +33,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     160
   );
   const url = `${SITE_URL}/deals/${deal.slug}`;
-  const image = deal.hero_image ?? `${SITE_URL}/og-default.png`;
+  // Facebook renders link previews at 1.91:1 (1200x630) and crops 16:9
+  // thumbs. When the hero image is an AI thumb under /previews/deals/, use
+  // the pre-rendered 1200x630 OG version from /previews/og/ so shares show
+  // the full artwork without cropping.
+  const image = deal.hero_image?.includes("/previews/deals/")
+    ? deal.hero_image.replace("/previews/deals/", "/previews/og/")
+    : (deal.hero_image ?? `${SITE_URL}/og-default.png`);
 
   // Only advertise og:video for formats Facebook can actually validate:
   // direct MP4 files, or YouTube player pages (text/html). Vimeo embed URLs
