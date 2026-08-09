@@ -31,6 +31,31 @@ function buildEmbedUrl(deal: Deal): string {
  * already playing underneath. Placed before the legibility gradients in the
  * DOM so they still darken it.
  */
+/**
+ * Renders the deal artwork (16:9 thumbnail) filling an arbitrary viewport
+ * without cropping: a blurred, scaled copy fills the background while the
+ * full sharp image sits centered on top. Used for full-bleed posters in the
+ * vertical stream so faces/artwork are never cut off.
+ */
+function HeroFill({ src }: { src: string }) {
+  return (
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt=""
+        className="absolute inset-0 h-full w-full scale-110 object-cover opacity-40 blur-2xl"
+      />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt=""
+        className="absolute inset-0 m-auto h-full w-full object-contain"
+      />
+    </>
+  );
+}
+
 function PosterCover({ deal, show }: { deal: Deal; show: boolean }) {
   return (
     <div
@@ -40,20 +65,15 @@ function PosterCover({ deal, show }: { deal: Deal; show: boolean }) {
       )}
       aria-hidden="true"
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={deal.hero_image ?? "/logo.svg"}
-        alt=""
-        className="h-full w-full object-cover"
-      />
+      <HeroFill src={deal.hero_image ?? "/logo.svg"} />
     </div>
   );
 }
 
 /**
  * Full-bleed VSL player. Shows the deal thumbnail as a poster, autoplays
- * (muted) when the card is in view, fades the poster only when the video is
- * actually playing (never exposes a buffering spinner), pauses when scrolled
+ * (muted) when the card is in view, holds the poster 3s once playback starts
+ * then fades it out (never exposes a buffering spinner), pauses when scrolled
  * away, and reports watch milestones to analytics.
  */
 export function VideoPlayer({
@@ -72,6 +92,9 @@ export function VideoPlayer({
   const [muted, setMuted] = useState(true);
   const [paused, setPaused] = useState(false);
   const [ready, setReady] = useState(false);
+  // Poster is shown until the video is playing AND 3s have elapsed, so the
+  // thumbnail is on screen for a moment before fading out over playback.
+  const [posterDone, setPosterDone] = useState(false);
   const reported = useRef<Set<number>>(new Set());
 
   const handleTimeUpdate = useCallback(() => {
@@ -104,11 +127,20 @@ export function VideoPlayer({
   useEffect(() => {
     if (!inView) {
       setReady(false);
+      setPosterDone(false);
       return;
     }
     const t = setTimeout(() => setReady(true), 8000);
     return () => clearTimeout(t);
   }, [inView]);
+
+  // Hold the thumbnail on screen for 3s once playback starts, then fade it.
+  useEffect(() => {
+    if (!ready) return;
+    setPosterDone(false);
+    const t = setTimeout(() => setPosterDone(true), 3000);
+    return () => clearTimeout(t);
+  }, [ready]);
 
   // Detect real playback start for embedded players via their postMessage API
   // (enablejsapi=1 / api=1). Until then the poster covers any buffering.
@@ -175,12 +207,7 @@ export function VideoPlayer({
   if (isProOnlyType(deal.video_type) && !proVideo) {
     return (
       <div className={cn("absolute inset-0 overflow-hidden bg-black", className)}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={deal.hero_image ?? "/logo.svg"}
-          alt={deal.title}
-          className="h-full w-full object-cover"
-        />
+        <HeroFill src={deal.hero_image ?? "/logo.svg"} />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/80" />
       </div>
     );
@@ -231,7 +258,7 @@ export function VideoPlayer({
           className="h-full w-full object-cover"
         />
 
-        <PosterCover deal={deal} show={!ready} />
+        <PosterCover deal={deal} show={!posterDone} />
 
         {/* bottom legibility gradient */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/80" />
@@ -297,7 +324,7 @@ export function VideoPlayer({
           className="h-full w-full"
         />
 
-        <PosterCover deal={deal} show={!ready} />
+        <PosterCover deal={deal} show={!posterDone} />
 
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/80" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/25" />
@@ -308,12 +335,7 @@ export function VideoPlayer({
   // ---- no video — hero image fallback --------------------------------------
   return (
     <div className={cn("absolute inset-0 overflow-hidden bg-black", className)}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={deal.hero_image ?? "/logo.svg"}
-        alt={deal.title}
-        className="h-full w-full object-cover"
-      />
+      <HeroFill src={deal.hero_image ?? "/logo.svg"} />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/80" />
     </div>
   );
