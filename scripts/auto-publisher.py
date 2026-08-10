@@ -99,6 +99,31 @@ def audio_duration(path):
 
 
 async def gen_tts(text, out, rate="-5%"):
+    key = os.environ.get("ELEVENLABS_API_KEY", "")
+    if key:
+        voice = os.environ.get("ELEVENLABS_VOICE_ID", "onwK4e9ZLuTAKqWW03F9")
+        model = os.environ.get("ELEVENLABS_MODEL_ID", "eleven_multilingual_v2")
+        body = json.dumps({
+            "text": text,
+            "model_id": model,
+            "voice_settings": {"stability": 0.5, "similarity_boost": 0.75},
+        }).encode()
+        req = urllib.request.Request(
+            f"https://api.elevenlabs.io/v1/text-to-speech/{voice}",
+            data=body, method="POST",
+            headers={
+                "xi-api-key": key,
+                "Content-Type": "application/json",
+                "Accept": "audio/mpeg",
+            },
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=120) as r:
+                data = r.read()
+            Path(out).write_bytes(data)
+            return
+        except urllib.error.HTTPError as e:
+            raise RuntimeError(f"ElevenLabs TTS HTTP {e.code}: {e.read()[:300]}")
     import edge_tts
     await edge_tts.Communicate(text, "en-US-GuyNeural", rate=rate).save(str(out))
 
@@ -117,6 +142,31 @@ def wrap_text(text, width):
     return lines
 
 
+def channel_slug():
+    """Slug of the connected YouTube channel title, for brandable short links."""
+    try:
+        auth = get_youtube_auth()
+        title = (auth or {}).get("channel_title") or ""
+        slug = re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
+        return slug or "youtube"
+    except Exception:
+        return "youtube"
+
+
+def short_link(deal, kind="front-end"):
+    """Brandable short URL for a deal, backed by the /r route on the site.
+
+    The /r route resolves the deal slug from the DB, so editing a deal's
+    affiliate/bundle URL in the admin portal updates every past description
+    without re-uploading videos.
+    """
+    slug = deal.get("slug") or deal["id"]
+    prefix = f"{SITE_URL}/r/{channel_slug()}"
+    if kind == "bundle":
+        return f"{prefix}/bundle/{slug}"
+    return f"{prefix}/{slug}"
+
+
 def build_description(deal):
     name = short_name(deal["title"])
     desc = strip_tags(deal.get("description"))
@@ -126,6 +176,7 @@ def build_description(deal):
     highlights = [strip_tags(h) for h in (deal.get("highlights") or []) if strip_tags(h)]
     coupon = deal.get("coupon_code")
     affiliate = (deal.get("affiliate_url") or "").strip()
+    main_link = short_link(deal, "front-end")
 
     lines = [f"{name} — Full Review ({time.strftime('%Y')}) | Lifetime Deal on JVZoo", ""]
     lines.append(summary)
@@ -140,7 +191,7 @@ def build_description(deal):
             lines.append(f"• {h}")
         lines.append("")
     lines.append(f"🔗 GET {name.upper()} HERE:")
-    lines.append(affiliate)
+    lines.append(main_link)
     lines.append("")
     funnel = deal.get("funnel_links") or []
     bundle = (deal.get("bundle_url") or "").strip()
@@ -151,7 +202,7 @@ def build_description(deal):
                 break
     if bundle:
         lines.append("🚀 BEST VALUE — The Full Bundle:")
-        lines.append(bundle)
+        lines.append(short_link(deal, "bundle"))
         lines.append("")
     for fl in funnel:
         label = fl.get("label") or "Upgrade"
