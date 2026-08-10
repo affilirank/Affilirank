@@ -58,54 +58,62 @@ def upload(path, data, ctype):
             "apikey": SERVICE_KEY,
             "Authorization": f"Bearer {SERVICE_KEY}",
             "Content-Type": ctype,
+            "x-upsert": "true",
         },
     )
     with urllib.request.urlopen(req, timeout=300) as r:
         return r.status
 
 
+def make_og(slug, src=None, out_png=None, work=None):
+    """Composite a single thumb (previews/deals/<slug>.png by default) onto a
+    1200x630 Facebook-friendly canvas and upload it to previews/og/<slug>.png.
+    Returns the public URL on success, or None on failure."""
+    if not (SUPABASE_URL and SERVICE_KEY):
+        raise RuntimeError("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY")
+    try:
+        from PIL import Image, ImageFilter
+    except ImportError:
+        raise RuntimeError("PIL not available — install Pillow")
+
+    work = work or Path("/tmp/affilirank-og")
+    work.mkdir(parents=True, exist_ok=True)
+
+    src = src or f"{SRC_PREFIX}/{slug}.png"
+    raw = work / f"{slug}.png"
+    if not download(src, raw):
+        print(f"SKIP {slug}: source {src} not reachable")
+        return None
+    im = Image.open(raw).convert("RGB")
+    iw, ih = im.size
+
+    # Target canvas is wider than the source, so the thumb fills the height
+    # and the extra side margins get the blurred fill.
+    fit_w = int(ih * (W / H))
+    scaled = im.resize((fit_w, ih), Image.LANCZOS)
+    fill = im.resize((W, H), Image.LANCZOS)
+    fill = fill.filter(ImageFilter.GaussianBlur(40))
+
+    out = Image.new("RGB", (W, H))
+    out.paste(fill, (0, 0))
+    ox = (W - fit_w) // 2
+    out.paste(scaled, (ox, 0))
+
+    png = out_png or work / f"{slug}.png"
+    out.save(png, "PNG")
+    path = f"og/{slug}.png"
+    upload(path, png.read_bytes(), "image/png")
+    print(f"OK {slug} {W}x{H}")
+    return f"{SUPABASE_URL}/storage/v1/object/public/{BUCKET}/{path}"
+
+
 def main():
     if not (SUPABASE_URL and SERVICE_KEY):
         print("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY")
         sys.exit(1)
-    import importlib.util
-    from subprocess import run
-
-    try:
-        from PIL import Image, ImageFilter
-    except ImportError:
-        print("PIL not available — install Pillow")
-        sys.exit(1)
-
-    work = Path("/tmp/affilirank-og")
-    work.mkdir(parents=True, exist_ok=True)
-
     slugs = sys.argv[1:] or SLUGS
     for slug in slugs:
-        src = f"{SRC_PREFIX}/{slug}.png"
-        raw = work / f"{slug}.png"
-        if not download(src, raw):
-            print(f"SKIP {slug}: source {src} not reachable")
-            continue
-        im = Image.open(raw).convert("RGB")
-        iw, ih = im.size
-
-        # Target canvas is wider than the source, so the thumb fills the height
-        # and the extra side margins get the blurred fill.
-        fit_w = int(ih * (W / H))
-        scaled = im.resize((fit_w, ih), Image.LANCZOS)
-        fill = im.resize((W, H), Image.LANCZOS)
-        fill = fill.filter(ImageFilter.GaussianBlur(40))
-
-        out = Image.new("RGB", (W, H))
-        out.paste(fill, (0, 0))
-        ox = (W - fit_w) // 2
-        out.paste(scaled, (ox, 0))
-
-        png = work / f"{slug}.png"
-        out.save(png, "PNG")
-        upload(f"og/{slug}.png", png.read_bytes(), "image/png")
-        print(f"OK {slug} {W}x{H}")
+        make_og(slug)
 
 
 if __name__ == "__main__":

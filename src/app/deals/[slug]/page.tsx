@@ -103,7 +103,7 @@ export default async function DealPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <StreamProvider initialDeals={[deal]} features={[...state.features]}>
-        <DealCard deal={deal} standalone />
+        <DealCard deal={deal} standalone priority />
         <DealModal />
       </StreamProvider>
     </>

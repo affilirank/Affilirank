@@ -50,6 +50,14 @@ export const metadata: Metadata = {
   },
 };
 
+const VIDEO_HOSTS = [
+  "https://player.vimeo.com",
+  "https://i.vimeocdn.com",
+  "https://www.youtube.com",
+  "https://www.youtube-nocookie.com",
+  "https://i.ytimg.com",
+];
+
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -86,6 +94,12 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="dark">
+      <head>
+        {VIDEO_HOSTS.map((h) => (
+          <link key={h} rel="preconnect" href={h} />
+        ))}
+        <link rel="dns-prefetch" href="https://hvrkdbmsfwrhnabefcmw.supabase.co" />
+      </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
         <script
           type="application/ld+json"

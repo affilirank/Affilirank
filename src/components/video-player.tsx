@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { Volume2, VolumeX, Play, Pause } from "lucide-react";
 import type { Deal } from "@/lib/types";
 import { analytics } from "@/lib/analytics";
@@ -25,38 +26,53 @@ function buildEmbedUrl(deal: Deal): string {
 }
 
 /**
- * Poster cover shown while a video is loading/starting. Rendered as an opaque
- * thumbnail so the browser's native buffering spinner is never visible — the
- * cover fades out only once playback actually starts, then the video is
- * already playing underneath. Placed before the legibility gradients in the
- * DOM so they still darken it.
- */
-/**
  * Renders the deal artwork (16:9 thumbnail) filling an arbitrary viewport
  * without cropping: a blurred, scaled copy fills the background while the
  * full sharp image sits centered on top. Used for full-bleed posters in the
  * vertical stream so faces/artwork are never cut off.
  */
-function HeroFill({ src }: { src: string }) {
+function HeroFill({
+  src,
+  priority = false,
+}: {
+  src: string;
+  /** First card in the stream — eager-load so playback starts instantly. */
+  priority?: boolean;
+}) {
+  const common = "absolute inset-0 h-full w-full";
   return (
     <>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      {/* Blurred backdrop: a tiny blurred variant is enough, so the browser
+          never downloads the full-res PNG twice for one card. */}
+      <Image
         src={src}
         alt=""
-        className="absolute inset-0 h-full w-full scale-110 object-cover opacity-40 blur-2xl"
+        fill
+        sizes="128px"
+        priority={priority}
+        className={cn(common, "scale-110 object-cover opacity-40 blur-2xl")}
       />
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={src}
         alt=""
-        className="absolute inset-0 m-auto h-full w-full object-contain"
+        fill
+        sizes="(max-width: 768px) 100vw, 60vw"
+        priority={priority}
+        className={cn(common, "m-auto object-contain")}
       />
     </>
   );
 }
 
-function PosterCover({ deal, show }: { deal: Deal; show: boolean }) {
+function PosterCover({
+  deal,
+  show,
+  priority = false,
+}: {
+  deal: Deal;
+  show: boolean;
+  priority?: boolean;
+}) {
   return (
     <div
       className={cn(
@@ -65,7 +81,7 @@ function PosterCover({ deal, show }: { deal: Deal; show: boolean }) {
       )}
       aria-hidden="true"
     >
-      <HeroFill src={deal.hero_image ?? "/logo.svg"} />
+      <HeroFill src={deal.hero_image ?? "/logo.svg"} priority={priority} />
     </div>
   );
 }
@@ -80,12 +96,15 @@ export function VideoPlayer({
   deal,
   inView,
   proVideo = false,
+  priority = false,
   className,
   onPosterHidden,
 }: {
   deal: Deal;
   inView: boolean;
   proVideo?: boolean;
+  /** First card — eager-load its poster so the VSL starts instantly. */
+  priority?: boolean;
   className?: string;
   /** Fired once the thumbnail poster has faded out (video is fully playing). */
   onPosterHidden?: () => void;
@@ -217,7 +236,7 @@ export function VideoPlayer({
   if (isProOnlyType(deal.video_type) && !proVideo) {
     return (
       <div className={cn("absolute inset-0 overflow-hidden bg-black", className)}>
-        <HeroFill src={deal.hero_image ?? "/logo.svg"} />
+        <HeroFill src={deal.hero_image ?? "/logo.svg"} priority={priority} />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/80" />
       </div>
     );
@@ -268,7 +287,7 @@ export function VideoPlayer({
           className="h-full w-full object-cover"
         />
 
-        <PosterCover deal={deal} show={!posterDone} />
+        <PosterCover deal={deal} show={!posterDone} priority={priority} />
 
         {/* bottom legibility gradient */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/80" />
@@ -334,7 +353,7 @@ export function VideoPlayer({
           className="h-full w-full"
         />
 
-        <PosterCover deal={deal} show={!posterDone} />
+        <PosterCover deal={deal} show={!posterDone} priority={priority} />
 
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/80" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/25" />
@@ -345,7 +364,7 @@ export function VideoPlayer({
   // ---- no video — hero image fallback --------------------------------------
   return (
     <div className={cn("absolute inset-0 overflow-hidden bg-black", className)}>
-      <HeroFill src={deal.hero_image ?? "/logo.svg"} />
+      <HeroFill src={deal.hero_image ?? "/logo.svg"} priority={priority} />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/80" />
     </div>
   );

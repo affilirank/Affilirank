@@ -56,7 +56,9 @@ function StreamInner({ exitIntent }: { exitIntent: boolean }) {
       >
         {!filters.query && !filters.category && <IntroSection />}
         {deals.length > 0 ? (
-          deals.map((deal) => <DealCard key={deal.id} deal={deal} />)
+          deals.map((deal, i) => (
+            <DealCard key={deal.id} deal={deal} priority={i === 0} />
+          ))
         ) : (
           <EmptyState
             hasFilters={!!filters.query || !!filters.category}

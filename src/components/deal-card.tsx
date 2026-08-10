@@ -46,9 +46,12 @@ function HotTag({ deal }: { deal: Deal }) {
 export function DealCard({
   deal,
   standalone = false,
+  priority = false,
 }: {
   deal: Deal;
   standalone?: boolean;
+  /** First card in the stream — eager-load its poster. */
+  priority?: boolean;
 }) {
   const { openDeal, setCurrentDeal, proVideo } = useStream();
   const { ref, inView } = useInView<HTMLDivElement>(0.65);
@@ -125,6 +128,7 @@ export function DealCard({
             deal={deal}
             inView={inView}
             proVideo={proVideo}
+            priority={priority}
             onPosterHidden={handlePosterHidden}
           />
         </div>
@@ -139,6 +143,7 @@ export function DealCard({
             deal={deal}
             inView={inView}
             proVideo={proVideo}
+            priority={priority}
             onPosterHidden={handlePosterHidden}
           />
         </button>

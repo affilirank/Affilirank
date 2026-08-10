@@ -628,6 +628,56 @@ def set_deal_status(deal_id, status, video_id=None, url=None):
     rest(f"/products?id=eq.{urllib.parse.quote(deal_id)}", "PATCH", patch)
 
 
+def upload_storage(path, data, ctype="image/png"):
+    """Upload bytes to the public previews bucket (upsert). Returns HTTP code."""
+    url = f"{SUPABASE_URL}/storage/v1/object/previews/{path}"
+    req = urllib.request.Request(
+        url, data=data, method="POST",
+        headers={
+            "apikey": SERVICE_KEY,
+            "Authorization": f"Bearer {SERVICE_KEY}",
+            "Content-Type": ctype,
+            "x-upsert": "true",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=300) as r:
+        return r.status
+
+
+def propagate_thumbnail(deal, thumb_path):
+    """Push the rendered thumbnail to every public surface in one pass: the
+    deal stream + deal page (hero_image), every blog post for the deal
+    (cover_image -> blog cards + blog OG shares), and the 1200x630 Facebook
+    OG image for the deal page. Best-effort — never blocks the upload."""
+    slug = deal.get("slug") or deal["id"]
+    try:
+        path = f"deals/{slug}.png"
+        code = upload_storage(path, thumb_path.read_bytes())
+        if code not in (200, 201):
+            print(f"  [warn] thumb upload -> HTTP {code}")
+            return
+        hero_url = f"{SUPABASE_URL}/storage/v1/object/public/previews/{path}"
+        rest(f"/products?id=eq.{urllib.parse.quote(deal['id'])}",
+             "PATCH", {"hero_image": hero_url})
+        blogs = rest(f"/blog_posts?select=id&deal_id=eq.{urllib.parse.quote(deal['id'])}") or []
+        for b in blogs:
+            rest(f"/blog_posts?id=eq.{b['id']}",
+                 "PATCH", {"cover_image": hero_url})
+        try:
+            import importlib.util
+            og_spec = importlib.util.spec_from_file_location(
+                "make_og_thumbnails", Path(__file__).resolve().parent / "make-og-thumbnails.py")
+            og_mod = importlib.util.module_from_spec(og_spec)
+            sys.modules["make_og_thumbnails"] = og_mod
+            og_spec.loader.exec_module(og_mod)
+            og_mod.make_og(slug, src=hero_url)
+        except Exception as e:
+            print(f"  [warn] og image failed: {e}")
+        print(f"  thumb propagated: {hero_url}")
+    except Exception as e:
+        print(f"  [warn] thumb propagation failed: {e}")
+
+
 def fetch_pending():
     rows = rest("/products?select=*&auto_post_status=eq.pending&limit=5")
     return rows or []
@@ -676,6 +726,10 @@ def process_deal(deal, format_, face_url=None, face_enabled=True):
     video = make_video(deal, out_dir, format_, demo_images=demo)
     thumb = make_ai_thumbnail(deal, out_dir) or make_thumbnail(deal, out_dir, None, format_=format_)
     print(f"  video: {video} ({video.stat().st_size/1e6:.1f} MB)")
+
+    # Single pass: the generated thumbnail goes to the deal stream, blog and
+    # Facebook OG image — no separate sync scripts needed for new deals.
+    propagate_thumbnail(deal, thumb)
 
     auth = get_youtube_auth()
     token = get_valid_token(auth)
