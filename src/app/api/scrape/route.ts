@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthed } from "@/lib/auth";
-import { scrapeUrl } from "@/lib/scraper";
+import { normalizeAffiliateUrl, scrapeUrl } from "@/lib/scraper";
 import { getYoutubeAuth, googleOAuthConfigured } from "@/lib/youtube";
 
 export const dynamic = "force-dynamic";
@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json().catch(() => null);
   const url = String(body?.url ?? "").trim();
+  const bundleUrl = String(body?.bundleUrl ?? "").trim();
 
   if (!url) {
     return NextResponse.json({ error: "url is required" }, { status: 400 });
@@ -42,6 +43,12 @@ export async function POST(request: NextRequest) {
 
   try {
     const result = await scrapeUrl(url);
+    if (bundleUrl) {
+      return NextResponse.json({
+        ...result,
+        bundle_url: normalizeAffiliateUrl(bundleUrl),
+      });
+    }
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(

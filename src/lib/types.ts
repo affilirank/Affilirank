@@ -53,6 +53,7 @@ export interface FunnelLink {
 export interface ScrapeResult {
   url: string;
   affiliate_url: string;
+  bundle_url?: string | null;
   title: string | null;
   description: string | null;
   hero_image: string | null;

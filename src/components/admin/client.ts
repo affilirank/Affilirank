@@ -29,10 +29,10 @@ async function api<T>(
 
 export const adminApi = {
   listDeals: () => api<Deal[]>("/api/admin/products"),
-  scrape: (url: string) =>
+  scrape: (url: string, bundleUrl?: string) =>
     api<ScrapeResult>("/api/scrape", {
       method: "POST",
-      body: JSON.stringify({ url }),
+      body: JSON.stringify({ url, bundleUrl }),
     }),
   createDeal: (draft: DealDraft) =>
     api<Deal>("/api/products", { method: "POST", body: JSON.stringify(draft) }),
@@ -72,6 +72,7 @@ export function draftFromScrape(r: ScrapeResult): DealDraft {
     original_price: r.original_price,
     currency: r.currency || "USD",
     affiliate_url: r.affiliate_url,
+    bundle_url: r.bundle_url ?? null,
     source_url: r.url,
     expiration_date: null,
     countdown_enabled: true,

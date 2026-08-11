@@ -43,6 +43,7 @@ export function UrlIngest({
   compact?: boolean;
 }) {
   const [url, setUrl] = useState("");
+  const [bundleUrl, setBundleUrl] = useState("");
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [result, setResult] = useState<ScrapeResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -94,7 +95,10 @@ export function UrlIngest({
     setState("loading");
     setError(null);
     try {
-      const r = await adminApi.scrape(trimmed);
+      const r = await adminApi.scrape(
+        trimmed,
+        bundleUrl.trim() ? bundleUrl.trim() : undefined
+      );
       setResult(r);
       setState("done");
     } catch (err) {
@@ -136,16 +140,29 @@ export function UrlIngest({
 
       {/* Input row */}
       <form onSubmit={scrape} className="flex flex-col gap-2 sm:flex-row">
-        <div className="relative flex-1">
-          <Link2 className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
-          <input
-            type="url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            disabled={!youtubeReady}
-            placeholder="https://www.jvzoo.com/b/123456/0"
-            className="h-12 w-full rounded-xl border border-white/10 bg-black/40 pl-10 pr-3 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-violet-400/60 focus:ring-2 focus:ring-violet-500/30 disabled:cursor-not-allowed disabled:opacity-40"
-          />
+        <div className="flex flex-1 flex-col gap-2">
+          <div className="relative">
+            <Link2 className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+            <input
+              type="url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              disabled={!youtubeReady}
+              placeholder="https://www.jvzoo.com/b/123456/0"
+              className="h-12 w-full rounded-xl border border-white/10 bg-black/40 pl-10 pr-3 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-violet-400/60 focus:ring-2 focus:ring-violet-500/30 disabled:cursor-not-allowed disabled:opacity-40"
+            />
+          </div>
+          <div className="relative">
+            <Tag className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+            <input
+              type="url"
+              value={bundleUrl}
+              onChange={(e) => setBundleUrl(e.target.value)}
+              disabled={!youtubeReady}
+              placeholder="https://www.jvzoo.com/b/123456/999998 (bundle)"
+              className="h-12 w-full rounded-xl border border-white/10 bg-black/40 pl-10 pr-3 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-violet-400/60 focus:ring-2 focus:ring-violet-500/30 disabled:cursor-not-allowed disabled:opacity-40"
+            />
+          </div>
         </div>
         <button
           type="submit"
@@ -289,6 +306,17 @@ export function UrlIngest({
                     {result.affiliate_url}
                   </p>
                 </div>
+
+                {result.bundle_url && (
+                  <div className="rounded-xl border border-dashed border-emerald-400/40 bg-emerald-500/5 px-3 py-2">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-300">
+                      Bundle URL (tracking attached)
+                    </p>
+                    <p className="truncate font-mono text-[11px] text-white/80">
+                      {result.bundle_url}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -315,8 +343,8 @@ export function UrlIngest({
 
       {compact && !result && state !== "loading" && (
         <p className="text-[11px] text-white/35">
-          Tip: paste the plain product URL — your affiliate tag is appended
-          automatically.
+          Tip: paste the plain product and bundle URLs — your affiliate tag is
+          appended to both automatically.
         </p>
       )}
     </div>
