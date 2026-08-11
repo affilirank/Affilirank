@@ -29,6 +29,12 @@ type DealStatus = {
 
 type StatusPayload = {
   configured: boolean;
+  /** Credentials came from Vercel env vars (host-managed), not the dashboard. */
+  envConfigured: boolean;
+  google_auth: {
+    client_id: string;
+    client_secret_set: boolean;
+  } | null;
   connected: boolean;
   channel: { id: string; title: string; avatar: string | null } | null;
   connected_at: string | null;
@@ -45,10 +51,15 @@ export function AutopublishTab() {
   const [busy, setBusy] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [geminiKey, setGeminiKey] = useState("");
+  const [googleClientId, setGoogleClientId] = useState("");
+  const [googleClientSecret, setGoogleClientSecret] = useState("");
 
   useEffect(() => {
     if (status && status.settings.gemini_api_key !== geminiKey) {
       setGeminiKey(status.settings.gemini_api_key ?? "");
+    }
+    if (status && status.google_auth?.client_id !== googleClientId) {
+      setGoogleClientId(status.google_auth?.client_id ?? "");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
@@ -127,6 +138,35 @@ export function AutopublishTab() {
     await saveSettings({ gemini_api_key: geminiKey.trim() });
   }, [saveSettings, geminiKey]);
 
+  const saveGoogleCreds = useCallback(async () => {
+    setBusy("google");
+    try {
+      const res = await fetch("/api/admin/youtube/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          google_auth: {
+            client_id: googleClientId.trim(),
+            client_secret: googleClientSecret.trim(),
+          },
+        }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.error ?? "Save failed");
+      setGoogleClientSecret("");
+      notify(
+        status?.google_auth?.client_id || status?.envConfigured
+          ? "Credentials updated"
+          : "Credentials saved — connect your channel below"
+      );
+      await refresh();
+    } catch (e) {
+      notify(e instanceof Error ? e.message : "Save failed");
+    } finally {
+      setBusy(null);
+    }
+  }, [googleClientId, googleClientSecret, notify, refresh, status]);
+
   const enqueue = useCallback(
     async (dealId: string | null) => {
       setBusy(dealId ? `deal:${dealId}` : "all");
@@ -169,42 +209,134 @@ export function AutopublishTab() {
         </div>
       )}
 
-      {!status.configured && (
-        <section className="rounded-3xl border border-dashed border-amber-400/30 bg-amber-400/5 p-6">
-          <h2 className="flex items-center gap-2 font-display text-lg font-bold text-amber-200">
-            <MonitorPlay className="h-5 w-5" /> Google API setup required
+      {/* Google API credentials — set from the dashboard, no Vercel redeploy */}
+      <section className="glass rounded-3xl p-6">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="flex items-center gap-2 font-display text-lg font-bold">
+            <MonitorPlay className="h-5 w-5" /> Google API credentials
           </h2>
-          <p className="mt-1 text-sm leading-relaxed text-white/55">
-            The Auto-Publish engine needs a Google Cloud OAuth client to upload
-            videos to your channel. Two env vars must be set:
-            <code className="mx-1 rounded bg-white/10 px-1.5 py-0.5 font-mono text-xs">GOOGLE_CLIENT_ID</code>
-            and
-            <code className="mx-1 rounded bg-white/10 px-1.5 py-0.5 font-mono text-xs">GOOGLE_CLIENT_SECRET</code>.
+          {status.configured && (
+            <span className="flex items-center gap-1.5 rounded-full bg-emerald-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-emerald-300 ring-1 ring-emerald-400/30">
+              <CheckCircle2 className="h-3.5 w-3.5" /> Configured
+            </span>
+          )}
+          {!status.configured && (
+            <span className="flex items-center gap-1.5 rounded-full bg-amber-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-300 ring-1 ring-amber-400/30">
+              <AlertTriangle className="h-3.5 w-3.5" /> Needs credentials
+            </span>
+          )}
+        </div>
+        <p className="mt-1 text-sm leading-relaxed text-white/55">
+          Paste the OAuth client ID + secret from your Google Cloud project.
+          They are stored securely in this site&apos;s settings — no server
+          env vars, no redeploy.
+          {status.envConfigured && (
+            <>
+              {" "}
+              Your host has also configured credentials via environment
+              variables; anything you save here is used when those aren&apos;t
+              set.
+            </>
+          )}
+        </p>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-white/50">
+              OAuth client ID
+            </label>
+            <input
+              type="text"
+              value={googleClientId}
+              onChange={(e) => setGoogleClientId(e.target.value)}
+              placeholder="1234567890-abc.apps.googleusercontent.com"
+              className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 font-mono text-xs text-white outline-none placeholder:text-white/30 focus:border-violet-400/50"
+              autoComplete="off"
+              spellCheck={false}
+            />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-white/50">
+              OAuth client secret
+            </label>
+            <input
+              type="password"
+              value={googleClientSecret}
+              onChange={(e) => setGoogleClientSecret(e.target.value)}
+              placeholder={
+                status.google_auth?.client_secret_set
+                  ? "•••••••••• (saved — leave blank to keep)"
+                  : "GOCSPX-…"
+              }
+              className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 font-mono text-xs text-white outline-none placeholder:text-white/30 focus:border-violet-400/50"
+              autoComplete="off"
+              spellCheck={false}
+            />
+          </div>
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <button
+            onClick={saveGoogleCreds}
+            disabled={
+              busy === "google" ||
+              !googleClientId.trim() ||
+              !googleClientSecret.trim()
+            }
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-2.5 text-sm font-bold text-white shadow-lg transition hover:opacity-90 disabled:opacity-40"
+          >
+            {busy === "google" ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <CheckCircle2 className="h-4 w-4" />
+            )}
+            Save credentials
+          </button>
+          {status.google_auth?.client_secret_set && (
+            <span className="text-xs text-white/45">
+              Client ID {status.google_auth.client_id} · secret saved
+            </span>
+          )}
+        </div>
+
+        <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-white/50">
+            One-time Google Cloud setup
           </p>
-          <ol className="mt-4 space-y-2 text-sm text-white/70">
+          <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm text-white/70">
             <li>
-              1. Go to{" "}
-              <a className="text-cyan-300 underline" href="https://console.cloud.google.com" target="_blank" rel="noopener noreferrer">console.cloud.google.com</a>{" "}
+              Go to{" "}
+              <a
+                className="text-cyan-300 underline"
+                href="https://console.cloud.google.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                console.cloud.google.com
+              </a>{" "}
               and create a project (or reuse one).
             </li>
             <li>
-              2. Enable the <strong>YouTube Data API v3</strong> under APIs &amp; Services.
+              Enable the <strong>YouTube Data API v3</strong> under APIs &amp;
+              Services.
             </li>
             <li>
-              3. Create an <strong>OAuth client ID</strong> (Application type: Web application) under Credentials.
+              Create an <strong>OAuth client ID</strong> (Application type: Web
+              application) under Credentials.
             </li>
             <li>
-              4. Add this authorized redirect URI:{" "}
+              Add this authorized redirect URI:{" "}
               <code className="break-all rounded bg-white/10 px-1.5 py-0.5 font-mono text-xs text-cyan-200">
                 {window.location.origin}/api/admin/youtube/callback
               </code>
             </li>
             <li>
-              5. Copy the client ID + secret into the Vercel project env vars and redeploy.
+              Paste the client ID + secret into the fields above and click{" "}
+              <strong>Save credentials</strong>.
             </li>
           </ol>
-        </section>
-      )}
+        </div>
+      </section>
 
       {status.configured && !status.connected && (
         <section className="glass rounded-3xl p-6 text-center">

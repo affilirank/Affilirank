@@ -4,26 +4,59 @@ import {
   AutopublishSettings,
   getAutopublishSettings,
   setAutopublishSettings,
+  GoogleAuth,
+  getGoogleAuth,
+  setGoogleAuth,
 } from "@/lib/youtube";
 
 export const dynamic = "force-dynamic";
 
 /**
  * GET/POST /api/admin/youtube/settings
- * Read or update the Auto-Publish settings (enabled, interval, format).
+ * Read or update the Auto-Publish settings (enabled, interval, format) and the
+ * Google OAuth client credentials stored in the settings row (client ID/secret
+ * the admin pastes in — no Vercel env var + redeploy required).
  */
 export async function GET() {
   if (!(await isAdminAuthed())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  return NextResponse.json({ settings: await getAutopublishSettings() });
+  const googleAuth = await getGoogleAuth();
+  return NextResponse.json({
+    settings: await getAutopublishSettings(),
+    google_auth: googleAuth
+      ? {
+          client_id: googleAuth.client_id,
+          client_secret_set: Boolean(googleAuth.client_secret),
+        }
+      : null,
+  });
 }
 
 export async function POST(req: Request) {
   if (!(await isAdminAuthed())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const body = (await req.json().catch(() => ({}))) as Partial<AutopublishSettings>;
+  const body = (await req.json().catch(() => ({}))) as Partial<AutopublishSettings> & {
+    google_auth?: GoogleAuth | null;
+  };
+
+  if (body.google_auth !== undefined) {
+    if (body.google_auth === null) {
+      await setGoogleAuth(null);
+    } else {
+      const client_id = String(body.google_auth.client_id ?? "").trim();
+      const client_secret = String(body.google_auth.client_secret ?? "").trim();
+      if (!client_id || !client_secret) {
+        return NextResponse.json(
+          { error: "Both client ID and client secret are required" },
+          { status: 400 }
+        );
+      }
+      await setGoogleAuth({ client_id, client_secret });
+    }
+  }
+
   const current = await getAutopublishSettings();
   const next: AutopublishSettings = {
     enabled: typeof body.enabled === "boolean" ? body.enabled : current.enabled,

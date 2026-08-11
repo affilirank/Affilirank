@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isAdminAuthed } from "@/lib/auth";
 import {
   getAutopublishSettings,
+  getGoogleAuth,
   getYoutubeAuth,
   googleOAuthConfigured,
 } from "@/lib/youtube";
@@ -17,10 +18,12 @@ export async function GET() {
   if (!(await isAdminAuthed())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const [auth, settings, deals] = await Promise.all([
+  const [auth, settings, deals, googleAuth, configured] = await Promise.all([
     getYoutubeAuth(),
     getAutopublishSettings(),
     getAllDeals(),
+    getGoogleAuth(),
+    googleOAuthConfigured(),
   ]);
 
   const dealsStatus = deals.map((d) => ({
@@ -35,7 +38,17 @@ export async function GET() {
   }));
 
   return NextResponse.json({
-    configured: googleOAuthConfigured(),
+    configured,
+    /** Whether the client ID/secret came from Vercel env vars (host-managed). */
+    envConfigured: Boolean(
+      process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    ),
+    google_auth: googleAuth
+      ? {
+          client_id: googleAuth.client_id,
+          client_secret_set: Boolean(googleAuth.client_secret),
+        }
+      : null,
     connected: Boolean(auth),
     channel: auth
       ? { id: auth.channel_id, title: auth.channel_title, avatar: auth.channel_avatar ?? null }

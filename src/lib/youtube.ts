@@ -42,8 +42,17 @@ export const DEFAULT_AUTOPUBLISH: AutopublishSettings = {
   profile_in_thumbnails: true,
 };
 
-const clientId = () => process.env.GOOGLE_CLIENT_ID ?? "";
-const clientSecret = () => process.env.GOOGLE_CLIENT_SECRET ?? "";
+/**
+ * Google OAuth client credentials. Admins paste these in the Auto-Publish tab
+ * and they persist in the Supabase settings row — no Vercel env var + redeploy
+ * needed. Deployment env vars still win when both are present (they override
+ * the DB values), which lets a host keep central credentials if desired.
+ */
+export interface GoogleAuth {
+  client_id: string;
+  client_secret: string;
+}
+
 export const YOUTUBE_REDIRECT_URI = `${SITE_URL}/api/admin/youtube/callback`;
 
 export const YOUTUBE_SCOPES = [
@@ -51,8 +60,40 @@ export const YOUTUBE_SCOPES = [
   "https://www.googleapis.com/auth/youtube.readonly",
 ];
 
-export function googleOAuthConfigured(): boolean {
-  return Boolean(clientId() && clientSecret());
+/** Read stored Google OAuth credentials — DB settings first, env vars override. */
+export async function getGoogleAuth(): Promise<GoogleAuth | null> {
+  const envId = process.env.GOOGLE_CLIENT_ID ?? "";
+  const envSecret = process.env.GOOGLE_CLIENT_SECRET ?? "";
+  const sb = await createSupabaseServerClient();
+  let dbId = "";
+  let dbSecret = "";
+  if (sb) {
+    const { data } = await sb
+      .from("settings")
+      .select("google_auth")
+      .eq("id", 1)
+      .maybeSingle();
+    const stored = (data as { google_auth?: GoogleAuth | null } | null)
+      ?.google_auth;
+    dbId = stored?.client_id?.trim() ?? "";
+    dbSecret = stored?.client_secret?.trim() ?? "";
+  }
+  const client_id = envId || dbId;
+  const client_secret = envSecret || dbSecret;
+  if (!client_id || !client_secret) return null;
+  return { client_id, client_secret };
+}
+
+export async function setGoogleAuth(auth: GoogleAuth | null): Promise<void> {
+  const sb = await createSupabaseServerClient();
+  if (!sb) return;
+  await sb
+    .from("settings")
+    .upsert({ id: 1, google_auth: auth }, { onConflict: "id" });
+}
+
+export async function googleOAuthConfigured(): Promise<boolean> {
+  return (await getGoogleAuth()) !== null;
 }
 
 /* ---------------------------------------------------------------------------
@@ -112,9 +153,11 @@ export async function setAutopublishSettings(
  * OAuth
  * ------------------------------------------------------------------------- */
 
-export function buildAuthUrl(state: string): string {
+export async function buildAuthUrl(state: string): Promise<string | null> {
+  const creds = await getGoogleAuth();
+  if (!creds) return null;
   const params = new URLSearchParams({
-    client_id: clientId(),
+    client_id: creds.client_id,
     redirect_uri: YOUTUBE_REDIRECT_URI,
     response_type: "code",
     scope: YOUTUBE_SCOPES.join(" "),
@@ -144,12 +187,13 @@ async function tokenRequest(
 }
 
 export async function exchangeCodeForTokens(
-  code: string
+  code: string,
+  creds: GoogleAuth
 ): Promise<Omit<YoutubeAuth, "channel_id" | "channel_title" | "connected_at">> {
   const body = new URLSearchParams({
     code,
-    client_id: clientId(),
-    client_secret: clientSecret(),
+    client_id: creds.client_id,
+    client_secret: creds.client_secret,
     redirect_uri: YOUTUBE_REDIRECT_URI,
     grant_type: "authorization_code",
   });
@@ -162,11 +206,12 @@ export async function exchangeCodeForTokens(
 }
 
 export async function refreshAccessToken(
-  refreshToken: string
+  refreshToken: string,
+  creds: GoogleAuth
 ): Promise<{ access_token: string; expires_at: number }> {
   const body = new URLSearchParams({
-    client_id: clientId(),
-    client_secret: clientSecret(),
+    client_id: creds.client_id,
+    client_secret: creds.client_secret,
     refresh_token: refreshToken,
     grant_type: "refresh_token",
   });
@@ -209,7 +254,9 @@ export async function getValidAccessToken(): Promise<{
   if (!auth) throw new Error("YouTube not connected");
   if (!auth.refresh_token) throw new Error("Missing refresh token");
   if (Date.now() >= auth.expires_at) {
-    const refreshed = await refreshAccessToken(auth.refresh_token);
+    const creds = await getGoogleAuth();
+    if (!creds) throw new Error("Google OAuth credentials are not configured");
+    const refreshed = await refreshAccessToken(auth.refresh_token, creds);
     auth = {
       ...auth,
       access_token: refreshed.access_token,

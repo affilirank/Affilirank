@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import {
   exchangeCodeForTokens,
   fetchChannelInfo,
+  getGoogleAuth,
   setYoutubeAuth,
 } from "@/lib/youtube";
 
@@ -28,7 +29,9 @@ export async function GET(req: Request) {
   }
 
   try {
-    const tokens = await exchangeCodeForTokens(code);
+    const creds = await getGoogleAuth();
+    if (!creds) throw new Error("Google OAuth credentials are not configured");
+    const tokens = await exchangeCodeForTokens(code, creds);
     const channel = await fetchChannelInfo(tokens.access_token);
     await setYoutubeAuth({
       ...tokens,

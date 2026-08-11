@@ -618,10 +618,25 @@ def get_youtube_auth():
     return auth
 
 
+def get_google_auth():
+    """OAuth client credentials for token refresh. Reads the credentials the
+    admin pasted in Admin > Auto-Publish (stored in settings.google_auth);
+    falls back to GOOGLE_CLIENT_ID/SECRET env vars when set."""
+    rows = rest("/settings?select=*&id=eq.1&limit=1")
+    db = (rows[0] or {}).get("google_auth") or {} if rows else {}
+    return {
+        "client_id": os.environ.get("GOOGLE_CLIENT_ID", "") or (db or {}).get("client_id", ""),
+        "client_secret": os.environ.get("GOOGLE_CLIENT_SECRET", "") or (db or {}).get("client_secret", ""),
+    }
+
+
 def refresh_token(auth):
+    creds = get_google_auth()
+    if not creds["client_id"] or not creds["client_secret"]:
+        raise RuntimeError("Google OAuth credentials are not configured — add them in Admin > Auto-Publish")
     body = urllib.parse.urlencode({
-        "client_id": os.environ.get("GOOGLE_CLIENT_ID", ""),
-        "client_secret": os.environ.get("GOOGLE_CLIENT_SECRET", ""),
+        "client_id": creds["client_id"],
+        "client_secret": creds["client_secret"],
         "refresh_token": auth["refresh_token"],
         "grant_type": "refresh_token",
     }).encode()

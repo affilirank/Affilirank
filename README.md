@@ -67,6 +67,8 @@ develop fully offline.
     - `0002_events.sql` — `deal_events` analytics table.
     - `0003_blog_posts.sql` — `blog_posts` table (auto-generated SEO articles).
     - `0004_settings.sql` — `settings` table (activated license keys).
+    - `0005_bundle_price.sql` — `products.bundle_price` column (bundle pricing).
+    - `0006_google_auth.sql` — `settings.google_auth` column (dashboard Google OAuth config).
 3. Copy the project URL, anon key, and service-role key into `.env.local`.
 
 ### 2. Environment variables
@@ -86,6 +88,7 @@ See [`.env.example`](.env.example) for the full list:
 | `UPSELL_URL_BLOG` … `UPSELL_URL_VIDEO` | Per-module checkout URLs (see Licensing) |
 | `UPSELL_URL_BUNDLE` | Bundle checkout URL (full version) |
 | `NEXT_PUBLIC_VSL_EMBED_URL` | Video sales letter embed on `/affilirank` |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Optional: Google OAuth client (can be configured in the admin dashboard instead, stored in `settings.google_auth`) |
 
 ### 3. Deploy to Vercel
 

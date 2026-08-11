@@ -16,15 +16,15 @@ export async function GET() {
   if (!(await isAdminAuthed())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  if (!googleOAuthConfigured()) {
+  if (!(await googleOAuthConfigured())) {
     return NextResponse.json(
-      { error: "Google OAuth is not configured (missing GOOGLE_CLIENT_ID/SECRET)" },
+      { error: "Google OAuth is not configured — add your client ID + secret in the Auto-Publish tab" },
       { status: 400 }
     );
   }
   const auth = await getYoutubeAuth();
   return NextResponse.json({
-    authUrl: buildAuthUrl("admin-connect"),
+    authUrl: await buildAuthUrl("admin-connect"),
     connected: Boolean(auth),
     channel: auth
       ? {
