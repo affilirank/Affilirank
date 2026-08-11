@@ -44,6 +44,11 @@ export const adminApi = {
   deleteDeal: (id: string) =>
     api<{ ok: boolean }>(`/api/products/${id}`, { method: "DELETE" }),
   listBlogs: () => api<BlogPost[]>("/api/blogs"),
+  generateThumbnail: (dealId: string) =>
+    api<{ hero_image: string }>("/api/admin/thumbnail", {
+      method: "POST",
+      body: JSON.stringify({ dealId }),
+    }),
   regenerateBlog: (dealId: string) =>
     api<BlogPost>("/api/blogs", {
       method: "POST",

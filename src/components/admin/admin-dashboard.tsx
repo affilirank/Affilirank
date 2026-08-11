@@ -62,6 +62,23 @@ export function AdminDashboard({
     setTimeout(() => setNotice(null), 3000);
   }, []);
 
+  const generateThumbnail = useCallback(
+    async (dealId: string) => {
+      try {
+        await adminApi.generateThumbnail(dealId);
+        notify("AI thumbnail generated");
+        await refresh();
+      } catch (e) {
+        notify(
+          e instanceof Error
+            ? `Thumbnail failed: ${e.message}`
+            : "Thumbnail generation failed"
+        );
+      }
+    },
+    [notify, refresh]
+  );
+
   useEffect(() => {
     refresh().catch(() => {});
   }, [refresh]);
@@ -107,23 +124,28 @@ export function AdminDashboard({
       setBusy(true);
       try {
         const finalDraft = { ...draft, published: publish ?? draft.published };
+        let createdId: string | null = null;
         if (id && id !== "new") {
           await adminApi.updateDeal(id, finalDraft);
           notify(publish ? "Deal published to the stream" : "Deal updated");
         } else {
-          await adminApi.createDeal(finalDraft);
+          const created = await adminApi.createDeal(finalDraft);
+          createdId = created.id;
           notify(publish ? "Deal published to the stream" : "Draft saved");
         }
         setEditing(null);
         await refresh();
         setTab("deals");
+        if (publish && createdId) {
+          generateThumbnail(createdId);
+        }
       } catch (e) {
         notify(e instanceof Error ? e.message : "Save failed");
       } finally {
         setBusy(false);
       }
     },
-    [notify, refresh]
+    [notify, refresh, generateThumbnail]
   );
 
   const handleTogglePublish = useCallback(
@@ -259,6 +281,7 @@ export function AdminDashboard({
             onTogglePublish={handleTogglePublish}
             onEdit={(deal) => setEditing({ id: deal.id, draft: dealToDraft(deal) })}
             onDelete={handleDelete}
+            onGenerateThumbnail={(deal) => generateThumbnail(deal.id)}
           />
         )}
 

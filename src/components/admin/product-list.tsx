@@ -11,6 +11,8 @@ import {
   Timer,
   Star,
   FileText,
+  Sparkles,
+  Loader2,
 } from "lucide-react";
 import type { BlogPost, Deal } from "@/lib/types";
 import { cn, formatPrice, timeAgo, categoryLabel } from "@/lib/utils";
@@ -25,15 +27,18 @@ export function ProductList({
   onTogglePublish,
   onEdit,
   onDelete,
+  onGenerateThumbnail,
 }: {
   deals: Deal[];
   onTogglePublish: (deal: Deal) => void;
   onEdit: (deal: Deal) => void;
   onDelete: (id: string) => void;
+  onGenerateThumbnail: (deal: Deal) => void;
 }) {
   const [query, setQuery] = useState("");
   const [onlyLive, setOnlyLive] = useState(false);
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [thumbing, setThumbing] = useState<string | null>(null);
 
   useEffect(() => {
     adminApi
@@ -183,6 +188,21 @@ export function ProductList({
 
                 {/* Actions */}
                 <div className="flex items-center gap-1.5 sm:justify-end">
+                  <button
+                    onClick={() => {
+                      setThumbing(deal.id);
+                      onGenerateThumbnail(deal);
+                    }}
+                    disabled={thumbing === deal.id}
+                    title="Generate AI thumbnail"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-white/60 transition hover:bg-fuchsia-500/20 hover:text-fuchsia-200 disabled:cursor-wait disabled:opacity-50"
+                  >
+                    {thumbing === deal.id ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Sparkles className="h-3.5 w-3.5" />
+                    )}
+                  </button>
                   {blogByDeal.get(deal.id) && (
                     <a
                       href={`/blog/${blogByDeal.get(deal.id)!.slug}`}
