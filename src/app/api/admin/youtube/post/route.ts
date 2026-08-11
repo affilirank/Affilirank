@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdminAuthed } from "@/lib/auth";
+import { getCurrentTenant } from "@/lib/tenant";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
@@ -7,13 +8,14 @@ export const dynamic = "force-dynamic";
 /**
  * POST /api/admin/youtube/post  { dealId }
  * Enqueue a deal for auto-posting — sets auto_post_status='pending' so the
- * worker picks it up. Also supports { dealId: null } to enqueue all
- * published deals without a video yet.
+ * worker picks it up. Also supports { dealId: null } to enqueue all published
+ * deals without a video yet. Scoped to the current tenant.
  */
 export async function POST(req: Request) {
   if (!(await isAdminAuthed())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const tenant = await getCurrentTenant();
   const { dealId } = (await req.json().catch(() => ({}))) as {
     dealId?: string | null;
   };
@@ -30,6 +32,7 @@ export async function POST(req: Request) {
     const { error } = await sb
       .from("products")
       .update({ auto_post_status: "pending" })
+      .eq("tenant_id", tenant.id)
       .eq("id", dealId);
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -41,6 +44,7 @@ export async function POST(req: Request) {
   const { data, error } = await sb
     .from("products")
     .update({ auto_post_status: "pending" })
+    .eq("tenant_id", tenant.id)
     .eq("published", true)
     .is("youtube_video_id", null)
     .select("id");

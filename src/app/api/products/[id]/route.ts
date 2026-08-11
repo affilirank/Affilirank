@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { deleteDeal, updateDeal } from "@/lib/data";
 import { isAdminAuthed } from "@/lib/auth";
+import { getCurrentTenant } from "@/lib/tenant";
 import type { DealDraft } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +26,8 @@ export async function PATCH(
   }
 
   try {
-    const deal = await updateDeal(id, body as Partial<DealDraft>);
+    const tenant = await getCurrentTenant();
+    const deal = await updateDeal(tenant.id, id, body as Partial<DealDraft>);
     return NextResponse.json(deal);
   } catch (error) {
     const status = error instanceof Error && error.name === "LicenseGateError" ? 400 : 500;
@@ -49,6 +51,7 @@ export async function DELETE(
   }
 
   const { id } = await ctx.params;
-  const ok = await deleteDeal(id);
+  const tenant = await getCurrentTenant();
+  const ok = await deleteDeal(tenant.id, id);
   return NextResponse.json({ ok });
 }

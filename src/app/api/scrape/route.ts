@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthed } from "@/lib/auth";
+import { getCurrentTenant } from "@/lib/tenant";
 import { normalizeAffiliateUrl, scrapeUrl } from "@/lib/scraper";
 import { getYoutubeAuth, googleOAuthConfigured } from "@/lib/youtube";
 
@@ -19,9 +20,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const tenant = await getCurrentTenant();
   const [auth, oauthConfigured] = await Promise.all([
-    getYoutubeAuth(),
-    googleOAuthConfigured(),
+    getYoutubeAuth(tenant.id),
+    googleOAuthConfigured(tenant.id),
   ]);
   if (!oauthConfigured || !auth) {
     return NextResponse.json(

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { AnalyticsScripts } from "@/components/analytics-scripts";
 import { getLicenseState } from "@/lib/data";
+import { getCurrentTenant } from "@/lib/tenant";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/constants";
 import "./globals.css";
 
@@ -89,7 +90,9 @@ export default async function RootLayout({
   };
 
   const [analytics] = await Promise.all([
-    getLicenseState().then((s) => s.features.has("analytics")),
+    getCurrentTenant().then((t) =>
+      getLicenseState(t.id).then((s) => s.features.has("analytics"))
+    ),
   ]);
 
   return (
@@ -98,7 +101,7 @@ export default async function RootLayout({
         {VIDEO_HOSTS.map((h) => (
           <link key={h} rel="preconnect" href={h} />
         ))}
-        <link rel="dns-prefetch" href="https://hvrkdbmsfwrhnabefcmw.supabase.co" />
+        <link rel="dns-prefetch" href="https://mckqmyekgnpzhjdcqqxg.supabase.co" />
       </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
         <script

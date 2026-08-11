@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdminAuthed } from "@/lib/auth";
+import { getCurrentTenant } from "@/lib/tenant";
 import {
   getAutopublishSettings,
   getGoogleAuth,
@@ -12,18 +13,20 @@ export const dynamic = "force-dynamic";
 
 /**
  * GET /api/admin/youtube/status
- * Connection state + autopublish settings + per-deal video status.
+ * Connection state + autopublish settings + per-deal video status for the
+ * current tenant.
  */
 export async function GET() {
   if (!(await isAdminAuthed())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const tenant = await getCurrentTenant();
   const [auth, settings, deals, googleAuth, configured] = await Promise.all([
-    getYoutubeAuth(),
-    getAutopublishSettings(),
-    getAllDeals(),
-    getGoogleAuth(),
-    googleOAuthConfigured(),
+    getYoutubeAuth(tenant.id),
+    getAutopublishSettings(tenant.id),
+    getAllDeals(tenant.id),
+    getGoogleAuth(tenant.id),
+    googleOAuthConfigured(tenant.id),
   ]);
 
   const dealsStatus = deals.map((d) => ({

@@ -30,14 +30,15 @@ import {
 } from "@/lib/licensing";
 
 /**
- * Unified server data layer.
+ * Unified server data layer — multi-tenant.
  *
- * When Supabase env vars are present, reads/writes go through the real
- * database (and Realtime pushes changes to open browsers). Without them the
- * local JSON store is used so `npm run dev` works out of the box.
+ * Every query is scoped by `tenantId` so one shared Supabase project can host
+ * hundreds of white-label brands without cross-tenant leakage. When Supabase
+ * env vars are present, reads/writes go through the real database; otherwise
+ * the local JSON store is used so `npm run dev` works out of the box.
  */
 
-export async function getPublishedDeals(): Promise<Deal[]> {
+export async function getPublishedDeals(tenantId: string): Promise<Deal[]> {
   if (isMockMode()) return mockGetPublishedDeals();
 
   const sb = await createSupabaseServerClient();
@@ -46,6 +47,7 @@ export async function getPublishedDeals(): Promise<Deal[]> {
   const { data, error } = await sb
     .from("products")
     .select("*")
+    .eq("tenant_id", tenantId)
     .eq("published", true)
     .order("featured", { ascending: false })
     .order("sort_order", { ascending: true });
@@ -54,7 +56,10 @@ export async function getPublishedDeals(): Promise<Deal[]> {
   return data as Deal[];
 }
 
-export async function getDealBySlug(slug: string): Promise<Deal | null> {
+export async function getDealBySlug(
+  tenantId: string,
+  slug: string
+): Promise<Deal | null> {
   if (isMockMode()) return mockGetDealBySlug(slug);
 
   const sb = await createSupabaseServerClient();
@@ -63,6 +68,7 @@ export async function getDealBySlug(slug: string): Promise<Deal | null> {
   const { data, error } = await sb
     .from("products")
     .select("*")
+    .eq("tenant_id", tenantId)
     .eq("slug", slug)
     .maybeSingle();
 
@@ -70,7 +76,10 @@ export async function getDealBySlug(slug: string): Promise<Deal | null> {
   return data as Deal;
 }
 
-export async function getDealById(id: string): Promise<Deal | null> {
+export async function getDealById(
+  tenantId: string,
+  id: string
+): Promise<Deal | null> {
   if (isMockMode()) return mockGetDealById(id);
 
   const sb = await createSupabaseServerClient();
@@ -79,6 +88,7 @@ export async function getDealById(id: string): Promise<Deal | null> {
   const { data, error } = await sb
     .from("products")
     .select("*")
+    .eq("tenant_id", tenantId)
     .eq("id", id)
     .maybeSingle();
 
@@ -86,7 +96,7 @@ export async function getDealById(id: string): Promise<Deal | null> {
   return data as Deal;
 }
 
-export async function getAllDeals(): Promise<Deal[]> {
+export async function getAllDeals(tenantId: string): Promise<Deal[]> {
   if (isMockMode()) return mockListDeals();
 
   const sb = await createSupabaseServerClient();
@@ -95,6 +105,7 @@ export async function getAllDeals(): Promise<Deal[]> {
   const { data, error } = await sb
     .from("products")
     .select("*")
+    .eq("tenant_id", tenantId)
     .order("created_at", { ascending: false });
 
   if (error || !data) return mockListDeals();
@@ -110,11 +121,14 @@ function uniqueSlug(title: string, existingSlugs: string[]): string {
   return `${base}-${n}`;
 }
 
-export async function createDeal(draft: DealDraft): Promise<Deal> {
+export async function createDeal(
+  tenantId: string,
+  draft: DealDraft
+): Promise<Deal> {
   const cleaned = { ...draft, ...sanitizeVideoForDeal(draft) };
-  const existing = await getAllDeals();
-  await assertCanCreateDeal(existing.length);
-  if (cleaned.video_type) await assertProVideoAllowed(cleaned.video_type);
+  const existing = await getAllDeals(tenantId);
+  await assertCanCreateDeal(tenantId, existing.length);
+  if (cleaned.video_type) await assertProVideoAllowed(tenantId, cleaned.video_type);
   const slug = uniqueSlug(cleaned.title, existing.map((d) => d.slug));
   let deal: Deal;
   if (isMockMode()) {
@@ -126,7 +140,7 @@ export async function createDeal(draft: DealDraft): Promise<Deal> {
     } else {
       const { data, error } = await sb
         .from("products")
-        .insert({ ...cleaned, slug })
+        .insert({ ...cleaned, slug, tenant_id: tenantId })
         .select("*")
         .single();
       if (error) throw new Error(error.message);
@@ -134,20 +148,21 @@ export async function createDeal(draft: DealDraft): Promise<Deal> {
     }
   }
 
-  await syncBlogForDeal(deal);
+  await syncBlogForDeal(tenantId, deal);
   return deal;
 }
 
 export async function updateDeal(
+  tenantId: string,
   id: string,
   patch: Partial<DealDraft>
 ): Promise<Deal> {
   const cleaned = { ...patch, ...sanitizeVideoForDeal(patch) };
-  if (cleaned.video_type) await assertProVideoAllowed(cleaned.video_type);
+  if (cleaned.video_type) await assertProVideoAllowed(tenantId, cleaned.video_type);
   let updated: Deal;
   let slug: string | undefined;
   if (cleaned.title) {
-    const all = await getAllDeals();
+    const all = await getAllDeals(tenantId);
     const otherSlugs = all.filter((d) => d.id !== id).map((d) => d.slug);
     slug = uniqueSlug(cleaned.title, otherSlugs);
   }
@@ -167,6 +182,7 @@ export async function updateDeal(
       const { data, error } = await sb
         .from("products")
         .update(patchRow)
+        .eq("tenant_id", tenantId)
         .eq("id", id)
         .select("*")
         .single();
@@ -175,11 +191,14 @@ export async function updateDeal(
     }
   }
 
-  await syncBlogForDeal(updated);
+  await syncBlogForDeal(tenantId, updated);
   return updated;
 }
 
-export async function deleteDeal(id: string): Promise<boolean> {
+export async function deleteDeal(
+  tenantId: string,
+  id: string
+): Promise<boolean> {
   if (isMockMode()) {
     mockDeleteBlogPostsByDeal(id);
     return mockDeleteDeal(id);
@@ -191,12 +210,16 @@ export async function deleteDeal(id: string): Promise<boolean> {
     return mockDeleteDeal(id);
   }
 
-  const { error } = await sb.from("products").delete().eq("id", id);
+  const { error } = await sb
+    .from("products")
+    .delete()
+    .eq("tenant_id", tenantId)
+    .eq("id", id);
   if (error) throw new Error(error.message);
   return true;
 }
 
-export async function resetToSeed(): Promise<number> {
+export async function resetToSeed(tenantId: string): Promise<number> {
   if (isMockMode()) return mockResetToSeed();
 
   const sb = await createSupabaseServerClient();
@@ -205,7 +228,7 @@ export async function resetToSeed(): Promise<number> {
   const { error } = await sb
     .from("products")
     .delete()
-    .neq("id", "00000000-0000-0000-0000-000000000000");
+    .eq("tenant_id", tenantId);
   if (error) throw new Error(error.message);
   return 0;
 }
@@ -214,7 +237,9 @@ export async function resetToSeed(): Promise<number> {
  * Blog posts
  * ------------------------------------------------------------------------- */
 
-export async function getPublishedBlogPosts(): Promise<BlogPost[]> {
+export async function getPublishedBlogPosts(
+  tenantId: string
+): Promise<BlogPost[]> {
   if (isMockMode()) return mockGetPublishedBlogPosts();
 
   const sb = await createSupabaseServerClient();
@@ -223,6 +248,7 @@ export async function getPublishedBlogPosts(): Promise<BlogPost[]> {
   const { data, error } = await sb
     .from("blog_posts")
     .select("*")
+    .eq("tenant_id", tenantId)
     .eq("published", true)
     .order("updated_at", { ascending: false });
 
@@ -230,7 +256,7 @@ export async function getPublishedBlogPosts(): Promise<BlogPost[]> {
   return data as BlogPost[];
 }
 
-export async function getAllBlogPosts(): Promise<BlogPost[]> {
+export async function getAllBlogPosts(tenantId: string): Promise<BlogPost[]> {
   if (isMockMode()) return mockListBlogPosts();
 
   const sb = await createSupabaseServerClient();
@@ -239,13 +265,17 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
   const { data, error } = await sb
     .from("blog_posts")
     .select("*")
+    .eq("tenant_id", tenantId)
     .order("updated_at", { ascending: false });
 
   if (error || !data) return mockListBlogPosts();
   return data as BlogPost[];
 }
 
-export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+export async function getBlogPostBySlug(
+  tenantId: string,
+  slug: string
+): Promise<BlogPost | null> {
   if (isMockMode()) return mockGetBlogPostBySlug(slug);
 
   const sb = await createSupabaseServerClient();
@@ -254,6 +284,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
   const { data, error } = await sb
     .from("blog_posts")
     .select("*")
+    .eq("tenant_id", tenantId)
     .eq("slug", slug)
     .maybeSingle();
 
@@ -266,7 +297,10 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
  * Called automatically whenever a deal is created or updated, so publishing
  * a deal from the admin portal instantly creates its article.
  */
-export async function syncBlogForDeal(deal: Deal): Promise<BlogPost | null> {
+export async function syncBlogForDeal(
+  tenantId: string,
+  deal: Deal
+): Promise<BlogPost | null> {
   const post = generateBlogPost(deal);
 
   if (isMockMode()) return mockUpsertBlogPost(post);
@@ -277,6 +311,7 @@ export async function syncBlogForDeal(deal: Deal): Promise<BlogPost | null> {
   // Let Postgres own the id — the upsert is keyed on the unique deal_id.
   const row = {
     deal_id: post.deal_id,
+    tenant_id: tenantId,
     slug: post.slug,
     title: post.title,
     excerpt: post.excerpt,
@@ -304,7 +339,7 @@ export async function syncBlogForDeal(deal: Deal): Promise<BlogPost | null> {
  * Licensing
  * ------------------------------------------------------------------------- */
 
-export async function getLicenseKeys(): Promise<string[]> {
+export async function getLicenseKeys(tenantId: string): Promise<string[]> {
   if (isMockMode()) return mockGetLicenseKeys();
 
   const sb = await createSupabaseServerClient();
@@ -313,14 +348,17 @@ export async function getLicenseKeys(): Promise<string[]> {
   const { data, error } = await sb
     .from("settings")
     .select("license_keys")
-    .eq("id", 1)
+    .eq("tenant_id", tenantId)
     .maybeSingle();
 
   if (error || !data) return [];
   return (data as { license_keys: string[] }).license_keys ?? [];
 }
 
-export async function setLicenseKeys(keys: string[]): Promise<string[]> {
+export async function setLicenseKeys(
+  tenantId: string,
+  keys: string[]
+): Promise<string[]> {
   if (isMockMode()) return mockSetLicenseKeys(keys);
 
   const sb = await createSupabaseServerClient();
@@ -328,13 +366,13 @@ export async function setLicenseKeys(keys: string[]): Promise<string[]> {
 
   const { error } = await sb
     .from("settings")
-    .upsert({ id: 1, license_keys: keys }, { onConflict: "id" });
+    .upsert({ tenant_id: tenantId, license_keys: keys }, { onConflict: "tenant_id" });
   if (error) throw new Error(error.message);
   return keys;
 }
 
-export async function getLicenseState(): Promise<LicenseState> {
-  const keys = await getLicenseKeys();
+export async function getLicenseState(tenantId: string): Promise<LicenseState> {
+  const keys = await getLicenseKeys(tenantId);
   return resolveLicense(keys);
 }
 
@@ -345,8 +383,11 @@ export function hasLicenseFeature(
   return state.features.has(feature);
 }
 
-export async function assertCanCreateDeal(dealCount: number): Promise<void> {
-  const state = await getLicenseState();
+export async function assertCanCreateDeal(
+  tenantId: string,
+  dealCount: number
+): Promise<void> {
+  const state = await getLicenseState(tenantId);
   if (state.features.has("unlimited-deals")) return;
   if (dealCount >= state.maxDeals) {
     throw new LicenseGateError(
@@ -365,10 +406,11 @@ export function assertVideoTypeAllowed(type: string): void {
 }
 
 export async function assertProVideoAllowed(
+  tenantId: string,
   videoType: string
 ): Promise<void> {
   if ((BASE_VIDEO_TYPES as readonly string[]).includes(videoType)) return;
-  const state = await getLicenseState();
+  const state = await getLicenseState(tenantId);
   if (!state.features.has("pro-video")) {
     throw new LicenseGateError(
       `Video type "${videoType}" requires the "Pro video mode" upgrade.`

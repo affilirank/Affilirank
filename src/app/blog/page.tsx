@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Clock, ArrowRight, Newspaper } from "lucide-react";
 import { getPublishedBlogPosts, getPublishedDeals, getLicenseState } from "@/lib/data";
+import { getCurrentTenant } from "@/lib/tenant";
 import { BlogNav } from "@/components/blog-nav";
 import { Logo } from "@/components/logo";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/constants";
@@ -12,10 +13,11 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const state = await getLicenseState();
+  const tenant = await getCurrentTenant();
+  const state = await getLicenseState(tenant.id);
   if (!state.features.has("blog")) return { title: "Blog not found" };
-  const posts = await getPublishedBlogPosts();
-  const description = `In-depth lifetime deal reviews, feature breakdowns and buying guides for the best one-time-payment software on ${SITE_NAME}. ${posts.length} articles and growing.`;
+  const posts = await getPublishedBlogPosts(tenant.id);
+  const description = `In-depth lifetime deal reviews, feature breakdowns and buying guides for the best one-time-payment software on ${tenant.name}. ${posts.length} articles and growing.`;
   return {
     title: `Blog — Lifetime Deal Reviews & Guides`,
     description,
@@ -44,11 +46,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function BlogIndex() {
-  const state = await getLicenseState();
+  const tenant = await getCurrentTenant();
+  const state = await getLicenseState(tenant.id);
   if (!state.features.has("blog")) notFound();
   const [posts, deals] = await Promise.all([
-    getPublishedBlogPosts(),
-    getPublishedDeals(),
+    getPublishedBlogPosts(tenant.id),
+    getPublishedDeals(tenant.id),
   ]);
 
   const jsonLd = {

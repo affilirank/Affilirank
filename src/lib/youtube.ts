@@ -1,13 +1,13 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
-import { SITE_URL } from "@/lib/constants";
 
 /**
  * YouTube Data API v3 OAuth — server-side token store + refresh.
  *
- * Tokens live in the Supabase `settings` row (column `youtube_auth`) so they
- * survive across deployments and are readable by both the Next.js app (to
- * render connection state) and the Python upload worker (which uses the same
- * Supabase table). Access tokens are refreshed automatically before use.
+ * Tokens live in the per-tenant Supabase `settings` row (column
+ * `youtube_auth`, keyed by `tenant_id`) so they survive across deployments
+ * and are readable by both the Next.js app (to render connection state) and
+ * the Python upload worker. Access tokens are refreshed automatically before
+ * use.
  */
 
 export interface YoutubeAuth {
@@ -44,24 +44,30 @@ export const DEFAULT_AUTOPUBLISH: AutopublishSettings = {
 
 /**
  * Google OAuth client credentials. Admins paste these in the Auto-Publish tab
- * and they persist in the Supabase settings row — no Vercel env var + redeploy
- * needed. Deployment env vars still win when both are present (they override
- * the DB values), which lets a host keep central credentials if desired.
+ * and they persist in the tenant's Supabase settings row — no Vercel env var +
+ * redeploy needed. Deployment env vars still win when both are present (they
+ * override the DB values), which lets a host keep central credentials if
+ * desired.
  */
 export interface GoogleAuth {
   client_id: string;
   client_secret: string;
 }
 
-export const YOUTUBE_REDIRECT_URI = `${SITE_URL}/api/admin/youtube/callback`;
-
 export const YOUTUBE_SCOPES = [
   "https://www.googleapis.com/auth/youtube",
   "https://www.googleapis.com/auth/youtube.readonly",
 ];
 
+/** OAuth redirect target derived from the request origin (per-tenant domain). */
+export function redirectUriFor(origin: string): string {
+  return `${origin}/api/admin/youtube/callback`;
+}
+
 /** Read stored Google OAuth credentials — DB settings first, env vars override. */
-export async function getGoogleAuth(): Promise<GoogleAuth | null> {
+export async function getGoogleAuth(
+  tenantId: string
+): Promise<GoogleAuth | null> {
   const envId = process.env.GOOGLE_CLIENT_ID ?? "";
   const envSecret = process.env.GOOGLE_CLIENT_SECRET ?? "";
   const sb = await createSupabaseServerClient();
@@ -71,7 +77,7 @@ export async function getGoogleAuth(): Promise<GoogleAuth | null> {
     const { data } = await sb
       .from("settings")
       .select("google_auth")
-      .eq("id", 1)
+      .eq("tenant_id", tenantId)
       .maybeSingle();
     const stored = (data as { google_auth?: GoogleAuth | null } | null)
       ?.google_auth;
@@ -84,29 +90,34 @@ export async function getGoogleAuth(): Promise<GoogleAuth | null> {
   return { client_id, client_secret };
 }
 
-export async function setGoogleAuth(auth: GoogleAuth | null): Promise<void> {
+export async function setGoogleAuth(
+  tenantId: string,
+  auth: GoogleAuth | null
+): Promise<void> {
   const sb = await createSupabaseServerClient();
   if (!sb) return;
   await sb
     .from("settings")
-    .upsert({ id: 1, google_auth: auth }, { onConflict: "id" });
+    .upsert({ tenant_id: tenantId, google_auth: auth }, { onConflict: "tenant_id" });
 }
 
-export async function googleOAuthConfigured(): Promise<boolean> {
-  return (await getGoogleAuth()) !== null;
+export async function googleOAuthConfigured(tenantId: string): Promise<boolean> {
+  return (await getGoogleAuth(tenantId)) !== null;
 }
 
 /* ---------------------------------------------------------------------------
- * Settings persistence (Supabase `settings` row, id=1)
+ * Settings persistence (per-tenant Supabase `settings` row)
  * ------------------------------------------------------------------------- */
 
-export async function getYoutubeAuth(): Promise<YoutubeAuth | null> {
+export async function getYoutubeAuth(
+  tenantId: string
+): Promise<YoutubeAuth | null> {
   const sb = await createSupabaseServerClient();
   if (!sb) return null;
   const { data, error } = await sb
     .from("settings")
     .select("youtube_auth")
-    .eq("id", 1)
+    .eq("tenant_id", tenantId)
     .maybeSingle();
   if (error || !data) return null;
   const auth = (data as { youtube_auth: YoutubeAuth | null }).youtube_auth;
@@ -114,22 +125,28 @@ export async function getYoutubeAuth(): Promise<YoutubeAuth | null> {
 }
 
 export async function setYoutubeAuth(
+  tenantId: string,
   auth: YoutubeAuth | null
 ): Promise<void> {
   const sb = await createSupabaseServerClient();
   if (!sb) return;
   await sb
     .from("settings")
-    .upsert({ id: 1, youtube_auth: auth }, { onConflict: "id" });
+    .upsert(
+      { tenant_id: tenantId, youtube_auth: auth },
+      { onConflict: "tenant_id" }
+    );
 }
 
-export async function getAutopublishSettings(): Promise<AutopublishSettings> {
+export async function getAutopublishSettings(
+  tenantId: string
+): Promise<AutopublishSettings> {
   const sb = await createSupabaseServerClient();
   if (!sb) return { ...DEFAULT_AUTOPUBLISH };
   const { data, error } = await sb
     .from("settings")
     .select("autopublish")
-    .eq("id", 1)
+    .eq("tenant_id", tenantId)
     .maybeSingle();
   if (error || !data) return { ...DEFAULT_AUTOPUBLISH };
   const stored = (data as { autopublish: AutopublishSettings | null })
@@ -138,6 +155,7 @@ export async function getAutopublishSettings(): Promise<AutopublishSettings> {
 }
 
 export async function setAutopublishSettings(
+  tenantId: string,
   settings: AutopublishSettings
 ): Promise<AutopublishSettings> {
   const sb = await createSupabaseServerClient();
@@ -145,7 +163,10 @@ export async function setAutopublishSettings(
   const merged = { ...DEFAULT_AUTOPUBLISH, ...settings };
   await sb
     .from("settings")
-    .upsert({ id: 1, autopublish: merged }, { onConflict: "id" });
+    .upsert(
+      { tenant_id: tenantId, autopublish: merged },
+      { onConflict: "tenant_id" }
+    );
   return merged;
 }
 
@@ -153,12 +174,16 @@ export async function setAutopublishSettings(
  * OAuth
  * ------------------------------------------------------------------------- */
 
-export async function buildAuthUrl(state: string): Promise<string | null> {
-  const creds = await getGoogleAuth();
+export async function buildAuthUrl(
+  state: string,
+  tenantId: string,
+  origin: string
+): Promise<string | null> {
+  const creds = await getGoogleAuth(tenantId);
   if (!creds) return null;
   const params = new URLSearchParams({
     client_id: creds.client_id,
-    redirect_uri: YOUTUBE_REDIRECT_URI,
+    redirect_uri: redirectUriFor(origin),
     response_type: "code",
     scope: YOUTUBE_SCOPES.join(" "),
     access_type: "offline",
@@ -188,13 +213,14 @@ async function tokenRequest(
 
 export async function exchangeCodeForTokens(
   code: string,
-  creds: GoogleAuth
+  creds: GoogleAuth,
+  redirectUri: string
 ): Promise<Omit<YoutubeAuth, "channel_id" | "channel_title" | "connected_at">> {
   const body = new URLSearchParams({
     code,
     client_id: creds.client_id,
     client_secret: creds.client_secret,
-    redirect_uri: YOUTUBE_REDIRECT_URI,
+    redirect_uri: redirectUri,
     grant_type: "authorization_code",
   });
   const json = await tokenRequest(body);
@@ -246,15 +272,15 @@ export async function fetchChannelInfo(
 }
 
 /** Return a valid access token, refreshing + persisting when expired. */
-export async function getValidAccessToken(): Promise<{
+export async function getValidAccessToken(tenantId: string): Promise<{
   auth: YoutubeAuth;
   accessToken: string;
 }> {
-  let auth = await getYoutubeAuth();
+  let auth = await getYoutubeAuth(tenantId);
   if (!auth) throw new Error("YouTube not connected");
   if (!auth.refresh_token) throw new Error("Missing refresh token");
   if (Date.now() >= auth.expires_at) {
-    const creds = await getGoogleAuth();
+    const creds = await getGoogleAuth(tenantId);
     if (!creds) throw new Error("Google OAuth credentials are not configured");
     const refreshed = await refreshAccessToken(auth.refresh_token, creds);
     auth = {
@@ -262,7 +288,7 @@ export async function getValidAccessToken(): Promise<{
       access_token: refreshed.access_token,
       expires_at: refreshed.expires_at,
     };
-    await setYoutubeAuth(auth);
+    await setYoutubeAuth(tenantId, auth);
   }
   return { auth, accessToken: auth.access_token };
 }

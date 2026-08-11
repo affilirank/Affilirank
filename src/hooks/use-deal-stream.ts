@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Deal } from "@/lib/types";
-import { createSupabaseBrowserClient } from "@/lib/supabase";
 
 /**
- * Keeps the deal stream live:
- *  - Polls `/api/products` every 45s (works everywhere).
- *  - When Supabase is configured, subscribes to realtime changes on the
- *    `products` table so publishing from /admin updates open tabs instantly.
+ * Keeps the deal stream live by polling `/api/products` every 45s. Realtime is
+ * intentionally not used: with one shared database serving many tenants and a
+ * single anon key, broadcast channels can't be filtered per tenant — polling
+ * keeps every tenant's stream scoped correctly.
  */
 export function useDealStream(initial: Deal[]) {
   const [deals, setDeals] = useState<Deal[]>(initial);
@@ -31,24 +30,6 @@ export function useDealStream(initial: Deal[]) {
   useEffect(() => {
     const id = setInterval(refresh, 45_000);
     return () => clearInterval(id);
-  }, [refresh]);
-
-  useEffect(() => {
-    const client = createSupabaseBrowserClient();
-    if (!client) return;
-
-    const channel = client
-      .channel("deals-stream")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "products" },
-        () => refresh()
-      )
-      .subscribe();
-
-    return () => {
-      client.removeChannel(channel);
-    };
   }, [refresh]);
 
   return { deals, refresh };

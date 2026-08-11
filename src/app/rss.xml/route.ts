@@ -1,5 +1,6 @@
 import { getPublishedBlogPosts } from "@/lib/data";
-import { SITE_NAME, SITE_URL } from "@/lib/constants";
+import { getCurrentTenant } from "@/lib/tenant";
+import { SITE_NAME } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -16,14 +17,16 @@ function escapeXml(text: string) {
     .replace(/'/g, "&apos;");
 }
 
-/** /rss.xml — feed of all published blog articles for subscribers. */
+/** /rss.xml — feed of all published blog articles for the current tenant. */
 export async function GET() {
-  const posts = await getPublishedBlogPosts();
+  const tenant = await getCurrentTenant();
+  const siteUrl = `https://${tenant.domain}`;
+  const posts = await getPublishedBlogPosts(tenant.id);
   const latest = posts[0]?.updated_at ?? new Date().toISOString();
 
   const items = posts
     .map((p) => {
-      const url = `${SITE_URL}/blog/${p.slug}`;
+      const url = `${siteUrl}/blog/${p.slug}`;
       return `    <item>
       <title>${escapeXml(p.title)}</title>
       <link>${url}</link>
@@ -38,11 +41,11 @@ export async function GET() {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>${SITE_NAME} — Blog</title>
-    <link>${SITE_URL}/blog</link>
+    <link>${siteUrl}/blog</link>
     <description>Lifetime deal reviews, feature breakdowns and buying guides for one-time-payment software.</description>
     <language>en-us</language>
     <lastBuildDate>${rssDate(latest)}</lastBuildDate>
-    <atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml" />
 ${items}
   </channel>
 </rss>`;

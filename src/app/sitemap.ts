@@ -1,41 +1,43 @@
 import type { MetadataRoute } from "next";
 import { getPublishedBlogPosts, getPublishedDeals } from "@/lib/data";
-import { SITE_URL, SHOW_PRODUCT_PAGE } from "@/lib/constants";
+import { getCurrentTenant } from "@/lib/tenant";
 
 export const dynamic = "force-dynamic";
 
 /**
- * /sitemap.xml — every public page: static routes, per-deal SEO pages and
- * the auto-generated blog articles.
+ * /sitemap.xml — every public page for the current tenant: static routes,
+ * per-deal SEO pages and the auto-generated blog articles.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const tenant = await getCurrentTenant();
+  const siteUrl = `https://${tenant.domain}`;
   const [deals, posts] = await Promise.all([
-    getPublishedDeals(),
-    getPublishedBlogPosts(),
+    getPublishedDeals(tenant.id),
+    getPublishedBlogPosts(tenant.id),
   ]);
 
   const staticEntries: MetadataRoute.Sitemap = [
-    { url: `${SITE_URL}/`, changeFrequency: "daily", priority: 1 },
-    { url: `${SITE_URL}/blog`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${siteUrl}/`, changeFrequency: "daily", priority: 1 },
+    { url: `${siteUrl}/blog`, changeFrequency: "daily", priority: 0.9 },
   ];
 
-  if (SHOW_PRODUCT_PAGE) {
+  if (tenant.show_product_page) {
     staticEntries.push({
-      url: `${SITE_URL}/affilirank`,
+      url: `${siteUrl}/affilirank`,
       changeFrequency: "monthly",
       priority: 0.6,
     });
   }
 
   const dealEntries: MetadataRoute.Sitemap = deals.map((d) => ({
-    url: `${SITE_URL}/deals/${d.slug}`,
+    url: `${siteUrl}/deals/${d.slug}`,
     lastModified: new Date(d.updated_at),
     changeFrequency: "daily",
     priority: 0.8,
   }));
 
   const blogEntries: MetadataRoute.Sitemap = posts.map((p) => ({
-    url: `${SITE_URL}/blog/${p.slug}`,
+    url: `${siteUrl}/blog/${p.slug}`,
     lastModified: new Date(p.updated_at),
     changeFrequency: "weekly",
     priority: 0.7,

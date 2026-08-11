@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthed } from "@/lib/auth";
 import { getDealById } from "@/lib/data";
+import { getCurrentTenant } from "@/lib/tenant";
 import { generateAiThumbnail } from "@/lib/thumbnail";
 
 export const dynamic = "force-dynamic";
@@ -22,13 +23,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "dealId is required" }, { status: 400 });
   }
 
-  const deal = await getDealById(dealId);
+  const tenant = await getCurrentTenant();
+  const deal = await getDealById(tenant.id, dealId);
   if (!deal) {
     return NextResponse.json({ error: "Deal not found" }, { status: 404 });
   }
 
   try {
-    const result = await generateAiThumbnail(deal);
+    const result = await generateAiThumbnail(tenant.id, deal);
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(

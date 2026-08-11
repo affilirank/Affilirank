@@ -10,8 +10,8 @@ export const runtime = "nodejs";
  *
  * Composites the deal's hero/product image + the connected channel's avatar
  * into a 16:9 high-CTR title card with the exact title / price / badge text,
- * uploads it to the public `previews` bucket and repoints the deal's
- * hero_image at it.
+ * uploads it to the public `previews` bucket under the tenant's namespace and
+ * repoints the deal's hero_image at it.
  */
 
 const GEMINI_MODEL = process.env.GEMINI_IMAGE_MODEL ?? "gemini-3.1-flash-image";
@@ -33,7 +33,7 @@ interface InlineImage {
   inline_data: { mime_type: string; data: string };
 }
 
-async function getGeminiKey(): Promise<string> {
+async function getGeminiKey(tenantId: string): Promise<string> {
   const env = process.env.GEMINI_API_KEY?.trim();
   if (env) return env;
   const sb = await createSupabaseServerClient();
@@ -41,7 +41,7 @@ async function getGeminiKey(): Promise<string> {
     const { data } = await sb
       .from("settings")
       .select("autopublish")
-      .eq("id", 1)
+      .eq("tenant_id", tenantId)
       .maybeSingle();
     const ap = (data as { autopublish?: { gemini_api_key?: string } | null })
       ?.autopublish;
@@ -155,13 +155,15 @@ async function genImage(
 
 /**
  * Generate a Gemini thumbnail for a deal and repoint its hero_image at the
- * new public storage URL. Returns the updated hero_image.
+ * new public storage URL (namespaced under the tenant). Returns the updated
+ * hero_image.
  */
 export async function generateAiThumbnail(
+  tenantId: string,
   deal: Deal
 ): Promise<{ hero_image: string }> {
-  const key = await getGeminiKey();
-  const auth = await getYoutubeAuth();
+  const key = await getGeminiKey(tenantId);
+  const auth = await getYoutubeAuth(tenantId);
   const avatarUrl = auth?.channel_avatar?.trim() || DEFAULT_AVATAR_URL;
 
   const title = shortName(deal.title);
@@ -179,7 +181,7 @@ export async function generateAiThumbnail(
   const sb = await createSupabaseServerClient();
   if (!sb) throw new Error("Supabase is not configured");
 
-  const path = `deals/${deal.slug}.png`;
+  const path = `deals/${tenantId}/${deal.slug}.png`;
   const { error } = await sb.storage
     .from("previews")
     .upload(path, data, { contentType: "image/png", upsert: true });
@@ -190,6 +192,7 @@ export async function generateAiThumbnail(
   const { error: upErr } = await sb
     .from("products")
     .update({ hero_image: heroImage })
+    .eq("tenant_id", tenantId)
     .eq("id", deal.id);
   if (upErr) throw new Error(`Failed to update deal: ${upErr.message}`);
 

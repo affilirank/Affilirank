@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { slugify } from "@/lib/utils";
+import { getCurrentTenant } from "@/lib/tenant";
 import { getYoutubeAuth } from "@/lib/youtube";
 
 export const dynamic = "force-dynamic";
@@ -18,8 +19,9 @@ export const dynamic = "force-dynamic";
  * The leading profile-name segment is cosmetic (it makes the URL look like it
  * belongs to the channel) but is not required — `/r/<deal-slug>` and
  * `/r/bundle/<deal-slug>` work too. The lookup is by the last path segment
- * (the deal slug), and the target lives in the DB so links never go stale:
- * edit the deal in the admin portal and every past description updates.
+ * (the deal slug), scoped to the request's tenant, and the target lives in the
+ * DB so links never go stale: edit the deal in the admin portal and every past
+ * description updates.
  */
 export async function GET(request: NextRequest) {
   const segments = request.nextUrl.pathname
@@ -33,9 +35,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url), 302);
   }
 
+  const tenant = await getCurrentTenant();
   const sb = await createSupabaseServerClient();
   const deal = sb
-    ? await sb.from("products").select("*").eq("slug", dealSlug).maybeSingle()
+    ? await sb
+        .from("products")
+        .select("*")
+        .eq("tenant_id", tenant.id)
+        .eq("slug", dealSlug)
+        .maybeSingle()
     : { data: null, error: null };
 
   const target =
@@ -50,10 +58,11 @@ export async function GET(request: NextRequest) {
   // Best-effort click tracking (fire-and-forget, never blocks the redirect).
   void (async () => {
     try {
-      const [auth] = await Promise.all([getYoutubeAuth()]);
+      const [auth] = await Promise.all([getYoutubeAuth(tenant.id)]);
       const profile = slugify(auth?.channel_title ?? "");
       await sb?.from("deal_events").insert({
         event: "shortlink_click",
+        tenant_id: tenant.id,
         payload: {
           deal_id: deal.data.id,
           deal_slug: dealSlug,

@@ -1,21 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPublishedDeals } from "@/lib/data";
 import { isAdminAuthed } from "@/lib/auth";
+import { getCurrentTenant } from "@/lib/tenant";
 import type { DealDraft } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 /**
  * GET /api/products
- * Public — returns published deals for the stream. Optional `category` and
- * `q` (search) query params.
+ * Public — returns the current tenant's published deals for the stream.
+ * Optional `category` and `q` (search) query params.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const category = searchParams.get("category");
   const query = searchParams.get("q")?.toLowerCase().trim();
 
-  const deals = await getPublishedDeals();
+  const tenant = await getCurrentTenant();
+  const deals = await getPublishedDeals(tenant.id);
 
   let filtered = deals;
   if (category && category !== "all") {
@@ -52,8 +54,9 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    const tenant = await getCurrentTenant();
     const deal = await import("@/lib/data").then((m) =>
-      m.createDeal(body as DealDraft)
+      m.createDeal(tenant.id, body as DealDraft)
     );
     return NextResponse.json(deal, { status: 201 });
   } catch (error) {
@@ -73,6 +76,7 @@ export async function DELETE() {
   if (!(await isAdminAuthed())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  await import("@/lib/data").then((m) => m.resetToSeed());
+  const tenant = await getCurrentTenant();
+  await import("@/lib/data").then((m) => m.resetToSeed(tenant.id));
   return NextResponse.json({ ok: true });
 }

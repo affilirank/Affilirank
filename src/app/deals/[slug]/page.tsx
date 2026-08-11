@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDealBySlug, getLicenseState } from "@/lib/data";
+import { getCurrentTenant } from "@/lib/tenant";
 import { StreamProvider } from "@/components/stream-provider";
 import { DealCard } from "@/components/deal-card";
 import { DealModal } from "@/components/deal-modal";
@@ -20,9 +21,10 @@ interface Props {
  */
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const state = await getLicenseState();
+  const tenant = await getCurrentTenant();
+  const state = await getLicenseState(tenant.id);
   if (!state.features.has("deal-pages")) return { title: "Deal not found" };
-  const deal = await getDealBySlug(slug);
+  const deal = await getDealBySlug(tenant.id, slug);
   if (!deal) return { title: "Deal not found" };
 
   const title = `${deal.title} — Lifetime Deal`;
@@ -75,9 +77,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function DealPage({ params }: Props) {
   const { slug } = await params;
-  const state = await getLicenseState();
+  const tenant = await getCurrentTenant();
+  const state = await getLicenseState(tenant.id);
   if (!state.features.has("deal-pages")) notFound();
-  const deal = await getDealBySlug(slug);
+  const deal = await getDealBySlug(tenant.id, slug);
   if (!deal) notFound();
 
   const jsonLd = {

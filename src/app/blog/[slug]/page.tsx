@@ -17,6 +17,7 @@ import {
   getLicenseState,
   getPublishedDeals,
 } from "@/lib/data";
+import { getCurrentTenant } from "@/lib/tenant";
 import { BlogNav } from "@/components/blog-nav";
 import { BlogAffiliateCta } from "@/components/blog-affiliate-cta";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
@@ -32,9 +33,10 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const state = await getLicenseState();
+  const tenant = await getCurrentTenant();
+  const state = await getLicenseState(tenant.id);
   if (!state.features.has("blog")) return { title: "Article not found" };
-  const post = await getBlogPostBySlug(slug);
+  const post = await getBlogPostBySlug(tenant.id, slug);
   if (!post) return { title: "Article not found" };
 
   const url = `${SITE_URL}/blog/${post.slug}`;
@@ -75,14 +77,15 @@ function formatDate(iso: string) {
 
 export default async function BlogArticlePage({ params }: Props) {
   const { slug } = await params;
-  const state = await getLicenseState();
+  const tenant = await getCurrentTenant();
+  const state = await getLicenseState(tenant.id);
   if (!state.features.has("blog")) notFound();
-  const post = await getBlogPostBySlug(slug);
+  const post = await getBlogPostBySlug(tenant.id, slug);
   if (!post) notFound();
 
   const [deal, deals] = await Promise.all([
-    post.deal_id ? getDealById(post.deal_id) : null,
-    getPublishedDeals(),
+    post.deal_id ? getDealById(tenant.id, post.deal_id) : null,
+    getPublishedDeals(tenant.id),
   ]);
 
   const related = deals
