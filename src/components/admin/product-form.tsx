@@ -286,7 +286,39 @@ export function ProductFormPanel({
               placeholder="https://www.jvzoo.com/b/123456/999999"
             />
             <p className="mt-1 text-[11px] text-white/35">
-              The link your CTA sends buyers to (with your tracking tag).
+              The front-end JVZoo link your CTA sends buyers to (with your
+              tracking tag). Required.
+            </p>
+          </div>
+
+          <div>
+            <label className={label}>Bundle JVZoo URL *</label>
+            <input
+              className={cn(input, "font-mono text-xs")}
+              value={draft.bundle_url ?? ""}
+              onChange={(e) => set("bundle_url", e.target.value || null)}
+              placeholder="https://www.jvzoo.com/b/123456/999998"
+            />
+            <p className="mt-1 text-[11px] text-white/35">
+              The bundle-tier JVZoo link (larger price). Required — every deal
+              needs both a front-end and a bundle link.
+            </p>
+          </div>
+
+          <div>
+            <label className={label}>Bundle price</label>
+            <input
+              type="number"
+              step="0.01"
+              className={input}
+              value={draft.bundle_price ?? ""}
+              onChange={(e) =>
+                set("bundle_price", e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder="317"
+            />
+            <p className="mt-1 text-[11px] text-white/35">
+              The bundle tier&apos;s larger price, shown next to the front-end price.
             </p>
           </div>
 
@@ -358,14 +390,24 @@ export function ProductFormPanel({
         <div className="flex gap-2.5 border-t border-white/10 px-5 py-4">
           <button
             onClick={() => submit(false)}
-            disabled={busy || !draft.title.trim() || !draft.affiliate_url.trim()}
+            disabled={
+              busy ||
+              !draft.title.trim() ||
+              !draft.affiliate_url.trim() ||
+              !draft.bundle_url?.trim()
+            }
             className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-bold text-white/80 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <Save className="h-4 w-4" /> Save Draft
           </button>
           <button
             onClick={() => submit(true)}
-            disabled={busy || !draft.title.trim() || !draft.affiliate_url.trim()}
+            disabled={
+              busy ||
+              !draft.title.trim() ||
+              !draft.affiliate_url.trim() ||
+              !draft.bundle_url?.trim()
+            }
             className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 via-purple-600 to-cyan-500 px-4 py-3 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 cta-glow"
           >
             {busy ? (

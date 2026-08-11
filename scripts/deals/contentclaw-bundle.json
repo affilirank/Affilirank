@@ -1,0 +1,71 @@
+{
+  "id": "ac5ed033-5925-4e01-9b8d-3258250764a2",
+  "slug": "contentclaw-bundle",
+  "title": "ContentClaw Bundle",
+  "subtitle": null,
+  "description": "AI system scrapes the web, social & news for high-interest topics, then auto-publishes content that earns audience income on autopilot.",
+  "highlights": [
+    "Claw Agent \u2014 one command runs your entire channel",
+    "Faceless videos, Shorts, scripts & thumbnails",
+    "Auto-post, auto-reply & manage comments",
+    "SEO scores & optimization to rank higher",
+    "Competitor spy & trending topic discovery"
+  ],
+  "category": "marketing",
+  "hero_image": "https://contentclawai.com/sales/assets/images/sales/screen-1.png",
+  "video_url": null,
+  "video_type": null,
+  "deal_tag": "Bundle",
+  "tag_style": "hot",
+  "coupon_code": null,
+  "price": 39.95,
+  "original_price": null,
+  "currency": "USD",
+  "affiliate_url": "https://jvz5.com/c/3582897/446603/",
+  "source_url": "https://jvz5.com/c/3582897/446603/",
+  "expiration_date": null,
+  "countdown_enabled": false,
+  "featured": false,
+  "sort_order": 5,
+  "published": true,
+  "created_at": "2026-08-02T22:20:51.803623+00:00",
+  "updated_at": "2026-08-07T05:09:48.473492+00:00",
+  "bundle_url": "https://jvz5.com/c/3582897/446607/",
+  "funnel_links": [
+    {
+      "url": "https://jvz5.com/c/3582897/446603/",
+      "label": "ContentClaw Premium (FE) — $39.95"
+    },
+    {
+      "url": "https://jvz5.com/c/3582897/446607/",
+      "label": "ContentClaw xBundle — the deal, $317"
+    },
+    {
+      "url": "https://jvz5.com/c/3582897/446609/",
+      "label": "FastPass — all upgrades for $230"
+    },
+    {
+      "url": "https://jvz5.com/c/3582897/446689/",
+      "label": "OTO1: DFY Income Empire — $197"
+    },
+    {
+      "url": "https://jvz5.com/c/3582897/446693/",
+      "label": "OTO2: Affiliate Profit Engine — $67"
+    },
+    {
+      "url": "https://jvz5.com/c/3582897/446695/",
+      "label": "OTO3: Agency Unlimited — $197"
+    },
+    {
+      "url": "https://jvz5.com/c/3582897/446697/",
+      "label": "OTO4: TurboGrowth + AI Coach — $97/yr"
+    },
+    {
+      "url": "https://jvz5.com/c/3582897/447023/",
+      "label": "MegaBundle — adds DFY, $77"
+    }
+  ],
+  "youtube_video_id": "b53_p80i3Bo",
+  "youtube_url": "https://www.youtube.com/watch?v=b53_p80i3Bo",
+  "auto_post_status": "pending"
+}

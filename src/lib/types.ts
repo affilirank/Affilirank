@@ -25,6 +25,8 @@ export interface Deal {
   affiliate_url: string;
   /** Bundle affiliate URL (optional) — added to blogs, deal CTAs, video descriptions. */
   bundle_url?: string | null;
+  /** Bundle price — the larger bundle tier shown next to the front-end price. */
+  bundle_price?: number | null;
   /** Full funnel links (OTO1, OTO2, downsells...) — embedded in video descriptions. */
   funnel_links?: FunnelLink[] | null;
   /** The raw JVZoo page that was scraped. */
@@ -81,6 +83,7 @@ export interface DealDraft {
   currency: string;
   affiliate_url: string;
   bundle_url?: string | null;
+  bundle_price?: number | null;
   funnel_links?: FunnelLink[] | null;
   source_url: string | null;
   expiration_date: string | null;

@@ -1,0 +1,514 @@
+{
+  "virofeed-ai-live": {
+    "pains": [
+      "Most creators spend hours scripting, hunting for clips, and editing before a single post ever goes live.",
+      "And by the time it's published, the news is already old. Nobody watches yesterday's story.",
+      "So you post inconsistently, the algorithm ignores you, and the audience you want never finds you."
+    ],
+    "stats": [
+      "Turns trending news, articles, RSS feeds and Google News into ready-to-publish videos",
+      "AI writes the script, picks images, adds captions, music and a voiceover — automatically",
+      "Talking-head avatars or faceless style, with your branding on every video",
+      "Export straight to Shorts, Reels, TikTok and Facebook in minutes"
+    ],
+    "demos": [
+      {
+        "src": "virofeed-1199282338.mp4",
+        "start": 31.1,
+        "end": 49.0,
+        "label": "CREATE A PROJECT",
+        "caption": "Pick your niche, drop in branding, choose a talking-head avatar",
+        "vo": "Start a project in seconds. Pick your niche, drop in your branding, and choose a talking-head or faceless avatar."
+      },
+      {
+        "src": "virofeed-1199282338.mp4",
+        "start": 80.2,
+        "end": 97.7,
+        "label": "ADD NEWS SOURCES",
+        "caption": "Find sources, search Google News, Reddit and Hacker News — and save",
+        "vo": "Connect your sources. Google News, Reddit, Hacker News — filter to the last twenty-four hours or seven days so you always get fresh stories."
+      },
+      {
+        "src": "virofeed-1199282338.mp4",
+        "start": 192.5,
+        "end": 213.0,
+        "label": "AI SCRIPTWRITER",
+        "caption": "Pick a video style and the AI writes the whole script for you",
+        "vo": "Choose the video style and the AI writes the entire script — with trending captions and hooks built in."
+      },
+      {
+        "src": "virofeed-1199282338.mp4",
+        "start": 277.5,
+        "end": 299.5,
+        "label": "VOICE CLONE",
+        "caption": "Clone your voice from 15 seconds of audio, in any language",
+        "vo": "Clone your own voice from just fifteen seconds of audio, in any language, then render and post."
+      },
+      {
+        "src": "virofeed-1199282338.mp4",
+        "start": 118.0,
+        "end": 141.5,
+        "label": "PICK YOUR STORY",
+        "caption": "Use a fresh post from your sources, paste a URL, or add custom text",
+        "vo": "Pick the story. Grab a fresh post from your sources, paste in any article URL, or drop in your own custom text — three ways to start a video."
+      },
+      {
+        "src": "virofeed-1199282338.mp4",
+        "start": 323.5,
+        "end": 346.5,
+        "label": "GENERATE",
+        "caption": "Hit generate and the final video is added to your library",
+        "vo": "Hit generate final video and it builds right in your library — while that runs, you can start the next one in parallel."
+      }
+    ],
+    "review": {
+      "what": "ViroFeed turns trending news and articles into ready-to-publish short-form videos — script, images, captions, music and voiceover, all automatic.",
+      "what_vo": "So what does ViroFeed actually do? It turns trending news and articles into ready-to-publish short-form videos. The AI writes the script, picks the images, and adds captions, music and a voiceover.",
+      "why": "Post consistently while the AI does the heavy lifting — and the audience you want finally finds you.",
+      "why_vo": "Why does that matter for your business? You stop spending hours scripting and editing. You post consistently, the algorithm rewards you, and the audience you want finally finds you."
+    }
+  },
+  "viralrevenueai": {
+    "pains": [
+      "Making social videos means jumping between image tools, editors, and voice apps — then stitching it all together by hand.",
+      "And most people quit before the algorithm ever gets a chance to promote their content.",
+      "So you never build the audience, and the revenue never shows up."
+    ],
+    "stats": [
+      "AI image studio plus prompt-to-motion and snap-to-motion video generation",
+      "Pro video editor with presets for 9:16, square and horizontal formats",
+      "12 built-in cash-flow sources that show you exactly how to monetize",
+      "Built-in learning and live AI research on the top affiliate platforms"
+    ],
+    "demos": [
+      {
+        "src": "v-1202012431.mp4",
+        "start": 55.4,
+        "end": 108.2,
+        "label": "AI IMAGE STUDIO",
+        "caption": "Type a prompt, hit enhance, and get pro images in seconds",
+        "vo": "Create images in seconds. Type a prompt, hit enhance, and download — and you can use them in videos right away."
+      },
+      {
+        "src": "v-1202012431.mp4",
+        "start": 171.6,
+        "end": 236.7,
+        "label": "SNAP TO MOTION",
+        "caption": "Any image becomes a moving, viral-style video — prompt in, magic out",
+        "vo": "Turn any image into a moving video with the exact same prompt. Hit show the magic and it generates — the kind of simple clip that racks up thousands of views."
+      },
+      {
+        "src": "v-1202012431.mp4",
+        "start": 574.2,
+        "end": 598.9,
+        "label": "PRO VIDEO EDITOR",
+        "caption": "Drag your video onto the canvas, add text and effects on the timeline",
+        "vo": "Drag your video onto the canvas and build on the timeline. Add text, overlays and stickers, then export or post directly."
+      },
+      {
+        "src": "v-1202012431.mp4",
+        "start": 741.4,
+        "end": 759.3,
+        "label": "MONETIZE",
+        "caption": "12 cash-flow sources included with live AI research",
+        "vo": "Monetize what you create. Twelve cash-flow sources with live AI research telling you what's hot today."
+      }
+    ],
+    "review": {
+      "what": "ViralRevenueAI is an all-in-one video and visual creation platform — AI images, prompt-to-motion clips, a pro editor, and twelve built-in cash-flow sources.",
+      "what_vo": "So what is ViralRevenueAI? It's an all-in-one video and visual creation platform. AI images, prompt-to-motion clips, a professional editor, and twelve built-in cash-flow sources.",
+      "why": "You create pro content in one place without hopping between five tools — and you always know exactly how to monetize it.",
+      "why_vo": "Why does that help your business? You create professional content in one place instead of hopping between five tools — and with twelve monetization sources built in, you always know how to turn it into revenue."
+    }
+  },
+  "onemanarmy-deploy-your-ai-army-in-5-minutes": {
+    "pains": [
+      "Most AI tools still make you do nearly all the work — one prompt in, one answer out, no execution.",
+      "And most so-called AI team apps aren't real systems at all, just bots passing messages back and forth.",
+      "So you stay stuck doing the manual work, while your competitors deploy real AI workers."
+    ],
+    "stats": [
+      "Three real AI systems — Paperclip, OpenClaw and Hermes — planning, executing and remembering",
+      "No Docker, no terminal, no setup nightmare — deploy AI workers from your browser",
+      "No outside API keys needed to get started",
+      "Deploy workers for yourself, or run them for clients and bill them"
+    ],
+    "demos": [
+      {
+        "src": "onemanarmy-1195983684.mp4",
+        "start": 109.6,
+        "end": 131.2,
+        "label": "THE AI ARMY",
+        "caption": "Paperclip plans, OpenClaw executes, Hermes remembers",
+        "vo": "Inside one hosted dashboard you get three real AI systems. Paperclip the planner, OpenClaw the operator, and Hermes the memory."
+      },
+      {
+        "src": "onemanarmy-1195983684.mp4",
+        "start": 144.8,
+        "end": 166.5,
+        "label": "RUN IN PARALLEL",
+        "caption": "Use one worker, or run all three together around one mission",
+        "vo": "Run them individually, or all three in parallel around a single business goal."
+      },
+      {
+        "src": "onemanarmy-1195983684.mp4",
+        "start": 234.9,
+        "end": 251.4,
+        "label": "DEPLOY IN MINUTES",
+        "caption": "No Docker, no terminal — just log in through your browser and deploy",
+        "vo": "No Docker, no terminal, no setup nightmare. Log in through your browser, deploy your AI workers, and start building."
+      },
+      {
+        "src": "onemanarmy-1195983684.mp4",
+        "start": 24.9,
+        "end": 32.0,
+        "label": "AI DOING THE WORK",
+        "caption": "Real AI workers planning, executing and following up — not just chat",
+        "vo": "This is what an AI army actually looks like — planning, execution, research, memory and follow-up, all working toward one mission."
+      },
+      {
+        "src": "onemanarmy-1195983684.mp4",
+        "start": 206.4,
+        "end": 226.5,
+        "label": "REAL AI SYSTEMS",
+        "caption": "Planning, execution and memory all running from one hosted dashboard",
+        "vo": "Planning, execution and memory, all running from one hosted dashboard. No installations, no servers, no constant technical management."
+      },
+      {
+        "src": "onemanarmy-1195983684.mp4",
+        "start": 251.4,
+        "end": 277.0,
+        "label": "AGENCY ANGLE",
+        "caption": "Deploy workers for yourself — or run them for clients and bill them",
+        "vo": "Go beyond your own business. Deploy workers for clients too — planning, support, research, follow-up and content creation, businesses everywhere are looking for exactly this."
+      }
+    ],
+    "review": {
+      "what": "OneManArmy gives you three real AI systems in one hosted dashboard — Paperclip plans, OpenClaw executes, Hermes remembers.",
+      "what_vo": "So what do you actually get? OneManArmy puts three real AI systems in one hosted dashboard. Paperclip plans, OpenClaw executes, and Hermes remembers — no Docker, no terminal, no setup nightmare.",
+      "why": "You deploy real AI workers that do the work for you — or run them for clients and bill them.",
+      "why_vo": "Why does that matter for your business? You're not babysitting prompts anymore. These are real AI workers that plan, execute and follow up — deploy them for your own business, or run them for clients and bill for the work."
+    }
+  },
+  "writix-all-inclusive": {
+    "pains": [
+      "Fighting with prompt after prompt just to get AI output that's even close to right — that's hours of your week gone.",
+      "And a single AI model only ever gives you one perspective, so your content all starts to sound the same.",
+      "You want the results, not a career as a prompt engineer."
+    ],
+    "stats": [
+      "300+ ready-made AI workflows — marketing, SEO, emails, reports and more",
+      "Taps the strengths of multiple AI models for fresh, unique output every time",
+      "Works in any language — create for global audiences without knowing the language",
+      "Build your own custom workflows, no coding needed"
+    ],
+    "demos": [
+      {
+        "src": "writix.mp4",
+        "start": 94.8,
+        "end": 119.4,
+        "label": "PICK A WORKFLOW",
+        "caption": "Choose a workflow, fill in a few details, and watch the magic happen",
+        "vo": "Just select a workflow, fill in a few details, and the AI does the rest. Over 300 ready-to-go workflows are built in."
+      },
+      {
+        "src": "writix.mp4",
+        "start": 151.7,
+        "end": 176.6,
+        "label": "ANY LANGUAGE",
+        "caption": "SEO content, emails, sales scripts and strategy — in any language",
+        "vo": "Every part of your business is covered. SEO-friendly content, high-converting emails, sales scripts — all in any language you choose."
+      },
+      {
+        "src": "writix.mp4",
+        "start": 210.0,
+        "end": 228.1,
+        "label": "BUILD YOUR OWN",
+        "caption": "Create custom workflows and become the architect of your automation",
+        "vo": "Stop repeating tedious tasks. Build your own custom workflows, and become the architect of your own automation."
+      },
+      {
+        "src": "writix.mp4",
+        "start": 177.4,
+        "end": 194.2,
+        "label": "COLLABORATE",
+        "caption": "Share workflows and results with your team in one click",
+        "vo": "Share workflows and results with your team in one click — so the whole team stays on the same automation."
+      },
+      {
+        "src": "writix.mp4",
+        "start": 195.0,
+        "end": 210.0,
+        "label": "DEEP-THINKING MODELS",
+        "caption": "Advanced reasoning models that dissect complex problems and reveal hidden patterns",
+        "vo": "For the hard problems, deep-thinking models dissect the challenge, reveal the hidden patterns, and deliver precise, actionable solutions."
+      }
+    ],
+    "review": {
+      "what": "Writix bundles over 300 ready-made AI workflows — marketing, SEO, emails, reports — and taps multiple AI models so your output never sounds the same.",
+      "what_vo": "So what is Writix? It bundles over three hundred ready-made AI workflows — marketing, SEO, emails, reports — and combines multiple AI models so every piece of output stays fresh and unique.",
+      "why": "You get results, not a career as a prompt engineer — pick a workflow and it works in any language.",
+      "why_vo": "Why does that help your business? You stop fighting prompt after prompt to get output that's close to right. Pick a workflow, fill in a few details, and get finished content in any language — without becoming a prompt engineer."
+    }
+  },
+  "superaffiliatesai-bundle": {
+    "demos": [
+      {
+        "src": "superaffiliatesai.mp4",
+        "start": 197.4,
+        "end": 214.1,
+        "label": "PICK A PRODUCT",
+        "caption": "Type your niche or paste any product URL — the scout agent searches JVZoo, ClickBank and WarriorPlus",
+        "vo": "Tell the system your niche, or paste any product URL. The scout agent searches JVZoo, ClickBank and WarriorPlus for products with proven buyer demand."
+      },
+      {
+        "src": "superaffiliatesai.mp4",
+        "start": 224.0,
+        "end": 244.2,
+        "label": "HONEST SCRIPTS",
+        "caption": "AI writes podcast-style dialogue — a curious host and a skeptical analyst",
+        "vo": "The script agent writes podcast-style dialogue between a curious host and a skeptical analyst — then the voice agent records it in your cloned voice or a premium AI voice."
+      },
+      {
+        "src": "superaffiliatesai.mp4",
+        "start": 244.2,
+        "end": 279.4,
+        "label": "THE SIX AGENTS",
+        "caption": "Video agent captures the sales page, thumbnails generated, then published everywhere",
+        "vo": "The video agent captures a smooth scroll of the sales page with auto zoom-ins, layered voiceover and captions. The thumbnail agent generates six to twelve variants, and one click publishes your review to YouTube, Shorts, Reels, TikTok and X — auto-formatted for each platform."
+      },
+      {
+        "src": "superaffiliatesai.mp4",
+        "start": 436.4,
+        "end": 463.7,
+        "label": "PRODUCT INTELLIGENCE",
+        "caption": "Network search across JVZoo, ClickBank and WarriorPlus with real commission and gravity data",
+        "vo": "Network search covers the biggest marketplaces. Filter by category, commission rate and gravity score, or paste any URL for instant analysis."
+      },
+      {
+        "src": "superaffiliatesai.mp4",
+        "start": 534.3,
+        "end": 559.4,
+        "label": "AUTOMODE",
+        "caption": "All six agents find products, write reviews, record voice, and publish daily — while you sleep",
+        "vo": "Auto mode is where all six agents work together without you. Set your niches, platforms and posting frequency — then walk away."
+      },
+      {
+        "src": "superaffiliatesai.mp4",
+        "start": 398.3,
+        "end": 422.9,
+        "label": "TRAFFIC BUILDER",
+        "caption": "Review-hub mini-sites, comparison pages and social cards drive traffic from day one",
+        "vo": "A traffic builder is built in — review-hub mini-sites that rank in Google, comparison pages for buyer-intent keywords, and social cards. You're not waiting on the algorithm, you're driving traffic from day one."
+      }
+    ],
+    "review": {
+      "what": "SuperAffiliatesAI runs six agents that find products, write honest review scripts, record the voiceover, capture the sales page, and publish everywhere.",
+      "what_vo": "So what is SuperAffiliatesAI? It runs six agents working together. One finds products with buyer demand, one writes an honest podcast-style review script, one records the voiceover, one captures the sales page, one generates thumbnails, and one publishes the finished review everywhere.",
+      "why": "Your affiliate channel publishes fresh reviews daily while you sleep — with a traffic builder driving buyers from day one.",
+      "why_vo": "Why does that matter for your business? You stop doing the scripting, recording and posting by hand. Your channel publishes fresh reviews daily while you sleep — and the built-in traffic builder drives buyers to your reviews from day one."
+    }
+  },
+  "browseragent-bundle": {
+    "demos": [
+      {
+        "src": "browseragent.mp4",
+        "start": 123.8,
+        "end": 175.6,
+        "label": "WATCH IT WORK",
+        "caption": "The AI takes over a real Chromium browser — clicking, scrolling, filling forms live",
+        "vo": "Type one command, one sentence. The AI takes over a real browser, pulls up the client's Google listing, checks the citation directories, and even clicks past the Yelp pop-up that would crash a normal scraper."
+      },
+      {
+        "src": "browseragent.mp4",
+        "start": 178.4,
+        "end": 221.1,
+        "label": "LOCAL SEO AUDIT",
+        "caption": "Reviews, ratings, competitor gaps — a branded audit built from one sentence",
+        "vo": "It pulls the full review profile, then ranks the top competitors. And here it is, a one-page local SEO audit, branded, with the scorecard, review snapshot and recommendations."
+      },
+      {
+        "src": "browseragent.mp4",
+        "start": 250.2,
+        "end": 297.8,
+        "label": "MONEY MISSIONS",
+        "caption": "Cold DMs, affiliate reviews, done-for-you social — preloaded and one-click",
+        "vo": "Preloaded missions make it a money machine. Personalized Instagram outreach, a researched affiliate review article with links and screenshots, and thirty done-for-you social posts — all built in under a minute."
+      },
+      {
+        "src": "browseragent.mp4",
+        "start": 347.1,
+        "end": 366.4,
+        "label": "AUTOPILOT",
+        "caption": "Schedule any mission to run on repeat while you sleep",
+        "vo": "Any mission runs on autopilot. Set it once, and every morning a fresh list of local leads lands in your inbox — no babysitting required."
+      }
+    ],
+    "review": {
+      "what": "BrowserAgent takes over a real browser from one command — clicking, scrolling, filling forms — and turns any workflow into a repeatable mission.",
+      "what_vo": "So what is BrowserAgent? From one sentence of instruction, it takes over a real browser — clicking, scrolling, filling in forms — and turns any workflow into a repeatable mission that runs while you sleep.",
+      "why": "Hours of manual browsing become one command — audits, outreach and research done for you.",
+      "why_vo": "Why does that help your business? Hours of manual clicking and copying become one command. Local SEO audits, personalized outreach, affiliate reviews, fresh lead lists every morning — the missions do the work for you."
+    }
+  },
+  "callfluent-2-0-bundle-callfluent-ai": {
+    "demos": [
+      {
+        "src": "callfluent-official-demo.mp4",
+        "start": 14.4,
+        "end": 56.6,
+        "label": "BUILD AN AGENT",
+        "caption": "Start from a real-estate template, pick your Twilio number and one of 400+ voices",
+        "vo": "From a blank dashboard, create a real estate agent in under a minute. Everything is pre-configured — select your Twilio number, pick from over four hundred voices, and add a welcome message."
+      },
+      {
+        "src": "callfluent-official-demo.mp4",
+        "start": 171.6,
+        "end": 194.2,
+        "label": "DEPLOY ANYWHERE",
+        "caption": "Embed it on your site as a pop-out or inline widget, or wire it up with webhooks",
+        "vo": "Deploy it as a pop-out or inline widget on your website — or use webhooks to capture names, emails and locations the agent needs."
+      },
+      {
+        "src": "callfluent-official-demo.mp4",
+        "start": 274.8,
+        "end": 395.5,
+        "label": "LIVE AI CALL",
+        "caption": "A real, unedited phone call — the agent qualifies a lead and books a viewing",
+        "vo": "This is a real, unedited call. The agent introduces itself, qualifies the lead on location and budget, handles scheduling questions, and even books the viewing — all in a natural conversation."
+      }
+    ],
+    "review": {
+      "what": "CallFluent is an AI phone-calling agency in a box — build a real-estate agent from a template in under a minute and deploy it on your site.",
+      "what_vo": "So what is CallFluent? It's an AI phone-calling agency in a box. From a template you build a real-estate agent in under a minute, and deploy it on your website as a widget or with webhooks.",
+      "why": "Your agent answers, qualifies and books leads around the clock — you deliver the agency service without the staffing.",
+      "why_vo": "Why does that help your business? Your AI agent answers every call, qualifies every lead, and books appointments around the clock — so you can sell phone-calling services to clients without building a call center or hiring staff."
+    }
+  },
+  "contentclaw-bundle": {
+    "demos": [
+      {
+        "src": "contentclaw.mp4",
+        "start": 113.2,
+        "end": 142.8,
+        "label": "CREATE AN AUDIENCE",
+        "caption": "Pick a niche, click create — account, avatar, bio and hosted bio page in one step",
+        "vo": "Inside the dashboard, pick a niche and click create. It names the account, generates the avatar, writes the bios, and builds the hosted bio page with your link on it."
+      },
+      {
+        "src": "contentclaw.mp4",
+        "start": 144.4,
+        "end": 180.5,
+        "label": "TREND RADAR",
+        "caption": "It scans 15 platforms and rebuilds what's winning as your content",
+        "vo": "Connect up to fifteen platforms, then open trend radar. It already scanned everything and found what's trending in your niche — like this one with millions of views in four days. Click create my version and it rebuilds the winning concept as your content."
+      },
+      {
+        "src": "contentclaw.mp4",
+        "start": 182.6,
+        "end": 209.3,
+        "label": "AUTO-PUBLISH",
+        "caption": "Activate and it schedules proven content daily, with your link on every post",
+        "vo": "Step four, activate. Content Claw now publishes and schedules this proven content across all fifteen platforms daily, automatically, with your link riding along on every single post."
+      },
+      {
+        "src": "contentclaw.mp4",
+        "start": 211.6,
+        "end": 224.9,
+        "label": "PROOF IN ACTION",
+        "caption": "A live account — every post found, created and published by the AI",
+        "vo": "Here's proof it works outside the demo. This is a live account that's been running for weeks — every single post on it was found, created and published by Content Claw."
+      }
+    ],
+    "review": {
+      "what": "ContentClaw scans up to 15 platforms, rebuilds what's already winning as your content, and auto-publishes it daily with your link on every post.",
+      "what_vo": "So what is ContentClaw? It connects up to fifteen platforms, scans what's already trending in your niche, rebuilds the winning concepts as your content, and auto-publishes it daily — with your link on every single post.",
+      "why": "You don't guess what works — you ride the trends the data already proves, every day.",
+      "why_vo": "Why does that help your business? You stop guessing what content might work. ContentClaw only repurposes concepts that are already proven — so your accounts stay active with winning content, every day, without you touching it."
+    }
+  },
+  "signal-droid": {
+    "demos": [
+      {
+        "src": "signaldroid.mp4",
+        "start": 28.1,
+        "end": 49.5,
+        "label": "VALUE DETECTED",
+        "caption": "The scanner flags abandoned domains worth $8,000 and $5,300 — listed for $10",
+        "vo": "Watch what the scanner does. It detects a domain worth eight thousand dollars, another at five thousand three hundred — names abandoned and sitting listed for just ten dollars."
+      },
+      {
+        "src": "signaldroid.mp4",
+        "start": 204.3,
+        "end": 250.3,
+        "label": "GREEN MEANS GO",
+        "caption": "The panel lights up green when a domain has profit potential, red when something's wrong",
+        "vo": "The readout shows a green light when a domain has serious profit potential and red when something's wrong — so scanning a list takes seconds, not hours."
+      },
+      {
+        "src": "signaldroid.mp4",
+        "start": 281.3,
+        "end": 317.3,
+        "label": "FIND + SELL",
+        "caption": "AI finds goldmine domains that sell fast, then you click sell",
+        "vo": "Signal Droid uses AI to find the goldmine domains that sell fast. It flags them green, you acquire them, hit sell — no funnels, no lists, no traffic to buy."
+      }
+    ],
+    "review": {
+      "what": "Signal Droid scans the market and flags abandoned domains worth thousands that are listed for a fraction of that — green for profit potential, red for skip.",
+      "what_vo": "So what is Signal Droid? It scans the domain market and flags abandoned names that are worth thousands but listed for a fraction of that. Green means real profit potential, red means skip.",
+      "why": "You scan in seconds instead of hours and only spend on domains the data says will flip.",
+      "why_vo": "Why does that help your business? You stop spending hours hunting for a needle in a haystack. Signal Droid scans in seconds, shows you exactly which names are undervalued, and you only buy the ones the data says will sell."
+    }
+  },
+  "viralreelai-bundle": {
+    "demos": [
+      {
+        "src": "viralreelai.mp4",
+        "start": 33.2,
+        "end": 76.6,
+        "label": "CREATE A CAMPAIGN",
+        "caption": "Start a campaign for any faceless account — auto mode or manual control",
+        "vo": "Start a campaign for your faceless account. Auto mode creates batches of videos with zero setup, or take full control in manual mode."
+      },
+      {
+        "src": "viralreelai.mp4",
+        "start": 106.5,
+        "end": 164.0,
+        "label": "PICK YOUR NICHE",
+        "caption": "Choose a content type and the AI builds the titles, captions and hashtags",
+        "vo": "Pick a content type — gaming, coach, story videos — and your niche. The AI generates the metadata: titles, descriptions, captions and hashtags, ready for every platform."
+      },
+      {
+        "src": "viralreelai.mp4",
+        "start": 206.4,
+        "end": 236.7,
+        "label": "TEMPLATES",
+        "caption": "Pick from trending templates — gaming, coach, story — that perform on Instagram and TikTok",
+        "vo": "Choose from templates of trending content that's already performing — visually engaging formats with the script built in."
+      },
+      {
+        "src": "viralreelai.mp4",
+        "start": 320.9,
+        "end": 340.2,
+        "label": "CUSTOMIZE + PREVIEW",
+        "caption": "Add a cloned voice or face narration, drop in a call to action, preview, then render",
+        "vo": "Customize everything — captions, voiceover, face narration, a call to action with your site name. Preview it, hit render, and it's scheduled for posting."
+      },
+      {
+        "src": "viralreelai.mp4",
+        "start": 769.9,
+        "end": 812.9,
+        "label": "FOLLOWER ENGINE",
+        "caption": "Six built-in ways to drive followers back to your faceless accounts",
+        "vo": "Beyond the videos, a follower engine drives growth — viral micro-content, Q&A outreach on Reddit and Quora, Pinterest pins and lead magnets, all pulling people back to your faceless profiles."
+      }
+    ],
+    "review": {
+      "what": "ViralReelAI builds faceless viral reels end to end — pick a niche, it writes the script, generates captions and hashtags, and renders from templates that are already performing.",
+      "what_vo": "So what is ViralReelAI? It builds faceless viral reels end to end. Pick a content type and niche, and it writes the script, generates the captions and hashtags, and renders from templates that are already performing on Instagram and TikTok.",
+      "why": "You run faceless accounts on autopilot with a built-in follower engine pulling growth back to your profiles.",
+      "why_vo": "Why does that help your business? You stop creating content by hand every day. ViralReelAI runs your faceless accounts on autopilot — and the built-in follower engine keeps pulling new followers back to your profiles."
+    }
+  }
+}

@@ -298,6 +298,8 @@ function dealToDraft(deal: Deal): DealDraft {
     original_price: deal.original_price,
     currency: deal.currency,
     affiliate_url: deal.affiliate_url,
+    bundle_url: deal.bundle_url ?? null,
+    bundle_price: deal.bundle_price ?? null,
     source_url: deal.source_url,
     expiration_date: deal.expiration_date,
     countdown_enabled: deal.countdown_enabled,

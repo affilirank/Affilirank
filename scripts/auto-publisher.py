@@ -167,6 +167,31 @@ def short_link(deal, kind="front-end"):
     return f"{prefix}/{slug}"
 
 
+_BLOG_SLUGS = {}
+
+
+def _load_blog_slugs():
+    if _BLOG_SLUGS:
+        return
+    try:
+        rows = rest("/blog_posts?select=deal_id,slug")
+        for r in rows or []:
+            _BLOG_SLUGS[r["deal_id"]] = r.get("slug") or ""
+    except Exception:
+        pass
+
+
+def blog_page_url(deal):
+    """Clickable description link for a deal: the blog page (HTTP 200 with the
+    JVZoo link inside). YouTube will not linkify the /r short links because they
+    302-redirect, so the main CTA points at the blog review page instead."""
+    _load_blog_slugs()
+    slug = _BLOG_SLUGS.get(deal["id"]) or _BLOG_SLUGS.get(deal.get("slug") or "")
+    if slug:
+        return f"{SITE_URL}/blog/{slug}"
+    return short_link(deal, "front-end")
+
+
 def build_description(deal):
     name = short_name(deal["title"])
     desc = strip_tags(deal.get("description"))
@@ -176,7 +201,7 @@ def build_description(deal):
     highlights = [strip_tags(h) for h in (deal.get("highlights") or []) if strip_tags(h)]
     coupon = deal.get("coupon_code")
     affiliate = (deal.get("affiliate_url") or "").strip()
-    main_link = short_link(deal, "front-end")
+    main_link = blog_page_url(deal)
 
     lines = [f"{name} — Full Review ({time.strftime('%Y')}) | Lifetime Deal on JVZoo", ""]
     lines.append(summary)
@@ -202,7 +227,7 @@ def build_description(deal):
                 break
     if bundle:
         lines.append("🚀 BEST VALUE — The Full Bundle:")
-        lines.append(short_link(deal, "bundle"))
+        lines.append(blog_page_url(deal))
         lines.append("")
     for fl in funnel:
         label = fl.get("label") or "Upgrade"

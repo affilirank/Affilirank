@@ -7,7 +7,6 @@ import {
   BadgeCheck,
   Check,
   ChevronDown,
-  ArrowRight,
   ShieldCheck,
   Zap,
   ChevronRight,
@@ -19,6 +18,7 @@ import {
   getPublishedDeals,
 } from "@/lib/data";
 import { BlogNav } from "@/components/blog-nav";
+import { BlogAffiliateCta } from "@/components/blog-affiliate-cta";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
 import { categoryLabel, discountPercent, formatPrice } from "@/lib/utils";
 import type { Deal } from "@/lib/types";
@@ -71,66 +71,6 @@ function formatDate(iso: string) {
     month: "long",
     day: "numeric",
   });
-}
-
-function AffiliateCta({ deal, label }: { deal: Deal | null; label: string }) {
-  const price = formatPrice(deal?.price, deal?.currency);
-  const pct = discountPercent(deal?.original_price ?? null, deal?.price ?? null);
-
-  return (
-    <div className="my-8 overflow-hidden rounded-3xl border border-violet-400/30 bg-gradient-to-br from-violet-600/15 via-panel to-cyan-500/10 p-6 text-center sm:p-8 cta-glow">
-      <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-violet-300">
-        Lifetime Deal · One-Time Payment
-      </p>
-      {pct && (
-        <p className="mt-3 font-display text-3xl font-extrabold sm:text-4xl">
-          <span className="text-gradient">{pct}% OFF</span>{" "}
-          {price && (
-            <>
-              <span className="align-top text-lg text-white/40 line-through">
-                {formatPrice(deal?.original_price, deal?.currency)}
-              </span>{" "}
-              <span className="text-white">{price}</span>
-            </>
-          )}
-        </p>
-      )}
-      {!pct && price && (
-        <p className="mt-3 font-display text-3xl font-extrabold text-white">
-          {price} <span className="text-base font-semibold text-white/50">one-time</span>
-        </p>
-      )}
-      <p className="mx-auto mt-2 max-w-md text-xs leading-relaxed text-white/60">
-        Pay once, own it forever. No monthly fees, no renewals — includes all
-        future updates.
-      </p>
-      <a
-        href={deal?.affiliate_url ?? "#"}
-        target="_blank"
-        rel="noopener noreferrer sponsored"
-        className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-cyan-500 px-7 py-3.5 text-sm font-bold text-white transition hover:brightness-110 active:scale-[0.98]"
-      >
-        <Zap className="h-4 w-4" />
-        {label}
-        <ArrowRight className="h-4 w-4" />
-      </a>
-      {deal?.bundle_url && (
-        <a
-          href={deal.bundle_url}
-          target="_blank"
-          rel="noopener noreferrer sponsored"
-          className="mt-3 inline-flex items-center gap-2 rounded-2xl border border-amber-400/40 bg-amber-400/10 px-7 py-3.5 text-sm font-bold text-amber-200 transition hover:bg-amber-400/20 active:scale-[0.98]"
-        >
-          <Zap className="h-4 w-4" />
-          Get The Bundle &amp; Save More
-          <ArrowRight className="h-4 w-4" />
-        </a>
-      )}
-      <p className="mt-3 text-[11px] text-white/40">
-        Official affiliate links — we may earn a commission at no extra cost to you.
-      </p>
-    </div>
-  );
 }
 
 export default async function BlogArticlePage({ params }: Props) {
@@ -291,7 +231,7 @@ export default async function BlogArticlePage({ params }: Props) {
         )}
 
         {/* Top affiliate CTA */}
-        {deal && <AffiliateCta deal={deal} label={ctaLabel} />}
+        {deal && <BlogAffiliateCta deal={deal} label={ctaLabel} related={related} />}
 
         {/* Sections */}
         <div className="mt-6 space-y-8">
@@ -324,7 +264,7 @@ export default async function BlogArticlePage({ params }: Props) {
                 </ul>
               )}
               {section.cta && deal && (
-                <AffiliateCta deal={deal} label={ctaLabel} />
+                <BlogAffiliateCta deal={deal} label={ctaLabel} related={related} />
               )}
             </section>
           ))}
@@ -359,7 +299,7 @@ export default async function BlogArticlePage({ params }: Props) {
         {/* Bottom CTA */}
         {deal && (
           <div className="mt-12 text-center">
-            <AffiliateCta deal={deal} label={ctaLabel} />
+            <BlogAffiliateCta deal={deal} label={ctaLabel} related={related} />
             <Link
               href={`/deals/${deal.slug}`}
               className="text-sm font-semibold text-cyan-300 transition hover:text-cyan-200"

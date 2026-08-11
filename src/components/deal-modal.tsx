@@ -10,6 +10,7 @@ import {
   BadgeCheck,
   Flame,
   ChevronLeft,
+  Zap,
 } from "lucide-react";
 import { useStream } from "@/components/stream-provider";
 import { CountdownTimer } from "@/components/countdown-timer";
@@ -32,11 +33,15 @@ import {
 export function DealModal() {
   const { activeDeal: deal, closeDeal } = useStream();
   const [view, setView] = useState<"details" | "sales">("details");
+  const [salesUrl, setSalesUrl] = useState<string | null>(null);
 
   // Reset to the details view whenever a new deal opens.
   useEffect(() => {
-    if (deal?.id) setView("details");
-  }, [deal?.id]);
+    if (deal?.id) {
+      setView("details");
+      setSalesUrl(deal.affiliate_url);
+    }
+  }, [deal?.id, deal?.affiliate_url]);
 
   useEffect(() => {
     if (!deal) return;
@@ -53,6 +58,14 @@ export function DealModal() {
   const goSales = () => {
     if (!deal) return;
     analytics.ctaClick(deal.id, deal.affiliate_url);
+    setSalesUrl(deal.affiliate_url);
+    setView("sales");
+  };
+
+  const goBundle = () => {
+    if (!deal?.bundle_url) return;
+    analytics.ctaClick(deal.id, deal.bundle_url as string);
+    setSalesUrl(deal.bundle_url as string);
     setView("sales");
   };
 
@@ -94,7 +107,7 @@ export function DealModal() {
                     {deal.title}
                   </p>
                   <a
-                    href={deal.affiliate_url}
+                    href={salesUrl ?? deal.affiliate_url}
                     target="_blank"
                     rel="noopener noreferrer sponsored nofollow"
                     className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-semibold text-violet-200 transition hover:bg-violet-500/15 hover:text-white"
@@ -110,7 +123,7 @@ export function DealModal() {
                   </button>
                 </div>
                 <iframe
-                  src={deal.affiliate_url}
+                  src={salesUrl ?? deal.affiliate_url}
                   title={`${deal.title} — sales page`}
                   allow="autoplay; fullscreen; payment; clipboard-write; encrypted-media; picture-in-picture"
                   allowFullScreen
@@ -241,40 +254,69 @@ export function DealModal() {
 
                   {/* CTA */}
                   <div className="sticky bottom-0 -mx-5 mt-7 bg-gradient-to-t from-abyss via-abyss/95 to-transparent px-5 pb-2 pt-6 sm:-mx-8 sm:px-8">
-                    <button
-                      onClick={goSales}
-                      className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-cyan-500 px-6 py-4 text-lg font-bold text-white transition-all duration-200 hover:brightness-110 active:scale-[0.99] cta-glow"
-                    >
-                      Watch Sales Video & Get the Deal
-                      <ArrowUpRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                    </button>
-                    {deal.bundle_url && (
-                      <a
-                        href={deal.bundle_url}
-                        target="_blank"
-                        rel="noopener noreferrer sponsored nofollow"
-                        onClick={() =>
-                          analytics.ctaClick(deal.id, deal.bundle_url as string)
-                        }
-                        className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-3 text-sm font-bold text-amber-200 transition hover:bg-amber-400/20"
-                      >
-                        Get The Bundle &amp; Save More
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </a>
-                    )}
-                    {deal.source_url && (
-                      <a
-                        href={deal.affiliate_url}
-                        target="_blank"
-                        rel="noopener noreferrer sponsored nofollow"
-                        onClick={() =>
-                          analytics.ctaClick(deal.id, deal.affiliate_url)
-                        }
-                        className="mt-2.5 flex w-full items-center justify-center gap-1.5 text-sm font-semibold text-white/60 transition hover:text-white"
-                      >
-                        Open sales page in a new tab{" "}
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </a>
+                    {deal.bundle_url ? (
+                      <div className="grid gap-2.5">
+                        <button
+                          onClick={goSales}
+                          className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-cyan-500 px-6 py-4 text-lg font-bold text-white transition-all duration-200 hover:brightness-110 active:scale-[0.99] cta-glow"
+                        >
+                          <Zap className="h-5 w-5" />
+                          Get {deal.title.split("—")[0].trim()} ·{" "}
+                          {deal.price != null
+                            ? formatPrice(deal.price, deal.currency)
+                            : "Front-End"}
+                          <ArrowUpRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        </button>
+                        <button
+                          onClick={goBundle}
+                          className="group flex w-full items-center justify-center gap-2 rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-3 text-sm font-bold text-amber-200 transition hover:bg-amber-400/20 active:scale-[0.99]"
+                        >
+                          <Zap className="h-4 w-4" />
+                          Get The Bundle ·{" "}
+                          {deal.bundle_price != null
+                            ? formatPrice(deal.bundle_price, deal.currency)
+                            : "Best Value"}
+                          <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        </button>
+                        {deal.source_url && (
+                          <a
+                            href={deal.affiliate_url}
+                            target="_blank"
+                            rel="noopener noreferrer sponsored nofollow"
+                            onClick={() =>
+                              analytics.ctaClick(deal.id, deal.affiliate_url)
+                            }
+                            className="mt-0.5 flex w-full items-center justify-center gap-1.5 text-sm font-semibold text-white/60 transition hover:text-white"
+                          >
+                            Open sales page in a new tab{" "}
+                            <ExternalLink className="h-3.5 w-3.5" />
+                          </a>
+                        )}
+                      </div>
+                    ) : (
+                      <>
+                        <button
+                          onClick={goSales}
+                          className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-cyan-500 px-6 py-4 text-lg font-bold text-white transition-all duration-200 hover:brightness-110 active:scale-[0.99] cta-glow"
+                        >
+                          Watch Sales Video & Get the Deal
+                          <ArrowUpRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        </button>
+                        {deal.source_url && (
+                          <a
+                            href={deal.affiliate_url}
+                            target="_blank"
+                            rel="noopener noreferrer sponsored nofollow"
+                            onClick={() =>
+                              analytics.ctaClick(deal.id, deal.affiliate_url)
+                            }
+                            className="mt-2.5 flex w-full items-center justify-center gap-1.5 text-sm font-semibold text-white/60 transition hover:text-white"
+                          >
+                            Open sales page in a new tab{" "}
+                            <ExternalLink className="h-3.5 w-3.5" />
+                          </a>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
