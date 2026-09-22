@@ -37,8 +37,27 @@ AFF_ID = os.environ.get("JVZOO_AFFILIATE_ID", "")
 SITE_URL = os.environ.get("SITE_URL", "https://affilirank.com")
 WORK = Path(os.environ.get("WORK_DIR", "/tmp/affilirank-autopublish"))
 MAX_FAILURES = int(os.environ.get("MAX_FAILURES", "2"))
+# Multi-tenant DB: when set, every queue + settings read/write is scoped to
+# this tenant (its own YouTube connection, autopublish settings, deals). Run
+# the worker once per tenant. Unset = legacy single-tenant behavior (settings
+# row id=1).
+TENANT_ID = os.environ.get("TENANT_ID", "")
 
 REST = f"{SUPABASE_URL}/rest/v1"
+
+
+def settings_query():
+    """Path fragment that resolves THIS tenant's settings row."""
+    if TENANT_ID:
+        return f"/settings?select=*&tenant_id=eq.{urllib.parse.quote(TENANT_ID)}&limit=1"
+    return "/settings?select=*&id=eq.1&limit=1"
+
+
+def settings_scope():
+    """Filter fragment for PATCHing this tenant's settings row."""
+    if TENANT_ID:
+        return f"/settings?tenant_id=eq.{urllib.parse.quote(TENANT_ID)}"
+    return "/settings?id=eq.1"
 
 
 def db_headers():
@@ -609,7 +628,7 @@ def set_thumbnail(access_token, video_id, thumb_path):
 
 
 def get_youtube_auth():
-    rows = rest("/settings?select=*&id=eq.1&limit=1")
+    rows = rest(settings_query())
     if not rows:
         raise RuntimeError("No settings row found (run the SQL migration first)")
     auth = (rows[0] or {}).get("youtube_auth")
@@ -622,7 +641,7 @@ def get_google_auth():
     """OAuth client credentials for token refresh. Reads the credentials the
     admin pasted in Admin > Auto-Publish (stored in settings.google_auth);
     falls back to GOOGLE_CLIENT_ID/SECRET env vars when set."""
-    rows = rest("/settings?select=*&id=eq.1&limit=1")
+    rows = rest(settings_query())
     db = (rows[0] or {}).get("google_auth") or {} if rows else {}
     return {
         "client_id": os.environ.get("GOOGLE_CLIENT_ID", "") or (db or {}).get("client_id", ""),
@@ -655,7 +674,7 @@ def get_valid_token(auth):
         refreshed = refresh_token(auth)
         auth["access_token"] = refreshed["access_token"]
         auth["expires_at"] = time.time() * 1000 + (refreshed.get("expires_in", 3600) * 1000)
-        rest("/settings?id=eq.1", "PATCH", {"youtube_auth": auth})
+        rest(settings_scope(), "PATCH", {"youtube_auth": auth})
     return auth["access_token"]
 
 
@@ -719,7 +738,10 @@ def propagate_thumbnail(deal, thumb_path):
 
 
 def fetch_pending():
-    rows = rest("/products?select=*&auto_post_status=eq.pending&limit=5")
+    q = "/products?select=*&auto_post_status=eq.pending&limit=5"
+    if TENANT_ID:
+        q += f"&tenant_id=eq.{urllib.parse.quote(TENANT_ID)}"
+    rows = rest(q)
     return rows or []
 
 
@@ -792,7 +814,7 @@ def main():
     format_ = "short"
     face_enabled = True
     try:
-        s = rest("/settings?select=autopublish&id=eq.1&limit=1")
+        s = rest(settings_query())
         autopublish = (s[0] or {}).get("autopublish") or {}
         format_ = autopublish.get("format", "short")
         face_enabled = autopublish.get("profile_in_thumbnails", True)
