@@ -65,10 +65,29 @@ def upload(path, data, ctype):
         return r.status
 
 
+def og_path_for(src, slug):
+    """Storage path for the OG variant, mirroring the source thumb's layout.
+
+    Live storage nests tenant-prefixed thumbs (previews/deals/<tenant>/
+    <slug>.png), so the OG variant must land at og/<tenant>/<slug>.png — the
+    deal page derives its share image by swapping /previews/deals/ for
+    /previews/og/ on the hero_image URL.
+    """
+    try:
+        from urllib.parse import urlparse
+
+        p = urlparse(str(src)).path
+        if "/previews/deals/" in p:
+            return "og/" + p.split("/previews/deals/", 1)[1]
+    except Exception:
+        pass
+    return f"og/{slug}.png"
+
+
 def make_og(slug, src=None, out_png=None, work=None):
     """Composite a single thumb (previews/deals/<slug>.png by default) onto a
-    1200x630 Facebook-friendly canvas and upload it to previews/og/<slug>.png.
-    Returns the public URL on success, or None on failure."""
+    1200x630 Facebook-friendly canvas and upload it to previews/og/<...>.png
+    (same directory structure as the source thumb)."""
     if not (SUPABASE_URL and SERVICE_KEY):
         raise RuntimeError("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY")
     try:
@@ -101,10 +120,26 @@ def make_og(slug, src=None, out_png=None, work=None):
 
     png = out_png or work / f"{slug}.png"
     out.save(png, "PNG")
-    path = f"og/{slug}.png"
+    path = og_path_for(src, slug)
     upload(path, png.read_bytes(), "image/png")
-    print(f"OK {slug} {W}x{H}")
+    print(f"OK {slug} {W}x{H} -> {path}")
     return f"{SUPABASE_URL}/storage/v1/object/public/{BUCKET}/{path}"
+
+
+def hero_url_for(slug):
+    """Fetch the deal's hero_image (the live 16:9 thumb) so backfills work
+    with the tenant-prefixed storage layout too."""
+    import json as _json
+    import urllib.parse
+
+    path = f"/products?select=hero_image&slug=eq.{urllib.parse.quote(slug)}&limit=1"
+    req = urllib.request.Request(
+        f"{SUPABASE_URL}/rest/v1{path}",
+        headers={"apikey": SERVICE_KEY, "Authorization": f"Bearer {SERVICE_KEY}"},
+    )
+    with urllib.request.urlopen(req, timeout=60) as r:
+        rows = _json.loads(r.read()) or []
+    return (rows[0] or {}).get("hero_image") if rows else None
 
 
 def main():
@@ -113,7 +148,12 @@ def main():
         sys.exit(1)
     slugs = sys.argv[1:] or SLUGS
     for slug in slugs:
-        make_og(slug)
+        src = hero_url_for(slug)
+        if src:
+            make_og(slug, src=src)
+        else:
+            # Fall back to the flat default path (no DB row or no hero yet).
+            make_og(slug)
 
 
 if __name__ == "__main__":

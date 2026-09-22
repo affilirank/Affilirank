@@ -11,8 +11,10 @@ import {
   Timer,
   Star,
   FileText,
+  FilePlus2,
   Sparkles,
   Loader2,
+  AlertTriangle,
 } from "lucide-react";
 import type { BlogPost, Deal } from "@/lib/types";
 import { cn, formatPrice, timeAgo, categoryLabel } from "@/lib/utils";
@@ -39,6 +41,8 @@ export function ProductList({
   const [onlyLive, setOnlyLive] = useState(false);
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [thumbing, setThumbing] = useState<string | null>(null);
+  const [regenning, setRegenning] = useState<string | null>(null);
+  const [blogError, setBlogError] = useState<string | null>(null);
 
   useEffect(() => {
     adminApi
@@ -46,6 +50,21 @@ export function ProductList({
       .then(setBlogs)
       .catch(() => {});
   }, [deals]);
+
+  const regenerateBlog = async (deal: Deal) => {
+    setRegenning(deal.id);
+    setBlogError(null);
+    try {
+      await adminApi.regenerateBlog(deal.id);
+      setBlogs(await adminApi.listBlogs());
+    } catch (e) {
+      setBlogError(
+        `${deal.title}: ${e instanceof Error ? e.message : "failed"}`
+      );
+    } finally {
+      setRegenning(null);
+    }
+  };
 
   const blogByDeal = useMemo(
     () => new Map(blogs.map((b) => [b.deal_id ?? "", b])),
@@ -67,6 +86,13 @@ export function ProductList({
 
   return (
     <div className="space-y-4">
+      {blogError && (
+        <div className="flex items-start gap-2 rounded-xl border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-xs text-rose-200">
+          <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          <span className="min-w-0 break-words">{blogError}</span>
+        </div>
+      )}
+
       {/* Toolbar */}
       <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-xs">
@@ -203,7 +229,7 @@ export function ProductList({
                       <Sparkles className="h-3.5 w-3.5" />
                     )}
                   </button>
-                  {blogByDeal.get(deal.id) && (
+                  {blogByDeal.get(deal.id) ? (
                     <a
                       href={`/blog/${blogByDeal.get(deal.id)!.slug}`}
                       target="_blank"
@@ -213,6 +239,19 @@ export function ProductList({
                     >
                       <FileText className="h-3.5 w-3.5" />
                     </a>
+                  ) : (
+                    <button
+                      onClick={() => regenerateBlog(deal)}
+                      disabled={regenning === deal.id}
+                      title="Generate / regenerate the SEO article"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-white/60 transition hover:bg-cyan-500/20 hover:text-cyan-200 disabled:cursor-wait disabled:opacity-50"
+                    >
+                      {regenning === deal.id ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <FilePlus2 className="h-3.5 w-3.5" />
+                      )}
+                    </button>
                   )}
                   <button
                     onClick={() => onEdit(deal)}

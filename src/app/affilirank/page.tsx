@@ -479,6 +479,12 @@ export default function VslPage() {
             <Link href="/affilirank" className="transition hover:text-white">
               About the product
             </Link>
+            <Link href="/privacy" className="transition hover:text-white">
+              Privacy
+            </Link>
+            <Link href="/terms" className="transition hover:text-white">
+              Terms
+            </Link>
             <Link href="/admin" className="transition hover:text-white">
               Admin
             </Link>
